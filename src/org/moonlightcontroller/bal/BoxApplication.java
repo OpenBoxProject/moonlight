@@ -3,8 +3,6 @@ package org.moonlightcontroller.bal;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.xml.ws.LogicalMessage;
-
 import org.moonlightcontroller.processing.IProcessingStage;
 import org.openboxprotocol.protocol.Priority;
 import org.openboxprotocol.protocol.Rule;
@@ -13,30 +11,30 @@ public abstract class BoxApplication {
 	
 	protected String name;
 	
-	private int priority;
-	private List<IProcessingStage> modules;
+	private Priority priority;
+	private List<IProcessingStage> stages;
 	private List<Rule> rules;
 	
 	public BoxApplication(String name) {
-		this(name, Priority.PRIORITY_NORMAL);
+		this(name, Priority.MEDIUM);
 	}
 	
-	public BoxApplication(String name, int priority) {
+	public BoxApplication(String name, Priority priority) {
 		this.name = name;
 		this.priority = priority;
-		this.modules = new ArrayList<IProcessingStage>();
+		this.stages = new ArrayList<IProcessingStage>();
 	}
 	
 	public String getName() {
 		return name;
 	}
 	
-	public int getPriority() {
+	public Priority getPriority() {
 		return priority;
 	}
 	
 	protected void addModule(IProcessingStage stage) {
-		this.modules.add(stage);
+		this.stages.add(stage);
 	}
 	
 	protected void setRules(List<Rule> rules) {
@@ -45,9 +43,5 @@ public abstract class BoxApplication {
 	
 	public List<Rule> getRules() {
 		return this.rules;
-	}
-	
-	protected void log(LogicalMessage msg) {
-		
-	}
+	}	
 }
