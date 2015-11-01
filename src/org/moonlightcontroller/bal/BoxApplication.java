@@ -3,51 +3,41 @@ package org.moonlightcontroller.bal;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.xml.ws.LogicalMessage;
-
 import org.moonlightcontroller.processing.IProcessingStage;
 import org.openboxprotocol.protocol.Priority;
 import org.openboxprotocol.protocol.Rule;
+import org.openboxprotocol.protocol.Statement;
 
 public abstract class BoxApplication {
 	
 	protected String name;
 	
-	private int priority;
-	private List<IProcessingStage> modules;
-	private List<Rule> rules;
+	private Priority priority;
+	private List<Statement> statements;
 	
 	public BoxApplication(String name) {
-		this(name, Priority.PRIORITY_NORMAL);
+		this(name, Priority.MEDIUM);
 	}
 	
-	public BoxApplication(String name, int priority) {
+	public BoxApplication(String name, Priority priority) {
 		this.name = name;
 		this.priority = priority;
-		this.modules = new ArrayList<IProcessingStage>();
+		this.statements = new ArrayList<Statement>();
 	}
 	
 	public String getName() {
 		return name;
 	}
 	
-	public int getPriority() {
+	public Priority getPriority() {
 		return priority;
 	}
-	
-	protected void addModule(IProcessingStage stage) {
-		this.modules.add(stage);
-	}
-	
-	protected void setRules(List<Rule> rules) {
-		this.rules = rules;
-	}
-	
-	public List<Rule> getRules() {
-		return this.rules;
-	}
-	
-	protected void log(LogicalMessage msg) {
 		
+	protected void setStatements(List<Statement> statements) {
+		this.statements = statements;
 	}
+	
+	public List<Statement> getStatemens() {
+		return this.statements;
+	}	
 }
