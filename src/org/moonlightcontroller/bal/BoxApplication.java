@@ -3,9 +3,7 @@ package org.moonlightcontroller.bal;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.moonlightcontroller.processing.IProcessingStage;
 import org.openboxprotocol.protocol.Priority;
-import org.openboxprotocol.protocol.Rule;
 import org.openboxprotocol.protocol.Statement;
 
 public abstract class BoxApplication {
