@@ -6,22 +6,41 @@ import java.util.Map;
 import org.moonlightcontroller.processing.ProcessingBlock;
 import org.openboxprotocol.protocol.HeaderMatch;
 
-public abstract class HeaderClassifier extends ProcessingBlock {
+public class HeaderClassifier extends ProcessingBlock {
 
 	private Map<HeaderMatch, Integer> headerToPort;
 	
-	public HeaderClassifier(String id) {
-		super(id);
-		this.headerToPort = new HashMap<>();
-	}
-	
-	public int addMatch(HeaderMatch hf) {
-		int p = super.addPort();
-		this.headerToPort.put(hf, p);
-		return p;
-	}
-	
 	public int getPort(HeaderMatch hf) {
 		return this.headerToPort.get(hf);
+	}
+	
+	protected static abstract class Init<T extends Init<T>> extends ProcessingBlock.Init<T> {
+		protected Map<HeaderMatch, Integer> headerToPort;
+		
+		protected Init() {
+			super();
+			this.headerToPort = new HashMap<>();
+		}
+		public T addMatch(HeaderMatch hf) {
+			super.addPort();
+			this.headerToPort.put(hf, super.portCount);
+			return self();
+		}
+
+		public HeaderClassifier build(){
+			return new HeaderClassifier(this);
+		}
+	}
+	
+    public static class Builder extends Init<Builder> {
+    	@Override
+        protected Builder self() {
+            return this;
+        }
+    }
+    
+	protected HeaderClassifier(Init<?> init) {
+		super(init);
+		this.headerToPort = init.headerToPort;
 	}
 }

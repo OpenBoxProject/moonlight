@@ -30,12 +30,21 @@ public class Connector implements IConnector {
 		return new Builder(this);
 	}
 	
+	@Override
+	public Connector clone() {
+		Connector other = new Connector();
+		other.sourceBlock = this.sourceBlock;
+		other.sourcePort = this.sourcePort;
+		other.destinationBlock = this.destinationBlock;
+		return other;
+	}
+	
 	public static class Builder implements IConnector.Builder {
 
 		private Connector conn;
 
 		public Builder(Connector conn){
-			this.conn = conn;
+			this.conn = conn.clone();
 		}
 		
 		public Builder(){
