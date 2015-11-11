@@ -9,6 +9,14 @@ public class FromDevice extends ProcessingBlock {
 	private boolean sniffer;
 	private boolean promisc;
 	
+	private FromDevice(String id, int output, String devname, boolean sniffer, boolean promisc) {
+		super(id);
+		this.output = output;
+		this.devname = devname;
+		this.sniffer = sniffer;
+		this.promisc = promisc;
+	}
+	
 	public int getOutputPort() {
 		return this.output;
 	}
@@ -25,45 +33,32 @@ public class FromDevice extends ProcessingBlock {
 		return promisc;
 	}	
 	
-    protected FromDevice(Init<?> init) {
-        super(init);
-        this.output = init.output;
-        this.devname = init.devname;
-        this.sniffer = init.sniffer;
-        this.promisc = init.promisc;
-    }
-    
-	protected static abstract class Init<T extends Init<T>> extends ProcessingBlock.Init<T> {
+	public static class Builder extends ProcessingBlock.Builder {
 		private int output;
 		private String devname;
 		private boolean sniffer;
 		private boolean promisc;
 		
-		public T setDevice(String device){
+		public Builder setDevice(String device){
 			this.devname = device;
-			return self();
+			return this;
 		}
 		
-		public T setSniffer(boolean sniffer){
+		public Builder setSniffer(boolean sniffer){
 			this.sniffer = sniffer;
-			return self();
+			return this;
 		}
 		
-		public T setPromisc(boolean promisc){
+		public Builder setPromisc(boolean promisc){
 			this.promisc = promisc;
-			return self();
+			return this;
 		}
-		
+	
+		@Override
 		public FromDevice build(){
 			this.addPort();
-			return new FromDevice(this);
+			return new FromDevice(super.id, this.output, this.devname, this.sniffer, this.promisc);
 		}
 	}
 	
-    public static class Builder extends Init<Builder> {
-        @Override
-        protected Builder self() {
-            return this;
-        }
-    }
 }

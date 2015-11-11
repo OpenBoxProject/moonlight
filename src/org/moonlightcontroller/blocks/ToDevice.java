@@ -5,33 +5,27 @@ import org.moonlightcontroller.processing.ProcessingBlock;
 public class ToDevice extends ProcessingBlock {
 
 	private String devname;
-	
-	protected static abstract class Init<T extends Init<T>> extends ProcessingBlock.Init<T> {
-		private String devname;
-		
-		public T setDevice(String device){
-			this.devname = device;
-			return self();
-		}
-		
-		public ToDevice build(){
-			return new ToDevice(this);
-		}
-	}
 
-    public static class Builder extends Init<Builder> {
-        @Override
-        protected Builder self() {
-            return this;
-        }
-    }
-    
-	public ToDevice(Init<?> init){
-		super(init);
-		this.devname = init.devname;
+	public ToDevice(String id, String devname){
+		super(id);
+		this.devname = devname;
 	}
 
 	public String getDevice() {
 		return this.devname;
 	}
+
+	protected static class Builder extends ProcessingBlock.Builder {
+		private String devname;
+		
+		public Builder setDevice(String device){
+			this.devname = device;
+			return this;
+		}
+		
+		public ToDevice build(){
+			return new ToDevice(super.id, this.devname);
+		}
+	}
+    
 }

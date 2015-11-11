@@ -3,7 +3,7 @@ package org.moonlightcontroller.processing;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ProcessingBlock implements IProcessingBlock{
+public abstract class ProcessingBlock implements IProcessingBlock{
 
 	private String id;
 	private List<Integer> ports;
@@ -31,46 +31,30 @@ public class ProcessingBlock implements IProcessingBlock{
 		return this.ports;
 	}
 	
-	protected ProcessingBlock(Init<?> init){
-		this.id = init.id;
-		this.ports = init.ports;
-		this.portCount = init.portCount;
-	}
-	
-	public static abstract class Init<T extends Init<T>>{
+	public static abstract class Builder implements IProcessingBlock.Builder {
 		
-		private String id;
-		private List<Integer> ports;
+		protected String id;
+		protected List<Integer> ports;
 		protected int portCount;
-		
-		protected abstract T self();
-		
-		protected Init(){
+				
+		protected Builder(){
 			this.portCount = 0;
 			this.id = "";
 			this.ports = new ArrayList<>();
 		}
 		
-		public T setId(String id){
+		public Builder setId(String id){
 			this.id = id;
-			return self();
+			return this;
 		}
 
-		public T addPort() {
+		public Builder addPort() {
 			this.portCount++;
 			this.ports.add(this.portCount);
-			return self();
+			return this;
 		}
 		
-		public ProcessingBlock build(){
-			return new ProcessingBlock(this);
-		}
+		public abstract ProcessingBlock build();
 	}
 	
-	public static class Builder extends Init<Builder> implements IProcessingBlock.Builder{
-        @Override
-        protected Builder self() {
-            return this;
-        }
-	}
 }

@@ -10,37 +10,31 @@ public class HeaderClassifier extends ProcessingBlock {
 
 	private Map<HeaderMatch, Integer> headerToPort;
 	
+	private HeaderClassifier(String id, Map<HeaderMatch, Integer> headerToPort) {
+		super(id);
+		this.headerToPort = headerToPort;
+	}
+	
 	public int getPort(HeaderMatch hf) {
 		return this.headerToPort.get(hf);
 	}
 	
-	protected static abstract class Init<T extends Init<T>> extends ProcessingBlock.Init<T> {
-		protected Map<HeaderMatch, Integer> headerToPort;
+	public static class Builder extends ProcessingBlock.Builder {
+		private Map<HeaderMatch, Integer> headerToPort;
 		
-		protected Init() {
+		public Builder() {
 			super();
 			this.headerToPort = new HashMap<>();
 		}
-		public T addMatch(HeaderMatch hf) {
+		
+		public Builder addMatch(HeaderMatch hf) {
 			super.addPort();
 			this.headerToPort.put(hf, super.portCount);
-			return self();
+			return this;
 		}
 
 		public HeaderClassifier build(){
-			return new HeaderClassifier(this);
+			return new HeaderClassifier(super.id, this.headerToPort);
 		}
-	}
-	
-    public static class Builder extends Init<Builder> {
-    	@Override
-        protected Builder self() {
-            return this;
-        }
-    }
-    
-	protected HeaderClassifier(Init<?> init) {
-		super(init);
-		this.headerToPort = init.headerToPort;
 	}
 }
