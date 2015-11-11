@@ -33,7 +33,7 @@ public class ApplicationRegistry implements IApplicationRegistry {
         	System.out.println("Given path is not found:" + path);
         	return false;
         }
-        if (loc.isDirectory()){
+        if (!loc.isDirectory()){
         	System.out.println("Path is not a directory:" + path);
         	return false;
         }
