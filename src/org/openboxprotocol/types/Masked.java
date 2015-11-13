@@ -1,6 +1,6 @@
 package org.openboxprotocol.types;
 
-public class Masked<F extends ValueType<F>> {
+public class Masked<F extends ValueType<F>> implements ValueType<Masked<F>> {
 
 	private F value;
 	private F mask;
@@ -30,6 +30,11 @@ public class Masked<F extends ValueType<F>> {
 	
 	public static <F extends ValueType<F>> Masked<F> of(F value, F mask) {
 		return new Masked<F>(value, mask);
+	}
+
+	@Override
+	public Masked<F> applyMask(Masked<F> mask) {
+		return this;
 	}
 	
 }
