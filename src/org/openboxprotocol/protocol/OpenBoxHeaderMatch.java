@@ -9,11 +9,9 @@ import org.openboxprotocol.types.ValueType;
 public class OpenBoxHeaderMatch implements HeaderMatch {
 
 	private Map<HeaderField<?>, ValueType<?>> fields;
-	private Map<HeaderField<?>, ValueType<?>> masks;
 	
 	private OpenBoxHeaderMatch() {
 		this.fields = new HashMap<>();
-		this.masks = new HashMap<>();
 	}
 	
 	@SuppressWarnings("unchecked")
@@ -31,12 +29,13 @@ public class OpenBoxHeaderMatch implements HeaderMatch {
 			throws UnsupportedOperationException {
 		if (!field.arePrerequisitesOK(this))
 			return null;
-		F value = (F)fields.get(field);
-		F mask = (F)masks.get(field);
 		
-		if (mask == null)
-			return Masked.of(value, field.noMask);
-		return Masked.of(value, mask);
+		F value = (F)fields.get(field);
+		if (value instanceof Masked<?>){
+			return (Masked<F>)value;	
+		}
+
+		return Masked.of(value, field.noMask);
 	}
 
 	@Override
@@ -53,7 +52,6 @@ public class OpenBoxHeaderMatch implements HeaderMatch {
 	public OpenBoxHeaderMatch clone() {
 		OpenBoxHeaderMatch other = new OpenBoxHeaderMatch();
 		other.fields.putAll(this.fields);
-		other.masks.putAll(this.masks);
 		return other;
 	}
 	
@@ -81,8 +79,7 @@ public class OpenBoxHeaderMatch implements HeaderMatch {
 		public <F extends ValueType<F>> org.openboxprotocol.protocol.HeaderMatch.Builder setMasked(
 				HeaderField<F> field, F value, F mask)
 				throws UnsupportedOperationException {
-			match.fields.put(field, value);
-			match.masks.put(field, value);
+			match.fields.put(field, Masked.of(value, mask));
 			return this;
 		}
 
@@ -90,8 +87,7 @@ public class OpenBoxHeaderMatch implements HeaderMatch {
 		public <F extends ValueType<F>> org.openboxprotocol.protocol.HeaderMatch.Builder setMasked(
 				HeaderField<F> field, Masked<F> valueWithMask)
 				throws UnsupportedOperationException {
-			match.fields.put(field, valueWithMask.getValue());
-			match.masks.put(field, valueWithMask.getMask());
+			match.fields.put(field, valueWithMask);
 			return this;
 		}
 
@@ -99,7 +95,6 @@ public class OpenBoxHeaderMatch implements HeaderMatch {
 		public <F extends ValueType<F>> org.openboxprotocol.protocol.HeaderMatch.Builder wildcard(
 				HeaderField<F> field) throws UnsupportedOperationException {
 			match.fields.remove(field);
-			match.masks.remove(field);
 			return this;
 		}
 
