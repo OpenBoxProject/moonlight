@@ -15,7 +15,7 @@ public class ToDevice extends ProcessingBlock {
 		return this.devname;
 	}
 
-	protected static class Builder extends ProcessingBlock.Builder {
+	public static class Builder extends ProcessingBlock.Builder {
 		private String devname;
 		
 		public Builder setDevice(String device){
