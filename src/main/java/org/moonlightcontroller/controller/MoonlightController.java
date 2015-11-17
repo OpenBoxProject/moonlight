@@ -9,6 +9,7 @@ import org.moonlightcontroller.southbound.server.ISouthboundServer;
 import org.openboxprotocol.protocol.IStatement;
 import org.openboxprotocol.protocol.topology.ILocationSpecifier;
 import org.openboxprotocol.protocol.topology.ITopologyManager;
+import org.openboxprotocol.protocol.topology.InstanceLocationSpecifier;
 
 public class MoonlightController {
 
@@ -30,9 +31,9 @@ public class MoonlightController {
 		ApplicationAggregator aggregator = new ApplicationAggregator(this.topology);
 		aggregator.addApplications(this.registry.getApplications());
 		aggregator.performAggregation();
-		for (ILocationSpecifier ep : this.topology.getAllEndpoints()){
-			List<IStatement> stmts = aggregator.getBlocks(ep);
-			this.sclient.sendProcessingGraph(ep, stmts);
+		for (InstanceLocationSpecifier endpoint : topology.getAllEndpoints()){
+			List<IStatement> stmts = aggregator.getBlocks(endpoint);
+			this.sclient.sendProcessingGraph(endpoint, stmts);
 		}
 	}
 	

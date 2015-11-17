@@ -1,4 +1,4 @@
-package org.moonlightcontroller.aggregator;
+package org.moonlightcontroller.aggregator.copy;
 
 import java.util.ArrayList;
 import java.util.HashMap;

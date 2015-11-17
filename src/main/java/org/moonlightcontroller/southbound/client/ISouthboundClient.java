@@ -4,7 +4,8 @@ import java.util.List;
 
 import org.openboxprotocol.protocol.IStatement;
 import org.openboxprotocol.protocol.topology.ILocationSpecifier;
+import org.openboxprotocol.protocol.topology.InstanceLocationSpecifier;
 
 public interface ISouthboundClient {
-	void sendProcessingGraph(ILocationSpecifier loc, List<IStatement> stmts);
+	void sendProcessingGraph(InstanceLocationSpecifier loc, List<IStatement> stmts);
 }

@@ -7,5 +7,7 @@ public interface ILocationSpecifier {
 		public ILocationSpecifier build();
 	}
 
-	boolean IsSingleLocation();
+	boolean isSingleLocation();
+	
+	String getId();
 }
