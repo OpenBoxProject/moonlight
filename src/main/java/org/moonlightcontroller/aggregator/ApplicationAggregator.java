@@ -13,16 +13,18 @@ import org.openboxprotocol.protocol.IStatement;
 import org.openboxprotocol.protocol.Statement;
 import org.openboxprotocol.protocol.topology.ILocationSpecifier;
 import org.openboxprotocol.protocol.topology.ITopologyManager;
+import org.openboxprotocol.protocol.topology.InstanceLocationSpecifier;
 
 public class ApplicationAggregator implements IApplicationAggregator {
 
 	private List<BoxApplication> apps;
 	private ITopologyManager topology;
-	private Map<ILocationSpecifier, ArrayList<IStatement>> aggregatedBlocks;
+	private Map<InstanceLocationSpecifier, ArrayList<IStatement>> aggregatedStatement;
 	
 	public ApplicationAggregator(ITopologyManager topology) {
 		this.topology = topology;
-		this.aggregatedBlocks = new HashMap<>();	
+		this.aggregatedStatement = new HashMap<>();	
+		this.apps = new ArrayList<>();
 	}
 			
 	@Override
@@ -47,22 +49,24 @@ public class ApplicationAggregator implements IApplicationAggregator {
 		for (BoxApplication ba : sorted){
 			for (IStatement st : ba.getStatemens()){
 				ILocationSpecifier loc = st.getLocation();
-				ArrayList<IStatement> stmts = this.aggregatedBlocks.get(loc);
-				if (stmts == null) {
-					stmts = new ArrayList<>();
-					this.aggregatedBlocks.put(loc, stmts);
+				for (InstanceLocationSpecifier ep : this.topology.getSubInstances(loc)) {
+				ArrayList<IStatement> stmts = this.aggregatedStatement.get(ep);
+					if (stmts == null) {
+						stmts = new ArrayList<>();
+						this.aggregatedStatement.put(ep, stmts);
+					}
+					stmts.add(st);
 				}
-				stmts.add(st);
 			}
 		}
 	}
 
 	@Override
-	public List<IStatement> getBlocks(ILocationSpecifier loc) {
+	public List<IStatement> getStatements(ILocationSpecifier loc) {
 		if (!loc.isSingleLocation()) {
 			// Throw exception?
 			return null;
 		}
-		return this.aggregatedBlocks.get(loc);
+		return this.aggregatedStatement.get(loc);
 	}
 }
