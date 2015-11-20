@@ -32,11 +32,12 @@ public class MoonlightController {
 		aggregator.addApplications(this.registry.getApplications());
 		aggregator.performAggregation();
 		for (InstanceLocationSpecifier endpoint : topology.getAllEndpoints()){
-			List<IStatement> stmts = aggregator.getBlocks(endpoint);
-			this.sclient.sendProcessingGraph(endpoint, stmts);
+			List<IStatement> stmts = aggregator.getStatements(endpoint);
+			if (stmts != null) {
+				this.sclient.sendProcessingGraph(endpoint, stmts);	
+			}
 		}
 	}
-	
 	
 	public void spin(){
 		// Here the controller should wait for incoming events or incoming calls from OBIs
