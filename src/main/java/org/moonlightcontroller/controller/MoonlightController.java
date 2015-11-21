@@ -6,6 +6,7 @@ import org.moonlightcontroller.aggregator.ApplicationAggregator;
 import org.moonlightcontroller.registry.IApplicationRegistry;
 import org.moonlightcontroller.southbound.client.ISouthboundClient;
 import org.moonlightcontroller.southbound.server.ISouthboundServer;
+import org.moonlightcontroller.southbound.server.SouthboundServer;
 import org.openboxprotocol.protocol.IStatement;
 import org.openboxprotocol.protocol.topology.ILocationSpecifier;
 import org.openboxprotocol.protocol.topology.ITopologyManager;
@@ -25,6 +26,7 @@ public class MoonlightController {
 		this.registry = registry;
 		this.topology = topology;
 		this.sclient = sclient;
+		this.sserver = new SouthboundServer();
 	}
 	
 	public void start(){
@@ -37,9 +39,11 @@ public class MoonlightController {
 				this.sclient.sendProcessingGraph(endpoint, stmts);	
 			}
 		}
-	}
-	
-	public void spin(){
-		// Here the controller should wait for incoming events or incoming calls from OBIs
+		
+		try {
+			this.sserver.start();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
 }
