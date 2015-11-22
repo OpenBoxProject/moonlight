@@ -1,5 +1,5 @@
 package org.moonlightcontroller.southbound.server;
 
 public interface ISouthboundServer {
-	void start();
+	void start() throws Exception;
 }
