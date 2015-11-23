@@ -28,6 +28,18 @@ public class MacAddress implements ValueType<MacAddress> {
 		return (other instanceof MacAddress) && ((MacAddress)other).mac == this.mac;
 	}
 	
+	public static MacAddress of(String mac) {
+		String[] parts = mac.split(":");
+		if (parts.length != 6)
+			throw new IllegalArgumentException("Illegal MAC address: " + mac);
+		long value = 0;
+		for (int i = 0; i < 6; i++) {
+			value <<= 8;
+			value |= 0x0FF & Integer.parseInt(parts[i], 16);
+		}
+		return new MacAddress(value);
+	}
+	
 	public static MacAddress fromJson(Object json) throws JSONParseException {
 		// TODO Auto-generated method stub
 		return null;

@@ -1,14 +1,13 @@
 package org.openboxprotocol.protocol;
 
 import org.openboxprotocol.types.EthType;
+import org.openboxprotocol.types.HeaderFields;
 import org.openboxprotocol.types.IPv4Address;
 import org.openboxprotocol.types.IPv6Address;
 import org.openboxprotocol.types.IpDscp;
 import org.openboxprotocol.types.IpEcn;
 import org.openboxprotocol.types.IpProto;
 import org.openboxprotocol.types.MacAddress;
-import org.openboxprotocol.types.HeaderFields;
-import org.openboxprotocol.types.Port;
 import org.openboxprotocol.types.TransportPort;
 import org.openboxprotocol.types.ValueType;
 import org.openboxprotocol.types.VlanPcp;
@@ -28,13 +27,6 @@ public class HeaderField<F extends ValueType<F>> {
 		this.noMask = noMask;
 		this.prerequisites = prerequisites;
 	}
-	
-	public final static HeaderField<Port> IN_PORT =
-			new HeaderField<Port>("in_port", HeaderFields.IN_PORT, Port.EMPTY_MASK);
-	
-	public final static HeaderField<Port> IN_PHY_PORT =
-			new HeaderField<Port>("in_phy_port", HeaderFields.IN_PHY_PORT, Port.EMPTY_MASK,
-					new Prerequisite<Port>(HeaderField.IN_PORT));
 	
 	public final static HeaderField<MacAddress> ETH_DST =
 			new HeaderField<MacAddress>("eth_dst", HeaderFields.ETH_DST, MacAddress.EMPTY_MASK);
