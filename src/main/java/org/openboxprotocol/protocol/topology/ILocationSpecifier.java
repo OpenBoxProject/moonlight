@@ -9,5 +9,9 @@ public interface ILocationSpecifier {
 
 	boolean isSingleLocation();
 	
+	boolean isMatch(String m);
+	
+	ILocationSpecifier findChild(String m);
+	
 	String getId();
 }

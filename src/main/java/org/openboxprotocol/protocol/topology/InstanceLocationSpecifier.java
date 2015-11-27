@@ -1,6 +1,10 @@
 package org.openboxprotocol.protocol.topology;
 
+import java.net.InetAddress;
+
 import org.apache.commons.lang.builder.HashCodeBuilder;
+
+import com.google.common.net.InetAddresses;
 
 public class InstanceLocationSpecifier implements ILocationSpecifier {
 
@@ -39,5 +43,28 @@ public class InstanceLocationSpecifier implements ILocationSpecifier {
 	
 	public int hashCode(){
 		return new HashCodeBuilder(17, 31).append(this.id).append(this.ip).toHashCode();
+	}
+
+	@Override
+	public boolean isMatch(String m) {		
+		if (InetAddresses.isInetAddress(m)){
+			InetAddress addr = InetAddresses.forString(m);
+			int address = InetAddresses.coerceToInteger(addr);
+			if (address == this.ip){
+				return true;
+			}
+		}
+		if (this.id.equals(m)){
+			return true;
+		}
+		return false;
+	}
+
+	@Override
+	public ILocationSpecifier findChild(String m) {
+		if (this.isMatch(m)) {
+			return this;
+		}
+		return null;
 	}
 }

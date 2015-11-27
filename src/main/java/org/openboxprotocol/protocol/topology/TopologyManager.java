@@ -6,6 +6,7 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
@@ -67,5 +68,11 @@ public class TopologyManager implements ITopologyManager {
 	@Override
 	public List<InstanceLocationSpecifier> getAllEndpoints() {
 		return segment.getEndpoints();
+	}
+
+	@Override
+	public ILocationSpecifier resolve(String id) {
+		// TODO: Should we through exception if the result is null
+		return this.segment.findChild(id);
 	}
 }

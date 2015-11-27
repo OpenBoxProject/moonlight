@@ -6,8 +6,10 @@ import java.util.List;
 import org.moonlightcontroller.events.IAlertListener;
 import org.moonlightcontroller.events.IInstanceDownListener;
 import org.moonlightcontroller.events.IInstanceUpListener;
+import org.moonlightcontroller.southbound.client.IHandleClient;
 import org.openboxprotocol.protocol.IStatement;
 import org.openboxprotocol.protocol.Priority;
+import org.openboxprotocol.protocol.topology.IApplicationTopology;
 
 public abstract class BoxApplication {
 	
@@ -41,6 +43,15 @@ public abstract class BoxApplication {
 		return this.statements;
 	}
 	
+	public void handleAppStart(IApplicationTopology top, IHandleClient handles) {
+	}
+	
+	public void handleAppStop(){
+	}
+	
+	public void handleError(){
+	}
+	
 	public IAlertListener getAlertListener(){
 		return this.alertListener;
 	}
@@ -68,4 +79,5 @@ public abstract class BoxApplication {
 	protected void setInstanceUpListener(IInstanceUpListener ul){
 		this.instanceUpListener = ul;
 	}
+	
 }
