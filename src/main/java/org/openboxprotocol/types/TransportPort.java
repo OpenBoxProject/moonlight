@@ -6,9 +6,12 @@ public class TransportPort implements ValueType<TransportPort> {
 
 	private int port;
 	
-	public static final TransportPort EMPTY_MASK = new TransportPort(0);
+	private static final int PORT_NUM_ANY = 0xFFFFFFFF;
 	
-	private TransportPort(int port) {
+	public static final TransportPort EMPTY_MASK = new TransportPort(0);
+	public static final TransportPort ANY = new TransportPort(PORT_NUM_ANY);
+	
+	public TransportPort(int port) {
 		this.port = port;
 	}
 
