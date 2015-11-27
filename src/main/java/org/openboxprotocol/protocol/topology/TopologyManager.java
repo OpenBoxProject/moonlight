@@ -49,7 +49,6 @@ public class TopologyManager implements ITopologyManager {
 			LOG.warning("File Not Found exception was catched");
 			e.printStackTrace();
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} finally {
 		}

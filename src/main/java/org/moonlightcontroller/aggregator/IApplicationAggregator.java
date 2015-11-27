@@ -10,5 +10,5 @@ public interface IApplicationAggregator {
 	void addApplications(List<BoxApplication> apps);
 	void addApplication(BoxApplication apps);
 	void performAggregation();
-	List<IStatement> getBlocks(ILocationSpecifier loc);
+	List<IStatement> getStatements(ILocationSpecifier loc);
 }

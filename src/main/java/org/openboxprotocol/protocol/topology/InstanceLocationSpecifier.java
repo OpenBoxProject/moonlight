@@ -1,6 +1,6 @@
 package org.openboxprotocol.protocol.topology;
 
-import org.openboxprotocol.types.IPv4Address;
+import org.apache.commons.lang.builder.HashCodeBuilder;
 
 public class InstanceLocationSpecifier implements ILocationSpecifier {
 
@@ -8,19 +8,36 @@ public class InstanceLocationSpecifier implements ILocationSpecifier {
 	long ip;
 	
 	public InstanceLocationSpecifier(String id, long ip) {
-		// TODO Auto-generated constructor stub
+		this.id = id;
+		this.ip = ip;
 	}
 
 	@Override
 	public boolean isSingleLocation() {
-		// TODO Auto-generated method stub
-		return false;
+		return true;
 	}
 
 	@Override
 	public String getId() {
-		// TODO Auto-generated method stub
-		return null;
+		return this.id;
 	}
-
+	
+	@Override
+	public boolean equals(Object obj) {
+		if (obj == null || !(obj instanceof InstanceLocationSpecifier)){
+			return false;
+		}
+		if (obj == this){
+			return true;
+		}
+		InstanceLocationSpecifier other = (InstanceLocationSpecifier)obj;
+		if (other.id.equals(this.id) && other.ip == this.ip){
+			return true;
+		}
+		return false;
+	}
+	
+	public int hashCode(){
+		return new HashCodeBuilder(17, 31).append(this.id).append(this.ip).toHashCode();
+	}
 }

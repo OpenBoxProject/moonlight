@@ -9,13 +9,14 @@ public class TestSegment {
 	@Test
 	public void testGetEndpoints() {
 //		Segment segment = new Segment("seg1");
-//		segment.endpoints.add(new InstanceLocationSpecifier("obi1", 167772161));
-//		
+
+//		segment.endpoints.add(new InstanceLocationSpecifier("obi1", new IPv4Address()));
+		
 //		Segment subSegment = new Segment("seg2");
-//		subSegment.endpoints.add(new InstanceLocationSpecifier("obi2", 167772162));
-//		subSegment.endpoints.add(new InstanceLocationSpecifier("obi3", 167772163));
-//		
-//		
+//		subSegment.endpoints.add(new InstanceLocationSpecifier());
+//		subSegment.endpoints.add(new InstanceLocationSpecifier());
+		
+		
 //		segment.segments.add(subSegment);
 		
 //		assertEquals(segment.getEndpoints().size(), 3);

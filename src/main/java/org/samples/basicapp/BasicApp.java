@@ -14,6 +14,8 @@ import org.openboxprotocol.protocol.IStatement;
 import org.openboxprotocol.protocol.OpenBoxHeaderMatch;
 import org.openboxprotocol.protocol.Priority;
 import org.openboxprotocol.protocol.Statement;
+import org.openboxprotocol.types.EthType;
+import org.openboxprotocol.types.MacAddress;
 import org.openboxprotocol.types.Port;
 
 public class BasicApp extends BoxApplication {
@@ -26,8 +28,8 @@ public class BasicApp extends BoxApplication {
 	
 	private List<IStatement> createStatements() {
 		
-		HeaderMatch h1 = new OpenBoxHeaderMatch.Builder().setExact(HeaderField.IN_PORT, Port.EMPTY_MASK).build();
-		HeaderMatch h2 = new OpenBoxHeaderMatch.Builder().setExact(HeaderField.IN_PORT, Port.ANY).build();
+		HeaderMatch h1 = new OpenBoxHeaderMatch.Builder().setExact(HeaderField.ETH_TYPE, EthType.IPv4).build();
+		HeaderMatch h2 = new OpenBoxHeaderMatch.Builder().setExact(HeaderField.ETH_TYPE, EthType.IPv6).build();
 		
 		ArrayList<IStatement> statements = new ArrayList<>();
 		FromDevice from = new FromDevice.Builder().setDevice("eth0").setPromisc(true).setSniffer(true).build();
