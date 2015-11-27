@@ -5,11 +5,13 @@ import java.util.List;
 import org.openboxprotocol.protocol.IStatement;
 import org.openboxprotocol.protocol.topology.InstanceLocationSpecifier;
 
-import com.twitter.finagle.http.Http;
-import com.twitter.util.StorageUnit;
-import com.twitter.finagle.Service;
+public class SouthboundClient implements ISouthboundClient  {
 
-public class SouthboundClient implements ISouthboundClient {
+	@Override
+	public void sendProcessingGraph(InstanceLocationSpecifier loc, List<IStatement> stmts) {
+		// TODO Auto-generated method stub
+		
+	}
 
 //	StorageUnit su = new StorageUnit(1024 * 1024 * 1024);
 //	private Http http;
@@ -31,13 +33,18 @@ public class SouthboundClient implements ISouthboundClient {
 //				.retries(1)
 //				.build();
 //	}
-	
-
-	 
-
-	@Override
-	public void sendProcessingGraph(InstanceLocationSpecifier loc, List<IStatement> stmts) {
-		// TODO Auto-generated method stub
-
-	}
+//
+//
+//
+//
+//	@Override
+//	public void sendProcessingGraph(InstanceLocationSpecifier loc, List<IStatement> stmts) {
+//		Gson gb = new GsonBuilder().create();
+//		a = gb.toJson(loc);
+//		HttpRequest request = HttpRequestBuilder
+//				.get(apiUrl)
+//				.body("")
+//				.header(a)
+//				.build();
+//	}
 }

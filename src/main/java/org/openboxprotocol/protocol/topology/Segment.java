@@ -6,14 +6,8 @@ import java.util.List;
 public class Segment implements ILocationSpecifier {
 
 	String id;
-	List<Segment> segments;
-	List<InstanceLocationSpecifier> endpoints;
-	
-	public Segment(String id) {
-		this.id = id;
-		segments = new ArrayList<>();
-		endpoints = new ArrayList<>();
-	}
+	Segment[] segments;
+	InstanceLocationSpecifier[] endpoints;
 	
 	public List<InstanceLocationSpecifier> getEndpoints(){
 		List<InstanceLocationSpecifier> allObis = new ArrayList<>();

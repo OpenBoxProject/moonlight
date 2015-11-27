@@ -8,40 +8,16 @@ public class TestSegment {
 
 	@Test
 	public void testGetEndpoints() {
-		Segment segment = new Segment("seg1");
-//		segment.endpoints.add(new InstanceLocationSpecifier("obi1", new IPv4Address()));
+//		Segment segment = new Segment("seg1");
+//		segment.endpoints.add(new InstanceLocationSpecifier("obi1", 167772161));
+//		
+//		Segment subSegment = new Segment("seg2");
+//		subSegment.endpoints.add(new InstanceLocationSpecifier("obi2", 167772162));
+//		subSegment.endpoints.add(new InstanceLocationSpecifier("obi3", 167772163));
+//		
+//		
+//		segment.segments.add(subSegment);
 		
-		Segment subSegment = new Segment("seg2");
-//		subSegment.endpoints.add(new InstanceLocationSpecifier());
-//		subSegment.endpoints.add(new InstanceLocationSpecifier());
-		
-		
-		segment.segments.add(subSegment);
-		
-		assertEquals(segment.getEndpoints().size(), 3);
+//		assertEquals(segment.getEndpoints().size(), 3);
 	}
-/*
- * {
-  "seg1": [
-    {
-      "seg1_1" : [
-        {
-          "id" : "obi1",
-          "ip" : "1.1.1.1"
-        },
-        {
-          "id" : "obi2",
-          "ip" : "1.1.1.2"
-        }
-        ]
-    },
-        {
-          "id" : "obi3",
-          "ip" : "1.1.1.3"
-        }
-  ]
-}
- * 
- * 
- */
 }
