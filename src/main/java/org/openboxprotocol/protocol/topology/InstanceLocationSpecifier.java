@@ -1,15 +1,16 @@
 package org.openboxprotocol.protocol.topology;
 
+
 import org.apache.commons.lang.builder.HashCodeBuilder;
 
 public class InstanceLocationSpecifier implements ILocationSpecifier {
 
-	String id;
-	long ip;
+	int xid;
+	long dpid;
 	
-	public InstanceLocationSpecifier(String id, long ip) {
-		this.id = id;
-		this.ip = ip;
+	public InstanceLocationSpecifier(int id, long ip) {
+		this.xid = id;
+		this.dpid = ip;
 	}
 
 	@Override
@@ -18,8 +19,8 @@ public class InstanceLocationSpecifier implements ILocationSpecifier {
 	}
 
 	@Override
-	public String getId() {
-		return this.id;
+	public int getId() {
+		return this.xid;
 	}
 	
 	@Override
@@ -31,13 +32,13 @@ public class InstanceLocationSpecifier implements ILocationSpecifier {
 			return true;
 		}
 		InstanceLocationSpecifier other = (InstanceLocationSpecifier)obj;
-		if (other.id.equals(this.id) && other.ip == this.ip){
+		if (other.xid == this.xid && other.dpid == this.dpid){
 			return true;
 		}
 		return false;
 	}
 	
 	public int hashCode(){
-		return new HashCodeBuilder(17, 31).append(this.id).append(this.ip).toHashCode();
+		return new HashCodeBuilder(17, 31).append(this.xid).append(this.dpid).toHashCode();
 	}
 }

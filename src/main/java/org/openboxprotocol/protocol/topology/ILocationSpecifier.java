@@ -9,5 +9,5 @@ public interface ILocationSpecifier {
 
 	boolean isSingleLocation();
 	
-	String getId();
+	int getId();
 }

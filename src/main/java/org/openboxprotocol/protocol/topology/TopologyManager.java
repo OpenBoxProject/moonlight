@@ -1,12 +1,13 @@
 package org.openboxprotocol.protocol.topology;
 
-import java.io.BufferedReader;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Logger;
+
+import org.apache.commons.io.IOUtils;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -14,13 +15,21 @@ import com.google.gson.GsonBuilder;
 public class TopologyManager implements ITopologyManager {
 	private final static Logger LOG = Logger.getLogger(TopologyManager.class.getName()); 
 
-	final String path;
+	private final String path = "topology.json";
 	private Segment segment;
+	private static TopologyManager instance;
 
-	public TopologyManager (String path) {
+	private TopologyManager () {
 		LOG.info("Initializing Topology Manager");
-		this.path = path;
 		buildTopologyTree();
+	}
+	
+	public synchronized static TopologyManager getInstance() {
+		if (instance == null) {
+			instance = new TopologyManager();
+		}
+		
+		return instance;
 	}
 
 	private void buildTopologyTree() {
@@ -31,28 +40,15 @@ public class TopologyManager implements ITopologyManager {
 	}
 
 	private String readFile() {
-		BufferedReader br;
+		ClassLoader classloader = Thread.currentThread().getContextClassLoader();
+		InputStream is = classloader.getResourceAsStream(path);
+		StringWriter writer = new StringWriter();
 		try {
-		br = new BufferedReader(new FileReader(path));
-	    StringBuilder sb = new StringBuilder();
-		
-		    String line = br.readLine();
-		    while (line != null) {
-		        sb.append(line);
-		        sb.append(System.lineSeparator());
-		        line = br.readLine();
-		    }
-		    br.close();
-
-		    return sb.toString();
-		} catch (FileNotFoundException e) {
-			LOG.warning("File Not Found exception was catched");
-			e.printStackTrace();
-		} catch (IOException e) {
-			e.printStackTrace();
-		} finally {
+			IOUtils.copy(is, writer, "UTF-8");
+		} catch (IOException e1) {
+			e1.printStackTrace();
 		}
-		return "";
+		return writer.toString();
 	}
 
 	@Override
@@ -70,5 +66,9 @@ public class TopologyManager implements ITopologyManager {
 	@Override
 	public List<InstanceLocationSpecifier> getAllEndpoints() {
 		return segment.getEndpoints();
+	}
+	
+	public Segment getSegment() {
+		return segment;
 	}
 }

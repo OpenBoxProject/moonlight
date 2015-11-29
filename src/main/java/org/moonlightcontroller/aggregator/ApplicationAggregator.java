@@ -5,15 +5,13 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import org.moonlightcontroller.bal.BoxApplication;
-import org.moonlightcontroller.processing.ProcessingBlock;
 import org.openboxprotocol.protocol.IStatement;
-import org.openboxprotocol.protocol.Statement;
 import org.openboxprotocol.protocol.topology.ILocationSpecifier;
 import org.openboxprotocol.protocol.topology.ITopologyManager;
 import org.openboxprotocol.protocol.topology.InstanceLocationSpecifier;
+import org.openboxprotocol.protocol.topology.TopologyManager;
 
 public class ApplicationAggregator implements IApplicationAggregator {
 
@@ -21,10 +19,19 @@ public class ApplicationAggregator implements IApplicationAggregator {
 	private ITopologyManager topology;
 	private Map<InstanceLocationSpecifier, ArrayList<IStatement>> aggregatedStatement;
 	
-	public ApplicationAggregator(ITopologyManager topology) {
-		this.topology = topology;
+	private static ApplicationAggregator instance;
+	
+	private ApplicationAggregator() {
+		this.topology = TopologyManager.getInstance();
 		this.aggregatedStatement = new HashMap<>();	
 		this.apps = new ArrayList<>();
+	}
+	
+	public static ApplicationAggregator getInstance() {
+		if (instance == null) {
+			instance = new ApplicationAggregator();
+		}
+		return instance;
 	}
 			
 	@Override

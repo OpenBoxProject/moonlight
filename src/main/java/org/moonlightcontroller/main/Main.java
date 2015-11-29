@@ -15,7 +15,7 @@ public class Main {
 		IApplicationRegistry reg = new ApplicationRegistry();
 		reg.loadFromPath("/home/tilon/workspace/input/apps/");
 		
-		ITopologyManager topology = new TopologyManager("/home/tilon/workspace/input/top.json");
+		ITopologyManager topology = TopologyManager.getInstance();
 		SouthboundClientMock sclient = new SouthboundClientMock();
 		MoonlightController mc = new MoonlightController(reg, topology, sclient);
 		mc.start();

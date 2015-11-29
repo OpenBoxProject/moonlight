@@ -5,7 +5,8 @@ import org.junit.Test;
 public class TestTopologyManager {
 	@Test
 	public void testTopology() {
-		new TopologyManager("C:\\dev\\topology.json");
+		TopologyManager manager = TopologyManager.getInstance();
+		manager.getAllEndpoints();
 	}
 	
 //	@Test

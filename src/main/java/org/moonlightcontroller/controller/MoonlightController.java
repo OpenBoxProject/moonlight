@@ -42,7 +42,7 @@ public class MoonlightController {
 	}
 	
 	public void start(){
-		ApplicationAggregator aggregator = new ApplicationAggregator(this.topology);
+		ApplicationAggregator aggregator = ApplicationAggregator.getInstance();
 		List<BoxApplication> apps = this.registry.getApplications();
 		aggregator.addApplications(apps);
 		aggregator.performAggregation();

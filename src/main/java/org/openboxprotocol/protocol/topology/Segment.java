@@ -5,7 +5,7 @@ import java.util.List;
 
 public class Segment implements ILocationSpecifier {
 
-	String id;
+	int xid;
 	Segment[] segments;
 	InstanceLocationSpecifier[] endpoints;
 	
@@ -32,8 +32,8 @@ public class Segment implements ILocationSpecifier {
 	}
 
 	@Override
-	public String getId() {
-		return id;
+	public int getId() {
+		return xid;
 	}
 	
 }
