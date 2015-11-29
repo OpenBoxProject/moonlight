@@ -6,9 +6,7 @@ import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Logger;
-
 import org.apache.commons.io.IOUtils;
-
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
@@ -70,5 +68,11 @@ public class TopologyManager implements ITopologyManager {
 	
 	public Segment getSegment() {
 		return segment;
+	}
+	
+	@Override
+	public ILocationSpecifier resolve(String id) {
+		// TODO: Should we through exception if the result is null
+		return this.segment.findChild(id);
 	}
 }

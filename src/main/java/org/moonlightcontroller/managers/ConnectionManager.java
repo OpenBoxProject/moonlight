@@ -28,8 +28,8 @@ public class ConnectionManager {
 		return instance;
 	}
 	
-	public boolean updateInstanceKeepAlive(int xid, long dpid) {
-		return updateInstanceKeepAlive(new InstanceLocationSpecifier(xid, dpid));
+	public boolean updateInstanceKeepAlive(int xid, int dpid) {
+		return updateInstanceKeepAlive(new InstanceLocationSpecifier(dpid+"", dpid));
 	}
 
 	public boolean updateInstanceKeepAlive(InstanceLocationSpecifier instanceLocationSpecifier) {
@@ -58,7 +58,7 @@ public class ConnectionManager {
 	}
 	
 	public boolean registerInstance(int xid, int dpid, String version, Map<String, List<String>> capabilities) {
-		InstanceLocationSpecifier key = new InstanceLocationSpecifier(xid, dpid);
+		InstanceLocationSpecifier key = new InstanceLocationSpecifier(dpid +"", dpid);
 		ConnectionInstance value = (new ConnectionInstance.Builder())
 				.setDpid(dpid)
 				.setVersion(version)

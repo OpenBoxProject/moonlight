@@ -5,7 +5,7 @@ import java.util.List;
 
 public class Segment implements ILocationSpecifier {
 
-	int xid;
+	String id;
 	Segment[] segments;
 	InstanceLocationSpecifier[] endpoints;
 	
@@ -32,8 +32,32 @@ public class Segment implements ILocationSpecifier {
 	}
 
 	@Override
-	public int getId() {
-		return xid;
+	public String getId() {
+		return id;
 	}
-	
+
+	@Override
+	public boolean isMatch(String m) {
+		return this.id.equals(m);
+	}
+
+	@Override
+	public ILocationSpecifier findChild(String m) {
+		if (this.isMatch(m)){
+			return this;
+		}
+		
+		for (InstanceLocationSpecifier ep : this.endpoints){
+			if (ep.findChild(m) != null) {
+				return ep;
+			}
+		}
+		for (Segment seg : this.segments){
+			ILocationSpecifier loc = seg.findChild(m);
+			if (loc != null){
+				return loc;
+			}
+		}
+		return null;
+	}
 }

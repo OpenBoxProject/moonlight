@@ -1,16 +1,19 @@
 package org.openboxprotocol.protocol.topology;
 
+import java.net.InetAddress;
 
 import org.apache.commons.lang.builder.HashCodeBuilder;
 
+import com.google.common.net.InetAddresses;
+
 public class InstanceLocationSpecifier implements ILocationSpecifier {
 
-	int xid;
-	long dpid;
+	String id;
+	long ip;
 	
-	public InstanceLocationSpecifier(int id, long ip) {
-		this.xid = id;
-		this.dpid = ip;
+	public InstanceLocationSpecifier(String id, long ip) {
+		this.id = id;
+		this.ip = ip;
 	}
 
 	@Override
@@ -19,8 +22,8 @@ public class InstanceLocationSpecifier implements ILocationSpecifier {
 	}
 
 	@Override
-	public int getId() {
-		return this.xid;
+	public String getId() {
+		return this.id;
 	}
 	
 	@Override
@@ -32,13 +35,36 @@ public class InstanceLocationSpecifier implements ILocationSpecifier {
 			return true;
 		}
 		InstanceLocationSpecifier other = (InstanceLocationSpecifier)obj;
-		if (other.xid == this.xid && other.dpid == this.dpid){
+		if (other.id.equals(this.id) && other.ip == this.ip){
 			return true;
 		}
 		return false;
 	}
 	
 	public int hashCode(){
-		return new HashCodeBuilder(17, 31).append(this.xid).append(this.dpid).toHashCode();
+		return new HashCodeBuilder(17, 31).append(this.id).append(this.ip).toHashCode();
+	}
+
+	@Override
+	public boolean isMatch(String m) {		
+		if (InetAddresses.isInetAddress(m)){
+			InetAddress addr = InetAddresses.forString(m);
+			int address = InetAddresses.coerceToInteger(addr);
+			if (address == this.ip){
+				return true;
+			}
+		}
+		if (this.id.equals(m)){
+			return true;
+		}
+		return false;
+	}
+
+	@Override
+	public ILocationSpecifier findChild(String m) {
+		if (this.isMatch(m)) {
+			return this;
+		}
+		return null;
 	}
 }
