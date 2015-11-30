@@ -1,13 +1,8 @@
 package org.moonlightcontroller.southbound.client;
 
 import java.util.List;
-
 import org.openboxprotocol.protocol.IStatement;
 import org.openboxprotocol.protocol.topology.InstanceLocationSpecifier;
-
-import com.twitter.finagle.http.Http;
-import com.twitter.util.StorageUnit;
-import com.twitter.finagle.Service;
 
 public class SouthboundClient implements ISouthboundClient {
 
