@@ -1,15 +1,19 @@
 package org.moonlightcontroller.southbound.server;
 
-import java.util.List;
-import java.util.Map;
+import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
-import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
-
+import javax.ws.rs.core.Response;
 import org.moonlightcontroller.managers.ConnectionManager;
+import org.moonlightcontroller.managers.models.messages.HelloMessage;
+import org.moonlightcontroller.managers.models.messages.IResponseMessage;
+import org.moonlightcontroller.managers.models.messages.KeepAliveMessage;
+import org.moonlightcontroller.managers.models.messages.SuccessMessage;
+
+import com.sun.jersey.api.client.ClientResponse.Status;
 
 @Path("/")
 public class SouthboundApi {
@@ -22,19 +26,22 @@ public class SouthboundApi {
     
     @POST
     @Path("Hello")
-    @Produces(MediaType.TEXT_PLAIN)
-    public String hello(@QueryParam("xid") int xid, @QueryParam("dpid") int dpid, @QueryParam("version") String version, @QueryParam("capabilities") Map<String, List<String>> capabilities) {
-    	boolean success = ConnectionManager.getInstance().registerInstance(xid, dpid, version, capabilities);
-    	return success? "Successful" : "Failed";
+    @Consumes(MediaType.APPLICATION_JSON)
+    public Response hello(HelloMessage message) {
+    	IResponseMessage result = ConnectionManager.getInstance().registerInstance(message);
+
+    	return (result instanceof SuccessMessage)? Response.status(Status.OK).build() :
+    		Response.status(Status.BAD_REQUEST).entity(result.toString()).build();
     }
     
     @GET
     @Path("KeepAlive")
-    @Produces(MediaType.TEXT_PLAIN)
-    public String keepalive(@QueryParam("xid") int xid, @QueryParam("dpid") int dpid) {
-    	boolean success = ConnectionManager.getInstance().updateInstanceKeepAlive(xid, dpid);
+    @Consumes(MediaType.APPLICATION_JSON)
+    public Response keepalive(KeepAliveMessage message) {
+    	IResponseMessage result = ConnectionManager.getInstance().updateInstanceKeepAlive(message);
     	
-        return success? "Successful" : "Failed";
+    	return (result instanceof SuccessMessage)? Response.status(Status.OK).build() :
+    		Response.status(Status.BAD_REQUEST).entity(result.toString()).build();
     }
     
     @GET
