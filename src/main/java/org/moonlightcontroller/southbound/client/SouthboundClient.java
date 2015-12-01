@@ -2,12 +2,15 @@ package org.moonlightcontroller.southbound.client;
 
 import java.util.List;
 
+import org.moonlightcontroller.managers.models.IRequestSender;
+import org.moonlightcontroller.managers.models.messages.IMessage;
 /*
 import com.sun.jersey.api.client.Client;
-import com.sun.jersey.api.client.ClientResponse;
+import org.moonlightcontroller.southbound.client.messages.Message;
 import com.sun.jersey.api.client.WebResource;
 */
 import org.openboxprotocol.protocol.IStatement;
+import org.openboxprotocol.protocol.topology.ILocationSpecifier;
 import org.openboxprotocol.protocol.topology.InstanceLocationSpecifier;
 
 public class SouthboundClient implements ISouthboundClient {
@@ -46,10 +49,15 @@ public class SouthboundClient implements ISouthboundClient {
 		System.out.println(result);
 		*/
 	}
-
+	
 	@Override
 	public void sendProcessingGraph(InstanceLocationSpecifier loc, List<IStatement> stmts) {
 		// TODO Auto-generated method stub
 
+	}
+
+	@Override
+	public void sendMessage(ILocationSpecifier loc, IMessage msg, IRequestSender sender) {
+		// TODO Auto-generated method stub
 	}
 }
