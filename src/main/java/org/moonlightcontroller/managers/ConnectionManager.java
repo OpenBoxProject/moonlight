@@ -5,69 +5,79 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
-
 import org.moonlightcontroller.managers.models.ConnectionInstance;
+import org.moonlightcontroller.managers.models.messages.ErrorMessage;
+import org.moonlightcontroller.managers.models.messages.ErrorSubType;
+import org.moonlightcontroller.managers.models.messages.HelloMessage;
+import org.moonlightcontroller.managers.models.messages.IResponseMessage;
+import org.moonlightcontroller.managers.models.messages.KeepAliveMessage;
+import org.moonlightcontroller.managers.models.messages.MessageResultType;
+import org.moonlightcontroller.managers.models.messages.SuccessMessage;
 import org.openboxprotocol.protocol.topology.ILocationSpecifier;
 import org.openboxprotocol.protocol.topology.InstanceLocationSpecifier;
 import org.openboxprotocol.protocol.topology.TopologyManager;
 
 public class ConnectionManager {
 	Map<InstanceLocationSpecifier, ConnectionInstance> instancesMapping;
-	
+
 	private static ConnectionManager instance;
-	
+
 	private ConnectionManager () {
 		instancesMapping = new HashMap<>();
 	}
-	
+
 	public synchronized static ConnectionManager getInstance() {
 		if (instance == null) {
 			instance = new ConnectionManager();
 		}
-		
+
 		return instance;
 	}
-	
-	public boolean updateInstanceKeepAlive(int xid, int dpid) {
-		return updateInstanceKeepAlive(new InstanceLocationSpecifier(dpid+"", dpid));
+
+	public IResponseMessage updateInstanceKeepAlive(KeepAliveMessage message) {
+		return updateInstanceKeepAlive(new InstanceLocationSpecifier(message.getDpid()+"", message.getDpid()));
 	}
 
-	public boolean updateInstanceKeepAlive(InstanceLocationSpecifier instanceLocationSpecifier) {
+	public IResponseMessage updateInstanceKeepAlive(InstanceLocationSpecifier instanceLocationSpecifier) {
 		ConnectionInstance data = instancesMapping.get(instanceLocationSpecifier);
 		if (data != null) {
 			data.updateKeepAlive();
-			return true;
+			return new SuccessMessage();
 		}
-		
-		return false;
+
+		return new ErrorMessage(MessageResultType.BAD_REQUEST, ErrorSubType.INTERNAL_ERROR);
 	}
-	
+
 	public List<InstanceLocationSpecifier> getAliveInstances(ILocationSpecifier loc) {
 		return TopologyManager.getInstance().getSubInstances(loc).stream()
-		.filter(item -> isAlive(item)).collect(Collectors.toList());
+				.filter(item -> isAlive(item)).collect(Collectors.toList());
 	}
-	
+
 	public List<InstanceLocationSpecifier> getAliveInstances() {
 		return getAliveInstances(TopologyManager.getInstance().getSegment());
 	}
-	
+
 	private boolean isAlive(InstanceLocationSpecifier item) {
 		ConnectionInstance data = instancesMapping.get(item);
 		return data.getKeepAliveDate()
 				.isAfter(LocalDateTime.now().minusSeconds(data.getKeepAliveInterval()));
 	}
-	
-	public boolean registerInstance(int xid, int dpid, String version, Map<String, List<String>> capabilities) {
-		InstanceLocationSpecifier key = new InstanceLocationSpecifier(dpid +"", dpid);
-		ConnectionInstance value = (new ConnectionInstance.Builder())
-				.setDpid(dpid)
-				.setVersion(version)
-				.setCapabilities(capabilities)
-				.build();
-		instancesMapping.put(key, value);
-		//TODO: section 3.5 in OpenBox spec
-		//SetProcessingGraphRequest
-		
-		return instancesMapping.get(key) != null;
+
+	public IResponseMessage registerInstance(HelloMessage message) {
+		try {
+			InstanceLocationSpecifier key = new InstanceLocationSpecifier(message.getDpid() +"", message.getDpid());
+
+			ConnectionInstance value = (new ConnectionInstance.Builder())
+					.setDpid(message.getDpid())
+					.setVersion(message.getVersion())
+					.setCapabilities(message.getCapabilities())
+					.build();
+			instancesMapping.put(key, value);
+			//TODO: section 3.5 in OpenBox spec
+			//SetProcessingGraphRequest
+			return new SuccessMessage();
+		} catch (Exception e) {
+			return new ErrorMessage(MessageResultType.BAD_REQUEST, ErrorSubType.ILLEGAL_ARGUMENT);
+		}
 	}
 }
