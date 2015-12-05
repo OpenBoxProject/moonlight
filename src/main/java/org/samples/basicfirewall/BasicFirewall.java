@@ -2,28 +2,42 @@ package org.samples.basicfirewall;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Logger;
 
+import org.glassfish.jersey.internal.l10n.LocalizableMessageFactory;
 import org.moonlightcontroller.bal.BoxApplication;
 import org.moonlightcontroller.blocks.Discard;
 import org.moonlightcontroller.blocks.FromDevice;
 import org.moonlightcontroller.blocks.HeaderClassifier;
 import org.moonlightcontroller.blocks.ToDevice;
+import org.moonlightcontroller.events.IHandleClient;
+import org.moonlightcontroller.events.IInstanceUpListener;
+import org.moonlightcontroller.events.InstanceUpArgs;
 import org.moonlightcontroller.processing.Connector;
 import org.openboxprotocol.protocol.HeaderField;
 import org.openboxprotocol.protocol.HeaderMatch;
 import org.openboxprotocol.protocol.IStatement;
 import org.openboxprotocol.protocol.OpenBoxHeaderMatch;
 import org.openboxprotocol.protocol.Statement;
+import org.openboxprotocol.protocol.topology.IApplicationTopology;
 import org.openboxprotocol.protocol.topology.InstanceLocationSpecifier;
+import org.openboxprotocol.protocol.topology.TopologyManager;
 import org.openboxprotocol.types.TransportPort;
 
 public class BasicFirewall extends BoxApplication{
 
+	private final static Logger LOG = Logger.getLogger(BasicFirewall.class.getName()); 
+	
 	public BasicFirewall() {
 		super("Firewall");
 		this.setStatements(createStatements());
+		this.setInstanceUpListener(new InstanceUpHandler());
 	}
 	
+	@Override
+	public void handleAppStart(IApplicationTopology top, IHandleClient handles) {
+		LOG.info("Got App Start");
+	}
 	
 	private List<IStatement> createStatements() {
 		
@@ -58,5 +72,13 @@ public class BasicFirewall extends BoxApplication{
 			.build();
 		statements.add(st);
 		return statements;
+	}
+	
+	private class InstanceUpHandler implements IInstanceUpListener {
+
+		@Override
+		public void Handle(InstanceUpArgs args) {
+			LOG.info("Instance up for firewall: " + args.getInstance().toString());	
+		}
 	}
 }

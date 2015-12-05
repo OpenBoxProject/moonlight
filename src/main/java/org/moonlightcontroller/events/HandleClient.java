@@ -1,5 +1,6 @@
-package org.moonlightcontroller.southbound.client;
+package org.moonlightcontroller.events;
 
+import org.moonlightcontroller.managers.ISouthboundClient;
 import org.moonlightcontroller.managers.models.IRequestSender;
 import org.moonlightcontroller.managers.models.messages.ReadRequest;
 import org.moonlightcontroller.managers.models.messages.WriteRequest;

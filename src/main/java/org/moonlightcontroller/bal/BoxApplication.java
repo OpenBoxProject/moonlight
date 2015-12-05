@@ -4,9 +4,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.moonlightcontroller.events.IAlertListener;
+import org.moonlightcontroller.events.IHandleClient;
 import org.moonlightcontroller.events.IInstanceDownListener;
 import org.moonlightcontroller.events.IInstanceUpListener;
-import org.moonlightcontroller.southbound.client.IHandleClient;
 import org.openboxprotocol.protocol.IStatement;
 import org.openboxprotocol.protocol.Priority;
 import org.openboxprotocol.protocol.topology.IApplicationTopology;

@@ -41,8 +41,14 @@ public class InstanceLocationSpecifier implements ILocationSpecifier {
 		return false;
 	}
 	
+	@Override
 	public int hashCode(){
 		return new HashCodeBuilder(17, 31).append(this.id).append(this.ip).toHashCode();
+	}
+	
+	@Override
+	public String toString(){
+		return this.id + ":" + this.ip;
 	}
 
 	@Override

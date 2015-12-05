@@ -5,6 +5,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
+
+import org.moonlightcontroller.events.EventManager;
+import org.moonlightcontroller.events.InstanceUpArgs;
 import org.moonlightcontroller.managers.models.ConnectionInstance;
 import org.moonlightcontroller.managers.models.IRequestSender;
 import org.moonlightcontroller.managers.models.messages.ErrorMessage;
@@ -76,6 +79,10 @@ public class ConnectionManager implements ISouthboundClient{
 					.setCapabilities(message.getCapabilities())
 					.build();
 			instancesMapping.put(key, value);
+			
+			// This should be done after send the processing graph
+			EventManager.getInstance().HandleInstanceUp(new InstanceUpArgs(key));
+			
 			//TODO: section 3.5 in OpenBox spec
 			//SetProcessingGraphRequest
 			return new SuccessMessage();

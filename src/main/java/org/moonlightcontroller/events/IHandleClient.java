@@ -1,4 +1,4 @@
-package org.moonlightcontroller.southbound.client;
+package org.moonlightcontroller.events;
 
 import org.moonlightcontroller.managers.models.IRequestSender;
 import org.openboxprotocol.protocol.topology.ILocationSpecifier;
