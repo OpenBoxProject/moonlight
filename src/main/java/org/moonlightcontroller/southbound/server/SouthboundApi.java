@@ -7,13 +7,13 @@ import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import javax.ws.rs.core.Response.Status;
+
 import org.moonlightcontroller.managers.ConnectionManager;
 import org.moonlightcontroller.managers.models.messages.HelloMessage;
 import org.moonlightcontroller.managers.models.messages.IResponseMessage;
 import org.moonlightcontroller.managers.models.messages.KeepAliveMessage;
 import org.moonlightcontroller.managers.models.messages.SuccessMessage;
-
-import com.sun.jersey.api.client.ClientResponse.Status;
 
 @Path("/")
 public class SouthboundApi {
@@ -24,25 +24,26 @@ public class SouthboundApi {
         return "Test";
     }
     
-    @POST
-    @Path("Hello")
-    @Consumes(MediaType.APPLICATION_JSON)
-    public Response hello(HelloMessage message) {
-    	IResponseMessage result = ConnectionManager.getInstance().registerInstance(message);
+  @POST
+  @Path("Hello")
+  @Consumes(MediaType.APPLICATION_JSON)
+  public Response hello(HelloMessage message) {
+  	IResponseMessage result = ConnectionManager.getInstance().registerInstance(message);
 
-    	return (result instanceof SuccessMessage)? Response.status(Status.OK).build() :
-    		Response.status(Status.BAD_REQUEST).entity(result.toString()).build();
-    }
-    
-    @GET
-    @Path("KeepAlive")
-    @Consumes(MediaType.APPLICATION_JSON)
-    public Response keepalive(KeepAliveMessage message) {
-    	IResponseMessage result = ConnectionManager.getInstance().updateInstanceKeepAlive(message);
-    	
-    	return (result instanceof SuccessMessage)? Response.status(Status.OK).build() :
-    		Response.status(Status.BAD_REQUEST).entity(result.toString()).build();
-    }
+  	System.out.println(message.getXid());
+  	return (result instanceof SuccessMessage)? Response.status(Status.OK).build() :
+  		Response.status(Status.BAD_REQUEST).entity(result.toString()).build();
+  }
+  
+  @POST
+  @Path("KeepAlive")
+  @Consumes(MediaType.APPLICATION_JSON)
+  public Response keepalive(KeepAliveMessage message) {
+  	IResponseMessage result = ConnectionManager.getInstance().updateInstanceKeepAlive(message);
+  	
+  	return (result instanceof SuccessMessage)? Response.status(Status.OK).build() :
+  		Response.status(Status.BAD_REQUEST).entity(result.toString()).build();
+  }
     
     @GET
     @Path("ListCapabilitiesResponse")
