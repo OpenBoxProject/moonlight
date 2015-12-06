@@ -1,15 +1,23 @@
 package org.moonlightcontroller.managers.models.messages;
 
+import java.util.ArrayList;
 import java.util.List;
+
+import org.openboxprotocol.protocol.IStatement;
 
 public class ProcessingGraphMessage implements IMessage {
 
 	private String type;
 	private int xid;
 	private int dpid;
-	private List<String> modules;
-	private List<String> blocks;
-	private List<String> connectors;
+	private List<IStatement> statements;
+	
+	public ProcessingGraphMessage(int xid, int dpid, List<IStatement> statements) {
+		this.type = "ProcessingGraphMessage";
+		this.xid = xid;
+		this.dpid = dpid;
+		this.statements = statements;
+	}
 	
 	@Override
 	public int getXid() {
@@ -25,40 +33,29 @@ public class ProcessingGraphMessage implements IMessage {
 		return dpid;
 	}
 
-	public void setDpid(int dpid) {
-		this.dpid = dpid;
+	public List<IStatement> getStatements() {
+		return statements;
 	}
-
-	public void setType(String type) {
-		this.type = type;
+	
+	public static class Builder {
+		private int xid;
+		private int dpid;
+		private List<IStatement> statements = new ArrayList<IStatement>();
+		
+		public Builder setXid(int xid) {
+			this.xid = xid;
+			return this;
+		}
+		public Builder setDpid(int dpid) {
+			this.dpid = dpid;
+			return this;
+		}
+		public Builder setStatements(List<IStatement> statements) {
+			this.statements = statements;
+			return this;
+		}
+		public ProcessingGraphMessage build() {
+			return new ProcessingGraphMessage(xid, dpid, statements);
+		}
 	}
-
-	public void setXid(int xid) {
-		this.xid = xid;
-	}
-
-	public List<String> getModules() {
-		return modules;
-	}
-
-	public void setModules(List<String> modules) {
-		this.modules = modules;
-	}
-
-	public List<String> getConnectors() {
-		return connectors;
-	}
-
-	public void setConnectors(List<String> connectors) {
-		this.connectors = connectors;
-	}
-
-	public List<String> getBlocks() {
-		return blocks;
-	}
-
-	public void setBlocks(List<String> blocks) {
-		this.blocks = blocks;
-	}
-
 }

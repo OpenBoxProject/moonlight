@@ -26,9 +26,8 @@ public class MoonlightController {
 	private ISouthboundClient sclient;
 	private ISouthboundServer sserver;
 	private Map<EventType, ArrayList<BoxApplication>> registeredHandlers;
-	
-	public MoonlightController(
-			IApplicationRegistry registry, 
+
+	public MoonlightController(IApplicationRegistry registry, 
 			ITopologyManager topology,
 			ISouthboundClient sclient) {
 		this.registry = registry;
@@ -40,24 +39,24 @@ public class MoonlightController {
 			this.registeredHandlers.put(t, new ArrayList<>());
 		}
 	}
-	
+
 	public void start(){
 		ApplicationAggregator aggregator = ApplicationAggregator.getInstance();
 		List<BoxApplication> apps = this.registry.getApplications();
 		aggregator.addApplications(apps);
 		aggregator.performAggregation();
-		
+
 		for (BoxApplication app : apps){
 			this.registerForEvents(app);
 		}
-		
+
 		for (InstanceLocationSpecifier endpoint : topology.getAllEndpoints()){
 			List<IStatement> stmts = aggregator.getStatements(endpoint);
 			if (stmts != null) {
 				this.sclient.sendProcessingGraph(endpoint, stmts);	
 			}
 		}
-		
+
 		try {
 			this.sserver.start();
 		} catch (Exception e) {

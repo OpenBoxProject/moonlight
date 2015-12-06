@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.moonlightcontroller.main.ControllerProperties;
 import org.moonlightcontroller.managers.ClientConnectionManager;
 import org.moonlightcontroller.managers.XidGenerator;
 import org.moonlightcontroller.managers.models.messages.IMessage;
@@ -75,7 +76,7 @@ public class ConnectionInstance implements IConnectionInstance {
 	}
 
 	public static class Builder {
-		private final int DEFAULT_KEEPALIVE_DURATION = 10;
+		private final int DEFAULT_KEEPALIVE_DURATION = ControllerProperties.getInstance().getKeepAliveInterval();
 
 		int dpid;
 		int keepaliveInterval = DEFAULT_KEEPALIVE_DURATION;

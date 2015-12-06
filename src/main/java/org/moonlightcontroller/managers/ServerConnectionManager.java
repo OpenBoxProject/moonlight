@@ -8,6 +8,8 @@ import java.util.stream.Collectors;
 
 import org.moonlightcontroller.aggregator.ApplicationAggregator;
 import org.moonlightcontroller.managers.models.ConnectionInstance;
+import org.moonlightcontroller.managers.models.HelloRequestSender;
+import org.moonlightcontroller.managers.models.IRequestSender;
 import org.moonlightcontroller.managers.models.messages.AcknowledgeMessage;
 import org.moonlightcontroller.managers.models.messages.ErrorMessage;
 import org.moonlightcontroller.managers.models.messages.ErrorSubType;
@@ -26,12 +28,14 @@ import org.openboxprotocol.protocol.topology.TopologyManager;
 public class ServerConnectionManager implements IServerConnectionManager{
 	Map<InstanceLocationSpecifier, ConnectionInstance> instancesMapping;
 	Map<Integer, IMessage> messagesMapping;
+	Map<Integer, IRequestSender> requestSendersMapping;
 
 	private static ServerConnectionManager instance;
 
 	private ServerConnectionManager () {
 		instancesMapping = new HashMap<>();
 		messagesMapping = new HashMap<>();
+		requestSendersMapping = new HashMap<>();
 	}
 
 	public synchronized static ServerConnectionManager getInstance() {
@@ -55,7 +59,7 @@ public class ServerConnectionManager implements IServerConnectionManager{
 			return new SuccessMessage(xid);
 		}
 
-		return new ErrorMessage(MessageResultType.BAD_REQUEST, ErrorSubType.INTERNAL_ERROR);
+		return new ErrorMessage(xid, MessageResultType.BAD_REQUEST, ErrorSubType.INTERNAL_ERROR);
 	}
 
 	public List<InstanceLocationSpecifier> getAliveInstances(ILocationSpecifier loc) {
@@ -75,24 +79,29 @@ public class ServerConnectionManager implements IServerConnectionManager{
 
 	@Override
 	public IResponseMessage handleHelloRequest(HelloMessage message) {
-		messagesMapping.put(message.getXid(), message);
+		int xid = message.getXid();
+		messagesMapping.put(xid, message);
 		try {
-			InstanceLocationSpecifier key = new InstanceLocationSpecifier(message.getDpid() +"", message.getDpid());
+			int dpid = message.getDpid();
+			InstanceLocationSpecifier key = new InstanceLocationSpecifier(dpid +"", dpid);
 
 			ConnectionInstance value = (new ConnectionInstance.Builder())
-					.setDpid(message.getDpid())
+					.setDpid(dpid)
 					.setVersion(message.getVersion())
 					.setCapabilities(message.getCapabilities())
 					.build();
 			instancesMapping.put(key, value);
-			//section 3.5 in OpenBox spec
+			//section 3.5 in OpenBox spec 
+			// TODO: need to generate a new xid or use the current?
 			List<IStatement> statements = ApplicationAggregator.getInstance().getStatements(key);
-			ProcessingGraphMessage processMessage = new ProcessingGraphMessage();
+			ProcessingGraphMessage processMessage = new ProcessingGraphMessage(xid, dpid, statements);
+			HelloRequestSender requestSender = new HelloRequestSender(xid);
 			value.sendRequest(processMessage, requestSender);
+			requestSendersMapping.put(xid, requestSender);
 			
-			return new SuccessMessage(message.getXid());
+			return new SuccessMessage(xid);
 		} catch (Exception e) {
-			return new ErrorMessage(MessageResultType.BAD_REQUEST, ErrorSubType.ILLEGAL_ARGUMENT);
+			return new ErrorMessage(xid, MessageResultType.BAD_REQUEST, ErrorSubType.ILLEGAL_ARGUMENT);
 		}
 	}
 
@@ -107,6 +116,6 @@ public class ServerConnectionManager implements IServerConnectionManager{
 			return new SuccessMessage(message.getXid());
 		}
 
-		return new ErrorMessage(MessageResultType.BAD_REQUEST, ErrorSubType.ILLEGAL_ARGUMENT);
+		return new ErrorMessage(message.getXid(), MessageResultType.BAD_REQUEST, ErrorSubType.ILLEGAL_ARGUMENT);
 	}
 }
