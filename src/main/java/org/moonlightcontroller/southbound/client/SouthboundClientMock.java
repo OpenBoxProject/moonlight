@@ -2,6 +2,7 @@ package org.moonlightcontroller.southbound.client;
 
 import java.util.List;
 
+import org.moonlightcontroller.managers.ISouthboundClient;
 import org.moonlightcontroller.managers.models.IRequestSender;
 import org.moonlightcontroller.managers.models.messages.IMessage;
 import org.openboxprotocol.protocol.IStatement;

@@ -5,7 +5,7 @@ import java.io.IOException;
 import org.moonlightcontroller.controller.MoonlightController;
 import org.moonlightcontroller.registry.ApplicationRegistry;
 import org.moonlightcontroller.registry.IApplicationRegistry;
-import org.moonlightcontroller.southbound.client.SouthboundClient;
+import org.moonlightcontroller.southbound.client.SingleInstanceConnection;
 import org.moonlightcontroller.southbound.client.SouthboundClientMock;
 import org.openboxprotocol.protocol.topology.ITopologyManager;
 import org.openboxprotocol.protocol.topology.TopologyManager;

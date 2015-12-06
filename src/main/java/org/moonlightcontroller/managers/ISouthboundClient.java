@@ -1,4 +1,4 @@
-package org.moonlightcontroller.southbound.client;
+package org.moonlightcontroller.managers;
 
 import java.util.List;
 
