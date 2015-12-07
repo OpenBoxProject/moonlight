@@ -5,22 +5,30 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class ConnectionInstance {
+import org.moonlightcontroller.main.ControllerProperties;
+import org.moonlightcontroller.managers.ClientConnectionManager;
+import org.moonlightcontroller.managers.XidGenerator;
+import org.moonlightcontroller.managers.models.messages.IMessage;
+import org.moonlightcontroller.managers.models.messages.SetProcessingGraphMessage;
 
-	long dpid;
-	LocalDateTime lastKeepAlive;
-	String version;
-	int keepaliveInterval;
-	Map<String, List<String>> capabilities;
+public class ConnectionInstance implements IConnectionInstance {
 
+	private int dpid;
+	private LocalDateTime lastKeepAlive;
+	private String version;
+	private int keepaliveInterval;
+	private Map<String, List<String>> capabilities;
+	private boolean isProcessingGraphConfiged;
+	
 	public ConnectionInstance (int dpid,
 			String version,
 			int keepaliveInterval,
 			Map<String, List<String>> capabilities) {
-		this.dpid = dpid;
-		this.version = version;
+		this.setDpid(dpid);
+		this.setVersion(version);
 		this.keepaliveInterval = keepaliveInterval;
-		this.capabilities = capabilities;
+		this.setCapabilities(capabilities);
+		this.setProcessingGraphConfiged(false);
 	}
 
 	public void updateKeepAlive() {
@@ -35,8 +43,40 @@ public class ConnectionInstance {
 		return this.keepaliveInterval;
 	}
 
+	public int getDpid() {
+		return dpid;
+	}
+
+	public void setDpid(int dpid) {
+		this.dpid = dpid;
+	}
+
+	public String getVersion() {
+		return version;
+	}
+
+	public void setVersion(String version) {
+		this.version = version;
+	}
+
+	public Map<String, List<String>> getCapabilities() {
+		return capabilities;
+	}
+
+	public void setCapabilities(Map<String, List<String>> capabilities) {
+		this.capabilities = capabilities;
+	}
+
+	public boolean isProcessingGraphConfiged() {
+		return isProcessingGraphConfiged;
+	}
+
+	public void setProcessingGraphConfiged(boolean isProcessingGraphConfiged) {
+		this.isProcessingGraphConfiged = isProcessingGraphConfiged;
+	}
+
 	public static class Builder {
-		private final int DEFAULT_KEEPALIVE_DURATION = 10;
+		private final int DEFAULT_KEEPALIVE_DURATION = ControllerProperties.getInstance().getKeepAliveInterval();
 
 		int dpid;
 		int keepaliveInterval = DEFAULT_KEEPALIVE_DURATION;
@@ -45,7 +85,7 @@ public class ConnectionInstance {
 		Map<String, List<String>> capabilities = new HashMap<>();
 
 		public Builder() {
-			
+
 		}
 
 		public Builder setDpid(int dpid) {
@@ -73,6 +113,14 @@ public class ConnectionInstance {
 					version,
 					keepaliveInterval, 
 					capabilities);
+		}
+	}
+
+	@Override
+	public void sendRequest(IMessage message, IRequestSender requestSender) {
+		int xid = XidGenerator.generateXid();
+		if (message instanceof SetProcessingGraphMessage) {
+			ClientConnectionManager.getInstance().sendProcessingGraphRequest(xid);
 		}
 	}
 }

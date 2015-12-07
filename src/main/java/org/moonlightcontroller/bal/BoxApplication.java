@@ -79,5 +79,4 @@ public abstract class BoxApplication {
 	protected void setInstanceUpListener(IInstanceUpListener ul){
 		this.instanceUpListener = ul;
 	}
-	
 }
