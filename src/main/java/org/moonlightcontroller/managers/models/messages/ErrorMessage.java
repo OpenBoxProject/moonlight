@@ -4,8 +4,10 @@ public class ErrorMessage implements IResponseMessage {
 
 	private MessageResultType errorType;
 	private ErrorSubType errorSubType;
-
-	public ErrorMessage (MessageResultType errorType, ErrorSubType errorSubType) {
+	private int xid;
+	
+	public ErrorMessage (int xid, MessageResultType errorType, ErrorSubType errorSubType) {
+		this.xid = xid;
 		this.errorType = errorType;
 		this.errorSubType = errorSubType;
 		validateErrorSubType();
@@ -13,7 +15,7 @@ public class ErrorMessage implements IResponseMessage {
 	
 	@Override
 	public String toString() {
-		return String.format("Error message of type = %s, sub type = %s", errorType.name(), errorSubType.name());
+		return String.format("Error message of type = %s, sub type = %s for xid = %s", errorType.name(), errorSubType.name(), xid);
 	}
 
 	private void validateErrorSubType() {
@@ -41,7 +43,7 @@ public class ErrorMessage implements IResponseMessage {
 			case NO_ACCESS:
 				return;
 			default:
-				errorSubType = errorSubType.NOT_PERMITTED;
+				errorSubType = ErrorSubType.NOT_PERMITTED;
 			}
 		case UNSUPPORTED:
 			switch (errorSubType) {
@@ -51,7 +53,7 @@ public class ErrorMessage implements IResponseMessage {
 			case UNSUPPORTED_OTHER:
 				return;
 			default:
-				errorSubType = errorSubType.UNSUPPORTED_OTHER;
+				errorSubType = ErrorSubType.UNSUPPORTED_OTHER;
 			}
 		case INTERNAL_ERROR:
 			switch (errorSubType) {
@@ -65,5 +67,15 @@ public class ErrorMessage implements IResponseMessage {
 		default:
 			break;
 		}
+	}
+
+	@Override
+	public int getXid() {
+		return xid;
+	}
+
+	@Override
+	public String getType() {
+		return "error";
 	}
 }

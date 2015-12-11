@@ -9,7 +9,8 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
-import org.moonlightcontroller.managers.ConnectionManager;
+import org.moonlightcontroller.managers.ServerConnectionManager;
+import org.moonlightcontroller.managers.models.messages.AcknowledgeMessage;
 import org.moonlightcontroller.managers.models.messages.HelloMessage;
 import org.moonlightcontroller.managers.models.messages.IResponseMessage;
 import org.moonlightcontroller.managers.models.messages.KeepAliveMessage;
@@ -17,94 +18,95 @@ import org.moonlightcontroller.managers.models.messages.SuccessMessage;
 
 @Path("/")
 public class SouthboundApi {
-    @GET
-    @Path("test")
-    @Produces(MediaType.TEXT_PLAIN)
-    public String test() {
-        return "Test";
-    }
-    
-  @POST
-  @Path("Hello")
-  @Consumes(MediaType.APPLICATION_JSON)
-  public Response hello(HelloMessage message) {
-  	IResponseMessage result = ConnectionManager.getInstance().registerInstance(message);
+	@GET
+	@Path("test")
+	@Produces(MediaType.TEXT_PLAIN)
+	public String test() {
+		return "Test";
+	}
 
-  	System.out.println(message.getXid());
-  	return (result instanceof SuccessMessage)? Response.status(Status.OK).build() :
-  		Response.status(Status.BAD_REQUEST).entity(result.toString()).build();
-  }
-  
-  @POST
-  @Path("KeepAlive")
-  @Consumes(MediaType.APPLICATION_JSON)
-  public Response keepalive(KeepAliveMessage message) {
-  	IResponseMessage result = ConnectionManager.getInstance().updateInstanceKeepAlive(message);
-  	
-  	return (result instanceof SuccessMessage)? Response.status(Status.OK).build() :
-  		Response.status(Status.BAD_REQUEST).entity(result.toString()).build();
-  }
-    
-    @GET
-    @Path("ListCapabilitiesResponse")
-    @Produces(MediaType.TEXT_PLAIN)
-    public String ListCapabilitiesResponse() {
-        return "Test";
-    }
-    
-    @GET
-    @Path("SetParametersResponse")
-    @Produces(MediaType.TEXT_PLAIN)
-    public String SetParametersResponse() {
-        return "Test";
-    }
-    
-    @GET
-    @Path("GetParametersResponse")
-    @Produces(MediaType.TEXT_PLAIN)
-    public String GetParametersResponse() {
-        return "Test";
-    }
-    
-    @GET
-    @Path("GlobalStatsResponse")
-    @Produces(MediaType.TEXT_PLAIN)
-    public String GlobalStatsResponse() {
-        return "Test";
-    }
-    
-    @GET
-    @Path("ReadResponse")
-    @Produces(MediaType.TEXT_PLAIN)
-    public String ReadResponse() {
-        return "Test";
-    }
-    
-    @GET
-    @Path("WriteResponse")
-    @Produces(MediaType.TEXT_PLAIN)
-    public String WriteResponse() {
-        return "Test";
-    }
-    
-    @GET
-    @Path("SetProcessingGraphResponse")
-    @Produces(MediaType.TEXT_PLAIN)
-    public String SetProcessingGraphResponse() {
-        return "Test";
-    }
-    
-    @GET
-    @Path("Alert")
-    @Produces(MediaType.TEXT_PLAIN)
-    public String Alert() {
-        return "Test";
-    }
-    
-    @GET
-    @Path("Error")
-    @Produces(MediaType.TEXT_PLAIN)
-    public String Error() {
-        return "Test";
-    }
+	@POST
+	@Path("message/Hello")
+	@Consumes(MediaType.APPLICATION_JSON)
+	public Response hello(HelloMessage message) {
+		IResponseMessage result = ServerConnectionManager.getInstance().handleHelloRequest(message);
+
+		return (result instanceof SuccessMessage)? Response.status(Status.OK).build() :
+			Response.status(Status.BAD_REQUEST).entity(result.toString()).build();
+	}
+
+	@POST
+	@Path("message/KeepAlive")
+	@Consumes(MediaType.APPLICATION_JSON)
+	public Response keepalive(KeepAliveMessage message) {
+		IResponseMessage result = ServerConnectionManager.getInstance().handleKeepaliveRequest(message);
+
+		return (result instanceof SuccessMessage)? Response.status(Status.OK).build() :
+			Response.status(Status.BAD_REQUEST).entity(result.toString()).build();
+	}
+
+	@POST
+	@Path("message/ListCapabilitiesResponse")
+	@Consumes(MediaType.TEXT_PLAIN)
+	public String ListCapabilitiesResponse() {
+		return "Test";
+	}
+
+	@POST
+	@Path("message/SetParametersResponse")
+	@Consumes(MediaType.TEXT_PLAIN)
+	public String SetParametersResponse() {
+		return "Test";
+	}
+
+	@POST
+	@Path("message/GetParametersResponse")
+	@Consumes(MediaType.TEXT_PLAIN)
+	public String GetParametersResponse() {
+		return "Test";
+	}
+
+	@POST
+	@Path("message/GlobalStatsResponse")
+	@Consumes(MediaType.TEXT_PLAIN)
+	public String GlobalStatsResponse() {
+		return "Test";
+	}
+
+	@POST
+	@Path("message/ReadResponse")
+	@Consumes(MediaType.TEXT_PLAIN)
+	public String ReadResponse() {
+		return "Test";
+	}
+
+	@POST
+	@Path("message/WriteResponse")
+	@Consumes(MediaType.TEXT_PLAIN)
+	public String WriteResponse() {
+		return "Test";
+	}
+
+	@POST
+	@Path("message/SetProcessingGraphResponse")
+	@Consumes(MediaType.APPLICATION_JSON)
+	public Response SetProcessingGraphResponse(AcknowledgeMessage message) {
+		IResponseMessage result = ServerConnectionManager.getInstance().handleProcessingGraphResponse(message);
+		return (result instanceof SuccessMessage)? Response.status(Status.OK).build() :
+			Response.status(Status.BAD_REQUEST).entity(result.toString()).build();
+	}
+
+	@POST
+	@Path("message/Alert")
+	@Consumes(MediaType.TEXT_PLAIN)
+	public String Alert() {
+		return "Test";
+	}
+
+	@POST
+	@Path("message/Error")
+	@Consumes(MediaType.TEXT_PLAIN)
+	public String Error() {
+		return "Test";
+	}
 }

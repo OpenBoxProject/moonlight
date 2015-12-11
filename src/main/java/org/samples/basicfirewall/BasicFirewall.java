@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Logger;
 
-import org.glassfish.jersey.internal.l10n.LocalizableMessageFactory;
 import org.moonlightcontroller.bal.BoxApplication;
 import org.moonlightcontroller.blocks.Discard;
 import org.moonlightcontroller.blocks.FromDevice;
@@ -21,7 +20,6 @@ import org.openboxprotocol.protocol.OpenBoxHeaderMatch;
 import org.openboxprotocol.protocol.Statement;
 import org.openboxprotocol.protocol.topology.IApplicationTopology;
 import org.openboxprotocol.protocol.topology.InstanceLocationSpecifier;
-import org.openboxprotocol.protocol.topology.TopologyManager;
 import org.openboxprotocol.types.TransportPort;
 
 public class BasicFirewall extends BoxApplication{

@@ -6,7 +6,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.moonlightcontroller.bal.BoxApplication;
-import org.moonlightcontroller.managers.ConnectionManager;
+import org.moonlightcontroller.southbound.client.SouthboundClient;
 import org.openboxprotocol.protocol.topology.ApplicationTopology;
 import org.openboxprotocol.protocol.topology.TopologyManager;
 
@@ -69,7 +69,7 @@ public class EventManager implements IEventManager {
 	public void HandleAppStart(String appId) {
 		this.apps.get(appId).handleAppStart(
 				new ApplicationTopology(TopologyManager.getInstance()),
-				new HandleClient(ConnectionManager.getInstance()));
+				(IHandleClient) new HandleClient(SouthboundClient.getInstance()));
 	}
 
 	@Override
