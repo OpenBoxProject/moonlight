@@ -1,12 +1,14 @@
 package org.moonlightcontroller.managers;
 
-import org.moonlightcontroller.managers.models.messages.HelloMessage;
-import org.moonlightcontroller.managers.models.messages.IResponseMessage;
-import org.moonlightcontroller.managers.models.messages.KeepAliveMessage;
+
+import javax.ws.rs.core.Response;
+
+import org.moonlightcontroller.managers.models.messages.Hello;
+import org.moonlightcontroller.managers.models.messages.KeepAlive;
 
 public interface IServerConnectionManager {
 	
-	IResponseMessage handleHelloRequest(HelloMessage message);
+	Response handleHelloRequest(Hello message);
 	
-	IResponseMessage handleKeepaliveRequest(KeepAliveMessage message);
+	Response handleKeepaliveRequest(KeepAlive message);
 }

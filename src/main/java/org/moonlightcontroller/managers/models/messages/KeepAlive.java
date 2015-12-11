@@ -1,10 +1,16 @@
 package org.moonlightcontroller.managers.models.messages;
 
-public class KeepAliveMessage implements IMessage {
+public class KeepAlive implements IMessage {
 	private String type;
 	private int xid;
 	private int dpid;
 
+	public KeepAlive(int xid, int dpid) {
+		this.type = "KeepAlive";
+		this.xid = xid;
+		this.dpid = dpid;
+	}
+	
 	public String getType() {
 		return type;
 	}

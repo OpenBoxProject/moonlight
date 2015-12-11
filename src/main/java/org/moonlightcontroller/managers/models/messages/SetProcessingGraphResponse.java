@@ -1,10 +1,10 @@
 package org.moonlightcontroller.managers.models.messages;
 
-public class AcknowledgeMessage implements IMessage {
+public class SetProcessingGraphResponse implements IMessage {
 
 	private int xid;
 	
-	public AcknowledgeMessage(int xid) {
+	public SetProcessingGraphResponse(int xid) {
 		this.xid = xid;
 	}
 	
@@ -15,7 +15,7 @@ public class AcknowledgeMessage implements IMessage {
 
 	@Override
 	public String getType() {
-		return "Acknowledgement";
+		return "SetProcessingGraphResponse";
 	}
 
 }

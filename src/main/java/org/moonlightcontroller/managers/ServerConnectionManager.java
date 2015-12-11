@@ -6,25 +6,23 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import javax.ws.rs.core.Response;
+import javax.ws.rs.core.Response.Status;
+
 import org.moonlightcontroller.aggregator.ApplicationAggregator;
 import org.moonlightcontroller.managers.models.ConnectionInstance;
 import org.moonlightcontroller.managers.models.IRequestSender;
-import org.moonlightcontroller.managers.models.messages.AcknowledgeMessage;
-import org.moonlightcontroller.managers.models.messages.ErrorMessage;
-import org.moonlightcontroller.managers.models.messages.ErrorSubType;
-import org.moonlightcontroller.managers.models.messages.HelloMessage;
+import org.moonlightcontroller.managers.models.messages.SetProcessingGraphResponse;
+import org.moonlightcontroller.managers.models.messages.Hello;
 import org.moonlightcontroller.managers.models.messages.IMessage;
-import org.moonlightcontroller.managers.models.messages.IResponseMessage;
-import org.moonlightcontroller.managers.models.messages.KeepAliveMessage;
-import org.moonlightcontroller.managers.models.messages.MessageResultType;
-import org.moonlightcontroller.managers.models.messages.SetProcessingGraphMessage;
-import org.moonlightcontroller.managers.models.messages.SuccessMessage;
+import org.moonlightcontroller.managers.models.messages.KeepAlive;
+import org.moonlightcontroller.managers.models.messages.SetProcessingGraphRequest;
 import org.openboxprotocol.protocol.IStatement;
 import org.openboxprotocol.protocol.topology.ILocationSpecifier;
 import org.openboxprotocol.protocol.topology.InstanceLocationSpecifier;
 import org.openboxprotocol.protocol.topology.TopologyManager;
 
-public class ServerConnectionManager implements IServerConnectionManager{
+public class ServerConnectionManager implements IServerConnectionManager, ISouthboundClient{
 	Map<InstanceLocationSpecifier, ConnectionInstance> instancesMapping;
 	Map<Integer, IMessage> messagesMapping;
 	Map<Integer, IRequestSender> requestSendersMapping;
@@ -48,19 +46,19 @@ public class ServerConnectionManager implements IServerConnectionManager{
 	}
 
 	@Override
-	public IResponseMessage handleKeepaliveRequest(KeepAliveMessage message) {
+	public Response handleKeepaliveRequest(KeepAlive message) {
 		messagesMapping.put(message.getXid(), message);
 		return handleKeepaliveRequest(new InstanceLocationSpecifier(message.getDpid()+"", message.getDpid()), message.getXid());
 	}
 
-	private IResponseMessage handleKeepaliveRequest(InstanceLocationSpecifier instanceLocationSpecifier, int xid) {
+	private Response handleKeepaliveRequest(InstanceLocationSpecifier instanceLocationSpecifier, int xid) {
 		ConnectionInstance data = instancesMapping.get(instanceLocationSpecifier);
 		if (data != null) {
 			data.updateKeepAlive();
-			return new SuccessMessage(xid);
+			return okResponse();
 		}
 
-		return new ErrorMessage(xid, MessageResultType.BAD_REQUEST, ErrorSubType.INTERNAL_ERROR);
+		return internalErrorResponse();
 	}
 
 	public List<InstanceLocationSpecifier> getAliveInstances(ILocationSpecifier loc) {
@@ -79,7 +77,7 @@ public class ServerConnectionManager implements IServerConnectionManager{
 	}
 
 	@Override
-	public IResponseMessage handleHelloRequest(HelloMessage message) {
+	public Response handleHelloRequest(Hello message) {
 		int xid = message.getXid();
 		messagesMapping.put(xid, message);
 		try {
@@ -92,30 +90,49 @@ public class ServerConnectionManager implements IServerConnectionManager{
 					.setCapabilities(message.getCapabilities())
 					.build();
 			instancesMapping.put(key, value);
-			//section 3.5 in OpenBox spec 
-			// TODO: need to generate a new xid or use the current?
 			List<IStatement> statements = ApplicationAggregator.getInstance().getStatements(key);
-			SetProcessingGraphMessage processMessage = new SetProcessingGraphMessage(xid, dpid, statements);
+			SetProcessingGraphRequest processMessage = new SetProcessingGraphRequest(xid, dpid, statements);
 			IRequestSender requestSender = requestSendersMapping.get(xid);
 			value.sendRequest(processMessage, requestSender);
+			return okResponse();
 
-			return new SuccessMessage(xid);
 		} catch (Exception e) {
-			return new ErrorMessage(xid, MessageResultType.BAD_REQUEST, ErrorSubType.ILLEGAL_ARGUMENT);
+			return internalErrorResponse();
 		}
 	}
 
-	public IResponseMessage handleProcessingGraphResponse(AcknowledgeMessage message) {
+	private Response internalErrorResponse() {
+		return Response.status(Status.INTERNAL_SERVER_ERROR).build();
+	}
+
+	public Response handleProcessingGraphResponse(SetProcessingGraphResponse message) {
 		IMessage originMessage = messagesMapping.get(message.getXid());
 
-		if (originMessage instanceof SetProcessingGraphMessage) {
-			int dpid = ((SetProcessingGraphMessage)originMessage).getDpid();
+		if (originMessage == null) {
+			return internalErrorResponse();
+		}
+		
+		if (originMessage instanceof SetProcessingGraphRequest) {
+			int dpid = ((SetProcessingGraphRequest)originMessage).getDpid();
 			InstanceLocationSpecifier loc = new InstanceLocationSpecifier(dpid +"", dpid);
 			ConnectionInstance instance = instancesMapping.get(loc);
 			instance.setProcessingGraphConfiged(true);
-			return new SuccessMessage(message.getXid());
+			return okResponse();
 		}
+		
+		return Response.status(Status.BAD_REQUEST).build();
+	}
 
-		return new ErrorMessage(message.getXid(), MessageResultType.BAD_REQUEST, ErrorSubType.ILLEGAL_ARGUMENT);
+	private Response okResponse() {
+		return Response.status(Status.OK).build();
+	}
+
+	@Override
+	public void sendMessage(ILocationSpecifier loc, IMessage message, IRequestSender requestSender) {
+		ConnectionInstance connectionInstance = instancesMapping.get(loc);
+		int xid = connectionInstance.sendRequest(message, requestSender);
+		messagesMapping.put(xid, message);
+		requestSendersMapping.put(xid, requestSender);
+		
 	}
 }

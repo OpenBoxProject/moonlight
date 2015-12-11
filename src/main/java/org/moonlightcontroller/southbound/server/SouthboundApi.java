@@ -7,14 +7,11 @@ import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import javax.ws.rs.core.Response.Status;
 
 import org.moonlightcontroller.managers.ServerConnectionManager;
-import org.moonlightcontroller.managers.models.messages.AcknowledgeMessage;
-import org.moonlightcontroller.managers.models.messages.HelloMessage;
-import org.moonlightcontroller.managers.models.messages.IResponseMessage;
-import org.moonlightcontroller.managers.models.messages.KeepAliveMessage;
-import org.moonlightcontroller.managers.models.messages.SuccessMessage;
+import org.moonlightcontroller.managers.models.messages.SetProcessingGraphResponse;
+import org.moonlightcontroller.managers.models.messages.Hello;
+import org.moonlightcontroller.managers.models.messages.KeepAlive;
 
 @Path("/")
 public class SouthboundApi {
@@ -28,21 +25,15 @@ public class SouthboundApi {
 	@POST
 	@Path("message/Hello")
 	@Consumes(MediaType.APPLICATION_JSON)
-	public Response hello(HelloMessage message) {
-		IResponseMessage result = ServerConnectionManager.getInstance().handleHelloRequest(message);
-
-		return (result instanceof SuccessMessage)? Response.status(Status.OK).build() :
-			Response.status(Status.BAD_REQUEST).entity(result.toString()).build();
+	public Response hello(Hello message) {
+		return ServerConnectionManager.getInstance().handleHelloRequest(message);
 	}
 
 	@POST
 	@Path("message/KeepAlive")
 	@Consumes(MediaType.APPLICATION_JSON)
-	public Response keepalive(KeepAliveMessage message) {
-		IResponseMessage result = ServerConnectionManager.getInstance().handleKeepaliveRequest(message);
-
-		return (result instanceof SuccessMessage)? Response.status(Status.OK).build() :
-			Response.status(Status.BAD_REQUEST).entity(result.toString()).build();
+	public Response keepalive(KeepAlive message) {
+		return ServerConnectionManager.getInstance().handleKeepaliveRequest(message);
 	}
 
 	@POST
@@ -90,10 +81,8 @@ public class SouthboundApi {
 	@POST
 	@Path("message/SetProcessingGraphResponse")
 	@Consumes(MediaType.APPLICATION_JSON)
-	public Response SetProcessingGraphResponse(AcknowledgeMessage message) {
-		IResponseMessage result = ServerConnectionManager.getInstance().handleProcessingGraphResponse(message);
-		return (result instanceof SuccessMessage)? Response.status(Status.OK).build() :
-			Response.status(Status.BAD_REQUEST).entity(result.toString()).build();
+	public Response SetProcessingGraphResponse(SetProcessingGraphResponse message) {
+		return  ServerConnectionManager.getInstance().handleProcessingGraphResponse(message);
 	}
 
 	@POST

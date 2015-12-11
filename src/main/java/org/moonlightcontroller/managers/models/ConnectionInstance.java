@@ -6,10 +6,9 @@ import java.util.List;
 import java.util.Map;
 
 import org.moonlightcontroller.main.ControllerProperties;
-import org.moonlightcontroller.managers.ClientConnectionManager;
 import org.moonlightcontroller.managers.XidGenerator;
 import org.moonlightcontroller.managers.models.messages.IMessage;
-import org.moonlightcontroller.managers.models.messages.SetProcessingGraphMessage;
+import org.moonlightcontroller.southbound.client.SingleInstanceConnection;
 
 public class ConnectionInstance implements IConnectionInstance {
 
@@ -19,6 +18,7 @@ public class ConnectionInstance implements IConnectionInstance {
 	private int keepaliveInterval;
 	private Map<String, List<String>> capabilities;
 	private boolean isProcessingGraphConfiged;
+	private SingleInstanceConnection client;
 	
 	public ConnectionInstance (int dpid,
 			String version,
@@ -117,10 +117,9 @@ public class ConnectionInstance implements IConnectionInstance {
 	}
 
 	@Override
-	public void sendRequest(IMessage message, IRequestSender requestSender) {
+	public int sendRequest(IMessage message, IRequestSender requestSender) {
 		int xid = XidGenerator.generateXid();
-		if (message instanceof SetProcessingGraphMessage) {
-			ClientConnectionManager.getInstance().sendProcessingGraphRequest(xid);
-		}
+		client.sendMessage(message);
+		return xid;
 	}
 }
