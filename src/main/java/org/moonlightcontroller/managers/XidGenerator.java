@@ -7,7 +7,6 @@ public class XidGenerator {
 	private XidGenerator() {
 		
 	}
-	
 	public synchronized static XidGenerator getInstance() {
 		if (instance == null) {
 			instance = new XidGenerator();

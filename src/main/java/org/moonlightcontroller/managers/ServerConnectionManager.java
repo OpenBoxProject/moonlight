@@ -43,7 +43,7 @@ public class ServerConnectionManager implements IServerConnectionManager{
 				instance = new ServerConnectionManager();
 			}
 		}
-		
+
 		return instance;
 	}
 
