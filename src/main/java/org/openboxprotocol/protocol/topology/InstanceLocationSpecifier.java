@@ -25,7 +25,11 @@ public class InstanceLocationSpecifier implements ILocationSpecifier {
 	public String getId() {
 		return this.id;
 	}
-	
+
+	public long getIp() {
+		return this.ip;
+	}
+
 	@Override
 	public boolean equals(Object obj) {
 		if (obj == null || !(obj instanceof InstanceLocationSpecifier)){
