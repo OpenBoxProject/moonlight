@@ -8,7 +8,7 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
-import org.moonlightcontroller.managers.ServerConnectionManager;
+import org.moonlightcontroller.managers.ConnectionManager;
 import org.moonlightcontroller.managers.models.messages.SetProcessingGraphResponse;
 import org.moonlightcontroller.managers.models.messages.Hello;
 import org.moonlightcontroller.managers.models.messages.KeepAlive;
@@ -26,14 +26,14 @@ public class SouthboundApi {
 	@Path("message/Hello")
 	@Consumes(MediaType.APPLICATION_JSON)
 	public Response hello(Hello message) {
-		return ServerConnectionManager.getInstance().handleHelloRequest(message);
+		return ConnectionManager.getInstance().handleHelloRequest(message);
 	}
 
 	@POST
 	@Path("message/KeepAlive")
 	@Consumes(MediaType.APPLICATION_JSON)
 	public Response keepalive(KeepAlive message) {
-		return ServerConnectionManager.getInstance().handleKeepaliveRequest(message);
+		return ConnectionManager.getInstance().handleKeepaliveRequest(message);
 	}
 
 	@POST
@@ -82,7 +82,7 @@ public class SouthboundApi {
 	@Path("message/SetProcessingGraphResponse")
 	@Consumes(MediaType.APPLICATION_JSON)
 	public Response SetProcessingGraphResponse(SetProcessingGraphResponse message) {
-		return  ServerConnectionManager.getInstance().handleProcessingGraphResponse(message);
+		return  ConnectionManager.getInstance().handleProcessingGraphResponse(message);
 	}
 
 	@POST

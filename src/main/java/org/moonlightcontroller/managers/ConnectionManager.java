@@ -22,23 +22,23 @@ import org.openboxprotocol.protocol.topology.ILocationSpecifier;
 import org.openboxprotocol.protocol.topology.InstanceLocationSpecifier;
 import org.openboxprotocol.protocol.topology.TopologyManager;
 
-public class ServerConnectionManager implements IServerConnectionManager, ISouthboundClient{
+public class ConnectionManager implements IConnectionManager, ISouthboundClient{
 	Map<InstanceLocationSpecifier, ConnectionInstance> instancesMapping;
 	Map<Integer, IMessage> messagesMapping;
 	Map<Integer, IRequestSender> requestSendersMapping;
 
-	private static ServerConnectionManager instance;
+	private static ConnectionManager instance;
 
-	private ServerConnectionManager () {
+	private ConnectionManager () {
 		instancesMapping = new HashMap<>();
 		messagesMapping = new HashMap<>();
 		requestSendersMapping = new HashMap<>();
 	}
 
-	public synchronized static ServerConnectionManager getInstance() {
+	public synchronized static ConnectionManager getInstance() {
 		synchronized (instance) {
 			if (instance == null) {
-				instance = new ServerConnectionManager();
+				instance = new ConnectionManager();
 			}
 		}
 

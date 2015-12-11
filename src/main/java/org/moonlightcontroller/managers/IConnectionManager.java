@@ -6,7 +6,7 @@ import javax.ws.rs.core.Response;
 import org.moonlightcontroller.managers.models.messages.Hello;
 import org.moonlightcontroller.managers.models.messages.KeepAlive;
 
-public interface IServerConnectionManager {
+public interface IConnectionManager {
 	
 	Response handleHelloRequest(Hello message);
 	
