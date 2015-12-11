@@ -4,14 +4,14 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class HelloMessage implements IMessage {
+public class Hello implements IMessage {
 	private String type;
 	private int xid;
 	private int dpid;
 	private String version;
 	private Map<String, List<String>> capabilities;
 	
-	public HelloMessage(int xid, int dpid, String version, Map<String, List<String>> capabilities) {
+	public Hello(int xid, int dpid, String version, Map<String, List<String>> capabilities) {
 		this.type = "Hello";
 		this.xid = xid;
 		this.dpid = dpid;
@@ -58,8 +58,8 @@ public class HelloMessage implements IMessage {
 			return this;
 		}
 		
-		public HelloMessage build() {
-			return new HelloMessage(xid, dpid, version, capabilities);
+		public Hello build() {
+			return new Hello(xid, dpid, version, capabilities);
 		}
 	}
 }

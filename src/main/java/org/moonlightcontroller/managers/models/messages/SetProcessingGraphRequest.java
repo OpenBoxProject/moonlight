@@ -5,15 +5,15 @@ import java.util.List;
 
 import org.openboxprotocol.protocol.IStatement;
 
-public class SetProcessingGraphMessage implements IMessage {
+public class SetProcessingGraphRequest implements IMessage {
 
 	private String type;
 	private int xid;
 	private int dpid;
 	private List<IStatement> statements;
 	
-	public SetProcessingGraphMessage(int xid, int dpid, List<IStatement> statements) {
-		this.type = "ProcessingGraphMessage";
+	public SetProcessingGraphRequest(int xid, int dpid, List<IStatement> statements) {
+		this.type = "SetProcessingGraphRequest";
 		this.xid = xid;
 		this.dpid = dpid;
 		this.statements = statements;
@@ -54,8 +54,8 @@ public class SetProcessingGraphMessage implements IMessage {
 			this.statements = statements;
 			return this;
 		}
-		public SetProcessingGraphMessage build() {
-			return new SetProcessingGraphMessage(xid, dpid, statements);
+		public SetProcessingGraphRequest build() {
+			return new SetProcessingGraphRequest(xid, dpid, statements);
 		}
 	}
 }
