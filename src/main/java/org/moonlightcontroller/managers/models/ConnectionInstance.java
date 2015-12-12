@@ -29,6 +29,7 @@ public class ConnectionInstance implements IConnectionInstance {
 		this.keepaliveInterval = keepaliveInterval;
 		this.setCapabilities(capabilities);
 		this.setProcessingGraphConfiged(false);
+		this.client = new SingleInstanceConnection(dpid, 3636);
 	}
 
 	public void updateKeepAlive() {

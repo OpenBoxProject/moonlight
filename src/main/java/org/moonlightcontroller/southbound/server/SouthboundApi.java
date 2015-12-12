@@ -13,7 +13,7 @@ import org.moonlightcontroller.managers.models.messages.SetProcessingGraphRespon
 import org.moonlightcontroller.managers.models.messages.Hello;
 import org.moonlightcontroller.managers.models.messages.KeepAlive;
 
-@Path("/")
+@Path("/message/")
 public class SouthboundApi {
 	@GET
 	@Path("test")
@@ -23,77 +23,77 @@ public class SouthboundApi {
 	}
 
 	@POST
-	@Path("message/Hello")
+	@Path("Hello")
 	@Consumes(MediaType.APPLICATION_JSON)
 	public Response hello(Hello message) {
 		return ConnectionManager.getInstance().handleHelloRequest(message);
 	}
 
 	@POST
-	@Path("message/KeepAlive")
+	@Path("KeepAlive")
 	@Consumes(MediaType.APPLICATION_JSON)
 	public Response keepalive(KeepAlive message) {
 		return ConnectionManager.getInstance().handleKeepaliveRequest(message);
 	}
 
 	@POST
-	@Path("message/ListCapabilitiesResponse")
+	@Path("ListCapabilitiesResponse")
 	@Consumes(MediaType.TEXT_PLAIN)
 	public String ListCapabilitiesResponse() {
 		return "Test";
 	}
 
 	@POST
-	@Path("message/SetParametersResponse")
+	@Path("SetParametersResponse")
 	@Consumes(MediaType.TEXT_PLAIN)
 	public String SetParametersResponse() {
 		return "Test";
 	}
 
 	@POST
-	@Path("message/GetParametersResponse")
+	@Path("GetParametersResponse")
 	@Consumes(MediaType.TEXT_PLAIN)
 	public String GetParametersResponse() {
 		return "Test";
 	}
 
 	@POST
-	@Path("message/GlobalStatsResponse")
+	@Path("GlobalStatsResponse")
 	@Consumes(MediaType.TEXT_PLAIN)
 	public String GlobalStatsResponse() {
 		return "Test";
 	}
 
 	@POST
-	@Path("message/ReadResponse")
+	@Path("ReadResponse")
 	@Consumes(MediaType.TEXT_PLAIN)
 	public String ReadResponse() {
 		return "Test";
 	}
 
 	@POST
-	@Path("message/WriteResponse")
+	@Path("WriteResponse")
 	@Consumes(MediaType.TEXT_PLAIN)
 	public String WriteResponse() {
 		return "Test";
 	}
 
 	@POST
-	@Path("message/SetProcessingGraphResponse")
+	@Path("SetProcessingGraphResponse")
 	@Consumes(MediaType.APPLICATION_JSON)
 	public Response SetProcessingGraphResponse(SetProcessingGraphResponse message) {
 		return  ConnectionManager.getInstance().handleProcessingGraphResponse(message);
 	}
 
 	@POST
-	@Path("message/Alert")
+	@Path("Alert")
 	@Consumes(MediaType.TEXT_PLAIN)
 	public String Alert() {
 		return "Test";
 	}
 
 	@POST
-	@Path("message/Error")
+	@Path("Error")
 	@Consumes(MediaType.TEXT_PLAIN)
 	public String Error() {
 		return "Test";
