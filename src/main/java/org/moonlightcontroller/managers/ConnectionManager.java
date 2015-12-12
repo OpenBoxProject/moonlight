@@ -40,10 +40,8 @@ public class ConnectionManager implements IConnectionManager, ISouthboundClient{
 	}
 
 	public synchronized static ConnectionManager getInstance() {
-		synchronized (instance) {
-			if (instance == null) {
-				instance = new ConnectionManager();
-			}
+		if (instance == null) {
+			instance = new ConnectionManager();
 		}
 
 		return instance;
