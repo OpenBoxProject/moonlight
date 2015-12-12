@@ -4,15 +4,17 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Logger;
 
 import org.moonlightcontroller.bal.BoxApplication;
 import org.moonlightcontroller.managers.ConnectionManager;
-import org.moonlightcontroller.managers.ISouthboundClient;
 import org.openboxprotocol.protocol.topology.ApplicationTopology;
 import org.openboxprotocol.protocol.topology.TopologyManager;
 
 public class EventManager implements IEventManager {
 
+	private final static Logger LOG = Logger.getLogger(EventManager.class.getName()); 
+	
 	private static IEventManager instance;
 	
 	private Map<EventType, ArrayList<BoxApplication>> registeredHandlers;
@@ -26,7 +28,7 @@ public class EventManager implements IEventManager {
 		}
 	}
 	
-	public static IEventManager getInstance(){
+	public synchronized static IEventManager getInstance(){
 		if (instance == null){
 			instance = new EventManager();
 		}
@@ -46,7 +48,11 @@ public class EventManager implements IEventManager {
 	public void HandleAlert(InstanceAlertArgs args){
 		// TODO: Handle refresh requests from apps
 		for (BoxApplication app : this.registeredHandlers.get(EventType.Alert)) {
+			try {
 			app.getAlertListener().Handle(args);
+			} catch (Exception e) {
+				LOG.warning("Caught exception while handling alert for app " + app.getName() + ":" + e.toString());
+			}
 		}
 	}
 
@@ -54,33 +60,51 @@ public class EventManager implements IEventManager {
 	public void HandleInstanceDown(InstanceDownArgs args){
 		// TODO: Handle refresh requests from apps
 		for (BoxApplication app : this.registeredHandlers.get(EventType.InstanceDown)) {
+			try {
 			app.getInstanceDownListener().Handle(args);
+			} catch (Exception e){
+				LOG.warning("Caught exception while handling instance down for app " + app.getName() + ":" + e.toString());
+			}
 		}
 	}
 
 	@Override
 	public void HandleInstanceUp(InstanceUpArgs args){
-		// TODO: Handle refresh requests from apps
 		for (BoxApplication app : this.registeredHandlers.get(EventType.InstanceUp)) {
-			app.getInstanceUpListener().Handle(args);
+			try {
+				app.getInstanceUpListener().Handle(args);	
+			} catch (Exception e){
+				LOG.warning("Caught exception while handling instance up for app " + app.getName() + ":" + e.toString());
+			}			
 		}
 	}
 	
 	@Override
 	public void HandleAppStart(String appId) {
-		this.apps.get(appId).handleAppStart(
-				new ApplicationTopology(TopologyManager.getInstance()),
-				new HandleClient(ConnectionManager.getInstance()));
+		try {
+			this.apps.get(appId).handleAppStart(new ApplicationTopology(TopologyManager.getInstance()),
+					new HandleClient(ConnectionManager.getInstance()));
+		} catch (Exception e) {
+			LOG.warning("Caught exception while handling app start for app " + appId + ":" + e.toString());
+		}
 	}
 
 	@Override
 	public void HandleAppStop(String appId) {
+		try {
 		this.apps.get(appId).handleAppStop();
+		} catch (Exception e){
+			LOG.warning("Caught exception while handling app stop for app " + appId + ":" + e.toString());
+		}
 	}
 
 	@Override
 	public void HandleError(String appId) {
+		try {
 		this.apps.get(appId).handleError();
+		} catch (Exception e) {
+			LOG.warning("Caught exception while handling error for app " + appId + ":" + e.toString());
+		}
 	}
 	
 	private void registerForEvents(BoxApplication app) {
