@@ -2,6 +2,7 @@ package org.moonlightcontroller.managers.models.messages;
 
 public class ErrorMessage implements IResponseMessage {
 
+	private String type; 
 	private MessageResultType errorType;
 	private ErrorSubType errorSubType;
 	private int xid;
@@ -10,6 +11,7 @@ public class ErrorMessage implements IResponseMessage {
 		this.xid = xid;
 		this.errorType = errorType;
 		this.errorSubType = errorSubType;
+		this.type = this.getClass().getName();
 		validateErrorSubType();
 	}
 	

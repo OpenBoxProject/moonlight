@@ -6,9 +6,9 @@ import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Logger;
-import org.apache.commons.io.IOUtils;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import org.apache.commons.io.IOUtils;
 
 public class TopologyManager implements ITopologyManager {
 	private final static Logger LOG = Logger.getLogger(TopologyManager.class.getName()); 
