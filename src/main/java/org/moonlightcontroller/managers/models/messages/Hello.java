@@ -11,6 +11,9 @@ public class Hello implements IMessage {
 	private String version;
 	private Map<String, List<String>> capabilities;
 	
+	public Hello() {
+	}
+	
 	public Hello(int xid, int dpid, String version, Map<String, List<String>> capabilities) {
 		this.type = "Hello";
 		this.xid = xid;
@@ -19,6 +22,12 @@ public class Hello implements IMessage {
 		this.capabilities = capabilities;
 	}
 	
+	@Override
+	public String toString() {
+		return String.format(
+				"HelloMessage::xid=%d::dpid=%d::version=%s::cap=%s",
+				this.xid, this.dpid, this.version, this.capabilities);
+	}
 	public String getType() {
 		return type;
 	}
