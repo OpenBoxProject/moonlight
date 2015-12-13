@@ -1,5 +1,7 @@
 package org.moonlightcontroller.blocks;
 
+import java.util.Map;
+
 import org.moonlightcontroller.processing.BlockClass;
 import org.moonlightcontroller.processing.ProcessingBlock;
 
@@ -50,6 +52,11 @@ public class ToDevice extends ProcessingBlock {
 	public ProcessingBlock clone() {
 		// TODO Auto-generated method stub
 		return null;
+	}
+
+	@Override
+	protected void putConfiguration(Map<String, String> config) {
+		config.put("devname", devname);
 	}
     
 }

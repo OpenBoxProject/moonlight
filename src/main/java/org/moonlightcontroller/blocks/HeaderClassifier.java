@@ -61,4 +61,11 @@ public class HeaderClassifier extends ProcessingBlock {
 		// TODO Auto-generated method stub
 		return null;
 	}
+
+	@Override
+	protected void putConfiguration(Map<String, String> config) {
+		// TODO Auto-generated method stub
+		// TODO: [Yotam] this should be completed to make the demo work
+		// It should serialize the configuration of matches as JSON
+	}
 }

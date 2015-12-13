@@ -1,5 +1,7 @@
 package org.moonlightcontroller.blocks;
 
+import java.util.Map;
+
 import org.moonlightcontroller.processing.BlockClass;
 import org.moonlightcontroller.processing.ProcessingBlock;
 
@@ -38,4 +40,10 @@ public class Discard extends ProcessingBlock {
 		// TODO Auto-generated method stub
 		return null;
 	}
+
+	@Override
+	protected void putConfiguration(Map<String, String> config) {
+		// No config for 'Discard'
+	}
+
 }
