@@ -12,6 +12,9 @@ public class SetProcessingGraphRequest implements IMessage {
 	private int dpid;
 	private List<IStatement> statements;
 	
+	public SetProcessingGraphRequest(){	
+	}
+	
 	public SetProcessingGraphRequest(int xid, int dpid, List<IStatement> statements) {
 		this.type = "SetProcessingGraphRequest";
 		this.xid = xid;

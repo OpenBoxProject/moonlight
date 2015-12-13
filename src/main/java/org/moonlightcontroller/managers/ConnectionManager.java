@@ -4,6 +4,7 @@ import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
 import javax.ws.rs.core.Response;
@@ -23,6 +24,9 @@ import org.openboxprotocol.protocol.topology.InstanceLocationSpecifier;
 import org.openboxprotocol.protocol.topology.TopologyManager;
 
 public class ConnectionManager implements IConnectionManager, ISouthboundClient{
+	
+	private final static Logger LOG = Logger.getLogger(ConnectionManager.class.getName());
+	
 	Map<InstanceLocationSpecifier, ConnectionInstance> instancesMapping;
 	Map<Integer, IMessage> messagesMapping;
 	Map<Integer, IRequestSender> requestSendersMapping;
@@ -36,10 +40,8 @@ public class ConnectionManager implements IConnectionManager, ISouthboundClient{
 	}
 
 	public synchronized static ConnectionManager getInstance() {
-		synchronized (instance) {
-			if (instance == null) {
-				instance = new ConnectionManager();
-			}
+		if (instance == null) {
+			instance = new ConnectionManager();
 		}
 
 		return instance;
@@ -97,6 +99,8 @@ public class ConnectionManager implements IConnectionManager, ISouthboundClient{
 			return okResponse();
 
 		} catch (Exception e) {
+			LOG.warning("Error occured while handling Hello message" + e.toString());
+			e.printStackTrace();
 			return internalErrorResponse();
 		}
 	}

@@ -20,9 +20,15 @@ public class SingleInstanceConnection implements ISingleInstanceConnection {
 	public SingleInstanceConnection(InstanceLocationSpecifier spec) {
 		// TODO: The cast to int might be problematic in case of ipv6
 		String ipAsStr = InetAddresses.fromInteger((int)spec.getIp()).toString();
-		this.target = String.format("http:/%s:3636", ipAsStr);
+		this.target = String.format("http:/%s:3636/message", ipAsStr);
 	}
-		
+
+	public SingleInstanceConnection(int ip, int port) {
+		// TODO: The cast to int might be problematic in case of ipv6
+		String ipAsStr = InetAddresses.fromInteger(ip).toString();
+		this.target = String.format("http:/%s:%d/message", ipAsStr, port);
+	}
+
 	@Override
 	public void sendMessage(IMessage msg) {
 		WebTarget webTarget = RestClient.getInstance().target(this.target).path(msg.getType());
