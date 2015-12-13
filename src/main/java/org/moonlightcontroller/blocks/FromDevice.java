@@ -1,5 +1,6 @@
 package org.moonlightcontroller.blocks;
 
+import org.moonlightcontroller.processing.BlockClass;
 import org.moonlightcontroller.processing.ProcessingBlock;
 
 public class FromDevice extends ProcessingBlock {
@@ -59,6 +60,29 @@ public class FromDevice extends ProcessingBlock {
 			this.addPort();
 			return new FromDevice(super.id, this.output, this.devname, this.sniffer, this.promisc);
 		}
+	}
+
+	@Override
+	public BlockClass getBlockClass() {
+		return BlockClass.BLOCK_CLASS_TERMINAL;
+	}
+
+	@Override
+	public String getBlockType() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public String toShortString() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public ProcessingBlock clone() {
+		// TODO Auto-generated method stub
+		return null;
 	}
 	
 }

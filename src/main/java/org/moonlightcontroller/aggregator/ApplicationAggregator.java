@@ -7,6 +7,9 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 import org.moonlightcontroller.bal.BoxApplication;
+import org.moonlightcontroller.processing.IConnector;
+import org.moonlightcontroller.processing.IProcessingBlock;
+import org.moonlightcontroller.processing.IProcessingGraph;
 import org.openboxprotocol.protocol.IStatement;
 import org.openboxprotocol.protocol.topology.ILocationSpecifier;
 import org.openboxprotocol.protocol.topology.ITopologyManager;
@@ -68,6 +71,7 @@ public class ApplicationAggregator implements IApplicationAggregator {
 		}
 	}
 
+	/*
 	@Override
 	public List<IStatement> getStatements(ILocationSpecifier loc) {
 		if (!loc.isSingleLocation()) {
@@ -75,5 +79,68 @@ public class ApplicationAggregator implements IApplicationAggregator {
 			return null;
 		}
 		return this.aggregatedStatement.get(loc);
+	}
+	*/
+	
+	@Override
+	public IProcessingGraph getProcessingGraph(ILocationSpecifier loc) {
+		// THIS IS A TEMPORARY CODE THAT WILL BE REPLACED ONCE THE NEW AGGREGATOR IS USED
+		
+		if (!loc.isSingleLocation()) {
+			// Throw exception?
+			return null;
+		}
+		List<IProcessingBlock> blocks = new ArrayList<>();
+		List<IConnector> connectors = new ArrayList<>();
+		
+		List<IStatement> statements = this.aggregatedStatement.get(loc);
+		
+		for (IStatement s : statements) {
+			blocks.addAll(s.getBlocks());
+			connectors.addAll(s.getConnectors());
+		}
+		
+		return new IProcessingGraph() {
+			
+			@Override
+			public List<IProcessingBlock> getSuccessors(IProcessingBlock block) {
+				throw new UnsupportedOperationException();
+			}
+			
+			@Override
+			public IProcessingBlock getRoot() {
+				throw new UnsupportedOperationException();
+			}
+			
+			@Override
+			public List<IConnector> getOutgoingConnectors(IProcessingBlock block) {
+				throw new UnsupportedOperationException();
+			}
+			
+			@Override
+			public int getOutDegree(IProcessingBlock block) {
+				throw new UnsupportedOperationException();
+			}
+			
+			@Override
+			public List<IConnector> getIncomingConnectors(IProcessingBlock block) {
+				throw new UnsupportedOperationException();
+			}
+			
+			@Override
+			public int getInDegree(IProcessingBlock block) {
+				throw new UnsupportedOperationException();
+			}
+			
+			@Override
+			public List<IConnector> getConnectors() {
+				return connectors;
+			}
+			
+			@Override
+			public List<IProcessingBlock> getBlocks() {
+				return blocks;
+			}
+		};
 	}
 }

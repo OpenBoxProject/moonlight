@@ -1,5 +1,6 @@
 package org.moonlightcontroller.blocks;
 
+import org.moonlightcontroller.processing.BlockClass;
 import org.moonlightcontroller.processing.ProcessingBlock;
 
 public class Discard extends ProcessingBlock {
@@ -13,5 +14,28 @@ public class Discard extends ProcessingBlock {
 			this.addPort();
 			return new Discard(super.id);
 		}
+	}
+
+	@Override
+	public BlockClass getBlockClass() {
+		return BlockClass.BLOCK_CLASS_TERMINAL;
+	}
+
+	@Override
+	public String getBlockType() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public String toShortString() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public ProcessingBlock clone() {
+		// TODO Auto-generated method stub
+		return null;
 	}
 }

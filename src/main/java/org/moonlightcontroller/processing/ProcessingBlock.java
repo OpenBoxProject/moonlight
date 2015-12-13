@@ -31,6 +31,9 @@ public abstract class ProcessingBlock implements IProcessingBlock{
 		return this.ports;
 	}
 	
+	@Override
+	public abstract ProcessingBlock clone();
+	
 	public static abstract class Builder implements IProcessingBlock.Builder {
 		
 		protected String id;

@@ -2,9 +2,9 @@ package org.moonlightcontroller.processing;
 
 public class Connector implements IConnector {
 
-	private String sourceBlock;
+	private IProcessingBlock sourceBlock;
 	private int sourcePort;
-	private String destinationBlock;
+	private IProcessingBlock destinationBlock;
 	
 	private Connector() {
 		// TODO Auto-generated constructor stub
@@ -12,16 +12,26 @@ public class Connector implements IConnector {
 
 	@Override
 	public String getSourceBlockId() {
-		return this.sourceBlock;
+		return this.sourceBlock.getId();
 	}
 
 	@Override
-	public int getSourceBlockPort() {
+	public int getSourceOutputPort() {
 		return this.sourcePort;
 	}
 
 	@Override
 	public String getDestinatinBlockId() {;
+		return this.destinationBlock.getId();
+	}
+
+	@Override
+	public IProcessingBlock getSourceBlock() {
+		return this.sourceBlock;
+	}
+
+	@Override
+	public IProcessingBlock getDestBlock() {
 		return this.destinationBlock;
 	}
 
@@ -50,7 +60,7 @@ public class Connector implements IConnector {
 		public Builder(){
 			this.conn = new Connector();
 		}
-		
+		/*
 		@Override
 		public org.moonlightcontroller.processing.IConnector.Builder setSourceBlockId(
 				String src) {
@@ -71,11 +81,33 @@ public class Connector implements IConnector {
 			this.conn.sourcePort = port;
 			return this;
 		}
-
+		*/
 		@Override
 		public IConnector build() {
 			return this.conn;
 		}
+
+		@Override
+		public org.moonlightcontroller.processing.IConnector.Builder setSourceBlock(
+				IProcessingBlock source) {
+			this.conn.sourceBlock = source;
+			return this;
+		}
+
+		@Override
+		public org.moonlightcontroller.processing.IConnector.Builder setSourceOutputPort(
+				int port) {
+			this.conn.sourcePort = port;
+			return this;
+		}
+
+		@Override
+		public org.moonlightcontroller.processing.IConnector.Builder setDestBlock(
+				IProcessingBlock dest) {
+			this.conn.destinationBlock = dest;
+			return this;
+		}
 	}
+
 }
 

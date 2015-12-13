@@ -1,6 +1,8 @@
-package org.moonlightcontroller.processing;
+package org.openboxprotocol.protocol;
 
 import java.util.List;
+
+import org.moonlightcontroller.processing.BlockClass;
 
 public interface IProcessingBlock {
 	public String getId();
@@ -18,6 +20,7 @@ public interface IProcessingBlock {
 	
 	public interface Builder {
 		public Builder addPort();
+		public Builder setBlockType(BlockClass type);
 		public IProcessingBlock build();
 	}
 }
