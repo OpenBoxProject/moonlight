@@ -1,6 +1,6 @@
 package org.openboxprotocol.types;
 
-import org.openboxprotocol.protocol.parsing.JSONParseException;
+import org.moonlightcontroller.exceptions.JSONParseException;
 
 public class TransportPort implements ValueType<TransportPort> {
 
@@ -34,5 +34,9 @@ public class TransportPort implements ValueType<TransportPort> {
 	@Override
 	public boolean equals(Object other) {
 		return (other instanceof TransportPort) && ((TransportPort)other).port == this.port;
+	}
+	
+	public static TransportPort of(int port) {
+		return new TransportPort(port);
 	}
 }
