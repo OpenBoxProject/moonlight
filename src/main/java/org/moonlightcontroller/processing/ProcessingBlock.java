@@ -1,7 +1,9 @@
 package org.moonlightcontroller.processing;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public abstract class ProcessingBlock implements IProcessingBlock{
 
@@ -30,6 +32,18 @@ public abstract class ProcessingBlock implements IProcessingBlock{
 	public List<Integer> getPorts() {
 		return this.ports;
 	}
+	
+	@Override
+	public Map<String, String> getConfiguration() {
+		Map<String, String> config = new HashMap<String, String>();
+		putConfiguration(config);
+		return config;
+	}
+	
+	protected abstract void putConfiguration(Map<String, String> config);
+	
+	@Override
+	public abstract ProcessingBlock clone();
 	
 	public static abstract class Builder implements IProcessingBlock.Builder {
 		

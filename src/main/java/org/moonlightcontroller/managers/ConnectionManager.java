@@ -13,12 +13,12 @@ import javax.ws.rs.core.Response.Status;
 import org.moonlightcontroller.aggregator.ApplicationAggregator;
 import org.moonlightcontroller.managers.models.ConnectionInstance;
 import org.moonlightcontroller.managers.models.IRequestSender;
-import org.moonlightcontroller.managers.models.messages.SetProcessingGraphResponse;
 import org.moonlightcontroller.managers.models.messages.Hello;
 import org.moonlightcontroller.managers.models.messages.IMessage;
 import org.moonlightcontroller.managers.models.messages.KeepAlive;
 import org.moonlightcontroller.managers.models.messages.SetProcessingGraphRequest;
-import org.openboxprotocol.protocol.IStatement;
+import org.moonlightcontroller.managers.models.messages.SetProcessingGraphResponse;
+import org.moonlightcontroller.processing.IProcessingGraph;
 import org.openboxprotocol.protocol.topology.ILocationSpecifier;
 import org.openboxprotocol.protocol.topology.InstanceLocationSpecifier;
 import org.openboxprotocol.protocol.topology.TopologyManager;
@@ -92,8 +92,9 @@ public class ConnectionManager implements IConnectionManager, ISouthboundClient{
 					.setCapabilities(message.getCapabilities())
 					.build();
 			instancesMapping.put(key, value);
-			List<IStatement> statements = ApplicationAggregator.getInstance().getStatements(key);
-			SetProcessingGraphRequest processMessage = new SetProcessingGraphRequest(xid, dpid, statements);
+			
+			IProcessingGraph processingGraph = ApplicationAggregator.getInstance().getProcessingGraph(key);
+			SetProcessingGraphRequest processMessage = new SetProcessingGraphRequest(xid, dpid, processingGraph);
 			IRequestSender requestSender = requestSendersMapping.get(xid);
 			value.sendRequest(processMessage, requestSender);
 			return okResponse();

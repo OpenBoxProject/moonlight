@@ -1,7 +1,8 @@
-package org.moonlightcontroller.processing;
+package org.openboxprotocol.protocol;
 
 import java.util.List;
-import java.util.Map;
+
+import org.moonlightcontroller.processing.BlockClass;
 
 public interface IProcessingBlock {
 	public String getId();
@@ -14,13 +15,12 @@ public interface IProcessingBlock {
 	
 	public String toShortString();
 	
-	public Map<String, String> getConfiguration();
-	
 	// Clone the block but give it a unique ID
 	public IProcessingBlock clone();
 	
 	public interface Builder {
 		public Builder addPort();
+		public Builder setBlockType(BlockClass type);
 		public IProcessingBlock build();
 	}
 }

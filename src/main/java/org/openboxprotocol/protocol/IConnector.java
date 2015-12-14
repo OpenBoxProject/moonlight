@@ -1,4 +1,4 @@
-package org.moonlightcontroller.processing;
+package org.openboxprotocol.protocol;
 
 
 public interface IConnector {
@@ -13,6 +13,10 @@ public interface IConnector {
 	
 	public interface Builder {
 		
+		Builder setSourceBlockId(String src);
+		
+		Builder setSourceBlockPort(int port);
+	
 		public Builder setSourceBlock(IProcessingBlock source);
 		public Builder setSourceOutputPort(int port);
 		public Builder setDestBlock(IProcessingBlock dest);

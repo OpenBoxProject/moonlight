@@ -13,7 +13,7 @@ import org.moonlightcontroller.managers.models.messages.SetProcessingGraphRespon
 import org.moonlightcontroller.managers.models.messages.Hello;
 import org.moonlightcontroller.managers.models.messages.KeepAlive;
 
-@Path("/message")
+@Path("/message/")
 public class SouthboundApi {
 	@GET
 	@Path("test")

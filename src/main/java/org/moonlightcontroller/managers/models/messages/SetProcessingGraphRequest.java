@@ -1,25 +1,19 @@
 package org.moonlightcontroller.managers.models.messages;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import org.openboxprotocol.protocol.IStatement;
+import org.moonlightcontroller.processing.IProcessingGraph;
 
 public class SetProcessingGraphRequest implements IMessage {
 
 	private String type;
 	private int xid;
 	private int dpid;
-	private List<IStatement> statements;
+	private IProcessingGraph graph;
 	
-	public SetProcessingGraphRequest(){	
-	}
-	
-	public SetProcessingGraphRequest(int xid, int dpid, List<IStatement> statements) {
+	public SetProcessingGraphRequest(int xid, int dpid, IProcessingGraph graph) {
 		this.type = "SetProcessingGraphRequest";
 		this.xid = xid;
 		this.dpid = dpid;
-		this.statements = statements;
+		this.graph = graph;
 	}
 	
 	@Override
@@ -36,14 +30,14 @@ public class SetProcessingGraphRequest implements IMessage {
 		return dpid;
 	}
 
-	public List<IStatement> getStatements() {
-		return statements;
+	public IProcessingGraph getProcessingGraph() {
+		return graph;
 	}
 	
 	public static class Builder {
 		private int xid;
 		private int dpid;
-		private List<IStatement> statements = new ArrayList<IStatement>();
+		private IProcessingGraph graph;
 		
 		public Builder setXid(int xid) {
 			this.xid = xid;
@@ -53,12 +47,12 @@ public class SetProcessingGraphRequest implements IMessage {
 			this.dpid = dpid;
 			return this;
 		}
-		public Builder setStatements(List<IStatement> statements) {
-			this.statements = statements;
+		public Builder setProcessingGraph(IProcessingGraph graph) {
+			this.graph = graph;
 			return this;
 		}
 		public SetProcessingGraphRequest build() {
-			return new SetProcessingGraphRequest(xid, dpid, statements);
+			return new SetProcessingGraphRequest(xid, dpid, graph);
 		}
 	}
 }
