@@ -10,6 +10,10 @@ public class IpProto implements ValueType<IpProto> {
 	private static final int IPP_TCP = 6;
 	private static final int IPP_UDP = 17;
 	
+	private static final String IPP_ICMP_STR = "icmp";
+	private static final String IPP_TCP_STR = "tcp";
+	private static final String IPP_UDP_STR = "udp";
+	
 	public static final IpProto ICMP = new IpProto(IPP_ICMP);
 	public static final IpProto TCP = new IpProto(IPP_TCP);
 	public static final IpProto UDP = new IpProto(IPP_UDP);
@@ -37,6 +41,20 @@ public class IpProto implements ValueType<IpProto> {
 	@Override
 	public boolean equals(Object other) {
 		return (other instanceof IpProto) && ((IpProto)other).ipProto == this.ipProto;
+	}
+	
+	@Override
+	public String toString() {
+		switch (ipProto) {
+		case IPP_ICMP:
+			return IPP_ICMP_STR;
+		case IPP_TCP:
+			return IPP_TCP_STR;
+		case IPP_UDP:
+			return IPP_UDP_STR;
+		default:
+			return Integer.toString(ipProto);
+		}
 	}
 	
 	public static IpProto of(int ipProto) {

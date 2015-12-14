@@ -15,8 +15,7 @@ public class IPv4Address implements ValueType<IPv4Address> {
 
 	@Override
 	public IPv4Address applyMask(IPv4Address mask) {
-		// TODO Auto-generated method stub
-		return null;
+		return new IPv4Address(this.ip & mask.ip);
 	}
 	
 	@Override
@@ -27,6 +26,26 @@ public class IPv4Address implements ValueType<IPv4Address> {
 	@Override
 	public boolean equals(Object other) {
 		return (other instanceof IPv4Address) && ((IPv4Address)other).ip == this.ip;
+	}
+	
+	private String toStringValue = null;
+	
+	@Override
+	public String toString() {
+		if (toStringValue == null) {
+			synchronized (this) {
+				if (toStringValue == null) {
+					long v = this.ip;
+					String[] parts = new String[4];
+					for (int i = 0; i < 4; i++) {
+						parts[3 - i] = Long.toString(v & 0x0FF);
+						v >>= 8;
+					}
+					toStringValue = String.join(".", parts);
+				}
+			}
+		}
+		return toStringValue;
 	}
 	
 	private static IPv4Address fromString(String addr) throws ParseException {

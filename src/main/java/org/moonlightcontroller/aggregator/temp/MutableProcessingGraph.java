@@ -52,6 +52,7 @@ class MutableProcessingGraph extends ProcessingGraph {
 
 	public MutableProcessingGraph removeBlock(IProcessingBlock block) {
 		this.blocks.remove(block);
+		this.connectors.removeIf(c -> c.getSourceBlock().equals(block) || c.getDestBlock().equals(block));
 		return this;
 	}
 	

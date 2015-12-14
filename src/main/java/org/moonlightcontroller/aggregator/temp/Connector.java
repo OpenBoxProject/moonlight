@@ -6,6 +6,10 @@ public class Connector implements IConnector {
 	private int sourceOutputPort;
 	
 	public Connector(IProcessingBlock src, int srcOutputPort, IProcessingBlock dst) {
+		if (src == null)
+			throw new NullPointerException("Connector src is null");
+		if (dst == null)
+			throw new NullPointerException("Connector dst is null");
 		this.src = src;
 		this.sourceOutputPort = srcOutputPort;
 		this.dst = dst;
