@@ -37,4 +37,9 @@ public class Masked<F extends ValueType<F>> implements ValueType<Masked<F>> {
 		return this;
 	}
 	
+	@Override
+	public String toString() {
+		return String.format("[ Masked: %s/%s ]", this.value, this.mask);
+	}
+	
 }

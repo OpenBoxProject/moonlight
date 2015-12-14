@@ -2,8 +2,11 @@ package org.openboxprotocol.protocol;
 
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
+import java.util.TreeMap;
 
 import org.moonlightcontroller.exceptions.MergeException;
 import org.openboxprotocol.types.Masked;
@@ -96,6 +99,35 @@ public class OpenBoxHeaderMatch implements HeaderMatch {
 		return matchBuilder.build();
 	}
 	
+	private String toStringValue = null;
+	
+	@Override
+	public String toString() {
+		if (toStringValue == null) {
+			synchronized (this) {
+				if (toStringValue == null) {
+					StringBuilder sb = new StringBuilder();
+					sb.append("[ OpenBoxHeaderMatch: ");
+					if (this.fields.size() == 0) {
+						sb.append("ANY");
+					} else {
+						TreeMap<HeaderField<?>, ValueType<?>> sortedMap = new TreeMap<>(this.fields);
+						Iterator<Entry<HeaderField<?>, ValueType<?>>> iter = sortedMap.entrySet().iterator();
+						while (iter.hasNext()) {
+							Entry<HeaderField<?>, ValueType<?>> e = iter.next();
+							sb.append(String.format("%s=%s", e.getKey(), e.getValue()));
+							if (iter.hasNext())
+								sb.append(", ");
+						}
+					}
+					sb.append(" ]");
+					toStringValue = sb.toString();
+				}
+			}
+		}
+		return toStringValue;
+	}
+	
 	public static class Builder implements HeaderMatch.Builder {
 
 		private OpenBoxHeaderMatch match;
@@ -112,12 +144,16 @@ public class OpenBoxHeaderMatch implements HeaderMatch {
 		public <F extends ValueType<F>> org.openboxprotocol.protocol.HeaderMatch.Builder setExact(
 				HeaderField<F> field, F value)
 				throws UnsupportedOperationException {
+			if (value == null)
+				throw new NullPointerException();
 			match.fields.put(field, value);
 			return this;
 		}
 		
         Builder setExactUnsafe(HeaderField<?> field, ValueType<?> value) 
         		throws UnsupportedOperationException {
+			if (value == null)
+				throw new NullPointerException();
         	match.fields.put(field, value);
 			return this;
         }
@@ -126,6 +162,8 @@ public class OpenBoxHeaderMatch implements HeaderMatch {
 		public <F extends ValueType<F>> org.openboxprotocol.protocol.HeaderMatch.Builder setMasked(
 				HeaderField<F> field, F value, F mask)
 				throws UnsupportedOperationException {
+			if (value == null || mask == null)
+				throw new NullPointerException();
 			match.fields.put(field, Masked.of(value, mask));
 			return this;
 		}
@@ -134,12 +172,16 @@ public class OpenBoxHeaderMatch implements HeaderMatch {
 		public <F extends ValueType<F>> org.openboxprotocol.protocol.HeaderMatch.Builder setMasked(
 				HeaderField<F> field, Masked<F> valueWithMask)
 				throws UnsupportedOperationException {
+			if (valueWithMask == null)
+				throw new NullPointerException();
 			match.fields.put(field, valueWithMask);
 			return this;
 		}
 		
         Builder setMaskedUnsafe(HeaderField<?> field, Masked<?> valueWithMask) 
         		throws UnsupportedOperationException {
+			if (valueWithMask == null)
+				throw new NullPointerException();
         	match.fields.put(field, valueWithMask);
 			return this;
         }

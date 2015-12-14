@@ -1,4 +1,8 @@
 package org.moonlightcontroller.aggregator.temp;
+
+import org.moonlightcontroller.exceptions.MergeException;
+
+
 public class Alert extends AbstractProcessingBlock implements IStaticProcessingBlock {
 
 	private String id;
@@ -37,7 +41,16 @@ public class Alert extends AbstractProcessingBlock implements IStaticProcessingB
 	public boolean canMergeWith(IStaticProcessingBlock other) {
 		if (!(other instanceof Alert))
 			return false;
-		Alert o = (Alert)other;
-		return this.message.equals(o.message);
+		return true;
+	}
+
+	@Override
+	public IStaticProcessingBlock mergeWith(IStaticProcessingBlock other) throws MergeException {
+		if (other instanceof Alert) {
+			Alert o = (Alert)other;
+			return new Alert("MERGED##" + this.id + "##" + other.getId() + "##" + UUIDGenerator.getSystemInstance().getUUID().toString(), this.message + ";;" + o.message);
+		} else {
+			throw new MergeException("Cannot merge statics of different type");
+		}
 	}
 }
