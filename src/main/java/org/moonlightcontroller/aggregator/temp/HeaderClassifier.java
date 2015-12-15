@@ -104,7 +104,7 @@ public class HeaderClassifier extends AbstractProcessingBlock implements IClassi
 		Collections.sort(rules);
 		//Collections.reverse(rules);
 
-		Priority newP = (this.priority.compareTo(o.priority) < 0 ? this.priority : o.priority);
+		Priority newP = (this.priority.compareTo(o.priority) > 0 ? this.priority : o.priority);
 		
 		IClassifierProcessingBlock merged = new HeaderClassifier("MERGED##" + this.id + "##" + other.getId() + "##" + UUIDGenerator.getSystemInstance().getUUID().toString(), rules, newP);
 		

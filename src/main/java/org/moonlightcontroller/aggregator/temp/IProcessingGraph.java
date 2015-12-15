@@ -7,6 +7,7 @@ public interface IProcessingGraph {
 	public List<IProcessingBlock> getSuccessors(IProcessingBlock block);
 	public List<IConnector> getOutgoingConnectors(IProcessingBlock block);
 	public List<IConnector> getIncomingConnectors(IProcessingBlock block);
+	public IConnector getOutgoingConnector(IProcessingBlock block, int outPort);
 	public int getOutDegree(IProcessingBlock block);
 	public int getInDegree(IProcessingBlock block);
 	public IProcessingBlock getRoot();
