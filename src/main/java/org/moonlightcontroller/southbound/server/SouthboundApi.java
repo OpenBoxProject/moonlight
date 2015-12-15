@@ -26,6 +26,7 @@ public class SouthboundApi {
 	@Path("Hello")
 	@Consumes(MediaType.APPLICATION_JSON)
 	public Response hello(Hello message) {
+		System.out.println("Poopy:" + message.toString());
 		return ConnectionManager.getInstance().handleHelloRequest(message);
 	}
 
