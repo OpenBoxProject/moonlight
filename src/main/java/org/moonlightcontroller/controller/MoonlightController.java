@@ -52,10 +52,10 @@ public class MoonlightController {
 		}
 		
 		for (InstanceLocationSpecifier endpoint : topology.getAllEndpoints()){
-			List<IStatement> stmts = aggregator.getStatements(endpoint);
-			if (stmts != null) {
-				this.sclient.sendProcessingGraph(endpoint, stmts);	
-			}
+			//List<IStatement> stmts = aggregator.getStatements(endpoint);
+			//if (stmts != null) {
+			//	this.sclient.sendProcessingGraph(endpoint, stmts);	
+			//}
 		}
 		
 		try {
