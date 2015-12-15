@@ -2,7 +2,10 @@ package org.moonlightcontroller.aggregator.temp;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.moonlightcontroller.aggregator.temp.Tupple.Pair;
 import org.moonlightcontroller.exceptions.MergeException;
@@ -103,6 +106,24 @@ public class HeaderClassifier extends AbstractProcessingBlock implements IClassi
 		}
 		Collections.sort(rules);
 		//Collections.reverse(rules);
+		
+		// Remove duplicate rules
+		// TODO: Fix here, it does not work correctly
+		Set<Integer> toRemove = new HashSet<>();
+		for (int i = 0; i < rules.size(); i++) {
+			for (int j = i + 1; j < rules.size(); j++) {
+				if (rules.get(i).matchEquals(rules.get(j))) {
+					// Same rule - remove rule j
+					toRemove.add(j);
+				}
+			}
+		}
+		List<Integer> toRemoveLst = toRemove.stream().collect(Collectors.toList());
+		Collections.sort(toRemoveLst);
+		Collections.reverse(toRemoveLst);
+		for (Integer i : toRemoveLst) {
+			rules.remove(i.intValue());
+		}
 
 		Priority newP = (this.priority.compareTo(o.priority) > 0 ? this.priority : o.priority);
 		
@@ -169,6 +190,15 @@ public class HeaderClassifier extends AbstractProcessingBlock implements IClassi
 				return o.priority.compareTo(this.priority);
 			else
 				return this.order - o.order;
+		}
+		
+		boolean matchEquals(HeaderClassifierRule other) {
+			return this.match.equals(other.match);
+		}
+		
+		@Override
+		public String toString() {
+			return String.format("[HeaderClassifierRule: priority: %s, order: %d, match: %s]", this.priority.name(), this.order, this.match.toString());
 		}
 	}
 	

@@ -128,6 +128,19 @@ public class OpenBoxHeaderMatch implements HeaderMatch {
 		return toStringValue;
 	}
 	
+	@Override
+	public boolean equals(Object other) {
+		if (!(other instanceof OpenBoxHeaderMatch))
+			return false;
+		OpenBoxHeaderMatch o = (OpenBoxHeaderMatch)other;
+		for (HeaderField<?> f : this.fields.keySet()) {
+			if (!o.fields.containsKey(f) || !this.fields.get(f).equals(o.fields.get(f))) {
+				return false;
+			}
+		}
+		return true;
+	}
+	
 	public static class Builder implements HeaderMatch.Builder {
 
 		private OpenBoxHeaderMatch match;
