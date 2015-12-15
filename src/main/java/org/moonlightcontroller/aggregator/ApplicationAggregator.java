@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import org.moonlightcontroller.aggregator.temp.IProcessingGraph;
 import org.moonlightcontroller.bal.BoxApplication;
 import org.moonlightcontroller.processing.IConnector;
 import org.moonlightcontroller.processing.IProcessingBlock;
@@ -73,12 +74,9 @@ public class ApplicationAggregator implements IApplicationAggregator {
 
 	/*
 	@Override
-	public List<IStatement> getStatements(ILocationSpecifier loc) {
-		if (!loc.isSingleLocation()) {
-			// Throw exception?
-			return null;
-		}
-		return this.aggregatedStatement.get(loc);
+	public IProcessingGraph getProcessingGraph(ILocationSpecifier loc) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 	*/
 	
