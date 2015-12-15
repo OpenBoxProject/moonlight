@@ -1,12 +1,14 @@
 package org.moonlightcontroller.aggregator.temp;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Queue;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.moonlightcontroller.aggregator.IApplicationAggregator;
 import org.moonlightcontroller.aggregator.temp.HeaderClassifier.HeaderClassifierRule;
@@ -57,6 +59,8 @@ public class Aggregator implements IApplicationAggregator {
 		
 		//compress(unifiedMutable, unified.getRoot(), null, 0, null, 0, new HashMap<>());
 		compress(unifiedMutable);
+		
+		rewireClones(unifiedMutable);
 
 		return unifiedMutable;
 	}
@@ -451,6 +455,11 @@ public class Aggregator implements IApplicationAggregator {
 	}
 	*/
 	
+	/**
+	 * Compresses the lengths of paths in a normalized graph by merging classifiers and statics.
+	 * 
+	 * @param graph
+	 */
 	private static void compress(MutableProcessingGraph graph) {
 		IProcessingBlock current;
 		IProcessingBlock start;
@@ -711,6 +720,50 @@ public class Aggregator implements IApplicationAggregator {
 		}
 	}
 	
+	/**
+	 * Groups all clones of the same block and changes connectors to point to only one of the instances,
+	 * discarding other clones used to normalize the graph into a tree or to duplicate parts of the graph
+	 * during the compression process.
+	 * 
+	 * @param graph
+	 */
+	private static void rewireClones(MutableProcessingGraph graph) {
+		graph.clean();
+		
+		List<IProcessingBlock> blocks = graph.getBlocks();
+		
+		List<IProcessingBlock> clones = blocks.stream().filter(b -> b.isClone()).collect(Collectors.toList());
+		
+		Map<IProcessingBlock, Set<IProcessingBlock>> sets = new HashMap<IProcessingBlock, Set<IProcessingBlock>>();
+		
+		for (IProcessingBlock clone : clones) {
+			if (!sets.containsKey(clone.getOriginalInstance())) {
+				sets.put(clone.getOriginalInstance(), new HashSet<>());
+			}
+			sets.get(clone.getOriginalInstance()).add(clone);
+		}
+	
+		for (Set<IProcessingBlock> s : sets.values()) {
+			IProcessingBlock leader;
+			IProcessingBlock rep = s.iterator().next();
+			if (blocks.contains(rep.getOriginalInstance())) {
+				leader = rep.getOriginalInstance();
+			} else {
+				leader = rep;
+			}
+			
+			for (IProcessingBlock clone : s) {
+				if (clone != leader) {
+					List<IConnector> ins = graph.getIncomingConnectors(clone);
+					ins.forEach(c -> graph.addConnector(new Connector(c.getSourceBlock(), c.getSourceOutputPort(), leader)));
+					ins.forEach(c -> graph.removeConnector(c));
+				}
+			}
+		}
+		
+		graph.clean();
+	}
+	
 	public static void main(String[] args) throws Exception {
 		
 		HeaderClassifierRule[] firewallRules = {
@@ -805,6 +858,9 @@ public class Aggregator implements IApplicationAggregator {
 				printRules(classifier);
 			}
 		}
+		
+		System.out.println();
+		System.out.println("Total number of blocks: " + merged.getBlocks().size());
 	}
 	
 	private static void printRules(HeaderClassifier classifier) {
