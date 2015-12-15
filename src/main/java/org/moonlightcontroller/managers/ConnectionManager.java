@@ -18,6 +18,8 @@ import org.moonlightcontroller.managers.models.messages.IMessage;
 import org.moonlightcontroller.managers.models.messages.KeepAlive;
 import org.moonlightcontroller.managers.models.messages.SetProcessingGraphRequest;
 import org.moonlightcontroller.managers.models.messages.SetProcessingGraphResponse;
+import org.moonlightcontroller.processing.IConnector;
+import org.moonlightcontroller.processing.IProcessingBlock;
 import org.moonlightcontroller.processing.IProcessingGraph;
 import org.openboxprotocol.protocol.topology.ILocationSpecifier;
 import org.openboxprotocol.protocol.topology.InstanceLocationSpecifier;
@@ -94,7 +96,10 @@ public class ConnectionManager implements IConnectionManager, ISouthboundClient{
 			instancesMapping.put(key, value);
 			
 			IProcessingGraph processingGraph = ApplicationAggregator.getInstance().getProcessingGraph(key);
-			SetProcessingGraphRequest processMessage = new SetProcessingGraphRequest(xid, dpid, processingGraph);
+			List<IProcessingBlock> blocks = processingGraph.getBlocks();
+			List<IConnector> connectors = processingGraph.getConnectors();
+			
+			SetProcessingGraphRequest processMessage = new SetProcessingGraphRequest(xid, dpid, null, blocks, connectors);
 			IRequestSender requestSender = requestSendersMapping.get(xid);
 			value.sendRequest(processMessage, requestSender);
 			return okResponse();

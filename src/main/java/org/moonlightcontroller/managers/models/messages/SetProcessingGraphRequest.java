@@ -1,19 +1,27 @@
 package org.moonlightcontroller.managers.models.messages;
 
-import org.moonlightcontroller.processing.IProcessingGraph;
+import java.util.List;
+import org.moonlightcontroller.processing.IConnector;
+import org.moonlightcontroller.processing.IProcessingBlock;
 
 public class SetProcessingGraphRequest implements IMessage {
 
 	private String type;
 	private int xid;
 	private int dpid;
-	private IProcessingGraph graph;
+	private List<String> modules;
+	private List<IProcessingBlock> blocks;
+//	private Map<String, Object> blocks;
+//	private List<JConnector> connectors;
+	private List<IConnector> connectors;
 	
-	public SetProcessingGraphRequest(int xid, int dpid, IProcessingGraph graph) {
+	public SetProcessingGraphRequest(int xid, int dpid, List<String> modules, List<IProcessingBlock> blocks, List<IConnector> connectors) {
 		this.type = "SetProcessingGraphRequest";
 		this.xid = xid;
 		this.dpid = dpid;
-		this.graph = graph;
+		this.modules = modules;
+		this.setBlocks(blocks);
+		this.setConnectors(connectors);
 	}
 	
 	@Override
@@ -30,29 +38,44 @@ public class SetProcessingGraphRequest implements IMessage {
 		return dpid;
 	}
 
-	public IProcessingGraph getProcessingGraph() {
-		return graph;
+	public List<String> getModules() {
+		return modules;
 	}
-	
-	public static class Builder {
-		private int xid;
-		private int dpid;
-		private IProcessingGraph graph;
-		
-		public Builder setXid(int xid) {
-			this.xid = xid;
-			return this;
-		}
-		public Builder setDpid(int dpid) {
-			this.dpid = dpid;
-			return this;
-		}
-		public Builder setProcessingGraph(IProcessingGraph graph) {
-			this.graph = graph;
-			return this;
-		}
-		public SetProcessingGraphRequest build() {
-			return new SetProcessingGraphRequest(xid, dpid, graph);
-		}
+
+	public void setModules(List<String> modules) {
+		this.modules = modules;
 	}
+
+	public List<IProcessingBlock> getBlocks() {
+		return blocks;
+	}
+
+	public void setBlocks(List<IProcessingBlock> blocks) {
+		this.blocks = blocks;
+	}
+
+	public List<IConnector> getConnectors() {
+		return connectors;
+	}
+
+	public void setConnectors(List<IConnector> connectors) {
+		this.connectors = connectors;
+	}
+
+//	public Map<String, Object> getBlocks() {
+//		return blocks;
+//	}
+//
+//	public void setBlocks(Map<String, Object> blocks) {
+//		this.blocks = blocks;
+//	}
+//
+//	public List<JConnector> getConnectors() {
+//		return connectors;
+//	}
+//
+//	public void setConnectors(List<JConnector> connectors) {
+//		this.connectors = connectors;
+//	}
+
 }

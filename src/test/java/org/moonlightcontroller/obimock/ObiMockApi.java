@@ -20,7 +20,7 @@ import org.moonlightcontroller.managers.models.messages.ReadRequest;
 import org.moonlightcontroller.managers.models.messages.SetProcessingGraphRequest;
 import org.moonlightcontroller.managers.models.messages.WriteRequest;
 
-@Path("/message")
+@Path("/message/")
 public class ObiMockApi {
 
 	private final static Logger LOG = Logger.getLogger(ObiMockApi.class.getName());
@@ -39,8 +39,7 @@ public class ObiMockApi {
 		HashMap<String, List<String>> caps = new HashMap<>();
 		caps.put("Caps1", Arrays.asList("cap1_1", "cap1_2"));
 		int xid = ObiMock.getInstance().fetchAndIncxid();
-		Hello hello = new Hello.Builder().setXid(xid).setDpid(ObiMock.getInstance().getObiIp()).setVersion("1.0")
-				.setCapabilities(caps).build();
+		Hello hello = new Hello(xid, ObiMock.getInstance().getObiIp(), "1.0", "Hello", caps);
 		this.sendMessage(hello);
 		
 	}
