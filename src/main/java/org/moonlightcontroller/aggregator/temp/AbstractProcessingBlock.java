@@ -27,6 +27,11 @@ public abstract class AbstractProcessingBlock implements IProcessingBlock {
 	}
 	
 	@Override
+	public boolean isClone() {
+		return this.cloned;
+	}
+	
+	@Override
 	public IProcessingBlock getOriginalInstance() {
 		return this.original;
 	}

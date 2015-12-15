@@ -1,6 +1,8 @@
 package org.moonlightcontroller.aggregator.temp;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 
 class MutableProcessingGraph extends ProcessingGraph {
@@ -69,6 +71,33 @@ class MutableProcessingGraph extends ProcessingGraph {
 		
 		this.connectors.removeIf(c -> c.getDestBlock().equals(oldBlock));
 		this.connectors.addAll(newOutgoingConnectors);
+		return this;
+	}
+	
+	private void markConnected(IProcessingBlock current, Set<IProcessingBlock> markedBlocks, Set<IConnector> markedConnectors) {
+		if (!this.blocks.contains(current))
+			return;
+		
+		markedBlocks.add(current);
+		List<IConnector> outs = this.getOutgoingConnectors(current);
+		
+		for (IConnector c : outs) {
+			if (this.blocks.contains(c.getDestBlock()))
+				markedConnectors.add(c);
+		}
+		
+		outs.forEach(c -> markConnected(c.getDestBlock(), markedBlocks, markedConnectors));
+	}
+	
+	public MutableProcessingGraph clean() {
+		Set<IProcessingBlock> markedBlocks = new HashSet<>();
+		Set<IConnector> markedConnectors = new HashSet<>();
+		
+		markConnected(getRoot(), markedBlocks, markedConnectors);
+		
+		this.blocks.removeIf(b -> !(markedBlocks.contains(b)));
+		this.connectors.removeIf(c -> !(markedConnectors.contains(c)));
+		
 		return this;
 	}
 }
