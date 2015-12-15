@@ -52,6 +52,18 @@ public class ProcessingGraph implements IProcessingGraph {
 	}
 
 	@Override
+	public IConnector getOutgoingConnector(IProcessingBlock block, int outPort) {
+		List<IConnector> outs = this.getOutgoingConnectors(block).stream().filter(c -> c.getSourceOutputPort() == outPort).collect(Collectors.toList());
+		if (outs.isEmpty()) {
+			return null;
+		} else if (outs.size() > 1) {
+			throw new IllegalStateException("Inconsistent graph: multiple outgoing connectors from the same port");
+		} else {
+			return outs.get(0);
+		}
+	}
+
+	@Override
 	public List<IConnector> getIncomingConnectors(IProcessingBlock block) {
 		return this.connectors.stream()
 				.filter(c -> c.getDestBlock().equals(block))

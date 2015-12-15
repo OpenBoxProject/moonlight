@@ -1,7 +1,6 @@
 package org.moonlightcontroller.aggregator.temp;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
@@ -9,12 +8,15 @@ import java.util.Map;
 import java.util.Queue;
 import java.util.Set;
 
+import org.moonlightcontroller.aggregator.IApplicationAggregator;
 import org.moonlightcontroller.aggregator.temp.HeaderClassifier.HeaderClassifierRule;
 import org.moonlightcontroller.aggregator.temp.Tupple.Pair;
+import org.moonlightcontroller.bal.BoxApplication;
 import org.moonlightcontroller.exceptions.MergeException;
 import org.openboxprotocol.protocol.HeaderField;
 import org.openboxprotocol.protocol.OpenBoxHeaderMatch;
 import org.openboxprotocol.protocol.Priority;
+import org.openboxprotocol.protocol.topology.ILocationSpecifier;
 import org.openboxprotocol.types.EthType;
 import org.openboxprotocol.types.IPv4Address;
 import org.openboxprotocol.types.IpProto;
@@ -23,9 +25,9 @@ import org.openboxprotocol.types.TransportPort;
 import com.google.common.collect.ImmutableList;
 
 
-public class Aggregator {
+public class Aggregator implements IApplicationAggregator {
 	
-	public static final boolean AGGREGATOR_DEBUG = true;
+	public static final boolean AGGREGATOR_DEBUG = false;
 	
 	/**
 	 * Merges two processing graphs. This method assumes order of (a, b).
@@ -210,7 +212,7 @@ public class Aggregator {
 	
 	private static String _lastGraphStr = "";
 	
-	// TODO: Complete here
+	/*
 	private static void compress(MutableProcessingGraph graph, IProcessingBlock current, 
 			IProcessingBlock parent, int parentPort,
 			IProcessingBlock start, int startOutPort,
@@ -358,9 +360,9 @@ public class Aggregator {
 				Set<IConnector> connectorsToAdd = new HashSet<>();
 				
 				for (IConnector next : nextConnectors) {
-					// TODO: This must be done on the cloned blocks, can't do that on original graph
+					// This must be done on the cloned blocks, can't do that on original graph
 					// However, after the changes, 'end' does not exist in the graph anymore...
-					// TODO: In fact this should be separated into two actions:
+					// In fact this should be separated into two actions:
 					// 1. Merge the classifiers, and mark the clones of the block that was before 'end'
 					// 2. Search the paths from 'merged' to these marked clones for merging statics
 					List<IProcessingBlock> path;
@@ -447,6 +449,7 @@ public class Aggregator {
 						replacements));			
 		}
 	}
+	*/
 	
 	private static void compress(MutableProcessingGraph graph) {
 		IProcessingBlock current;
@@ -519,6 +522,10 @@ public class Aggregator {
 						try {
 							IProcessingBlock merged = ((IClassifierProcessingBlock)start).mergeWith((IClassifierProcessingBlock)end, graph, outPortSources);
 							
+							if (merged instanceof HeaderClassifier) {
+								printRules((HeaderClassifier)merged);
+							}
+							
 							blocksToRemove.add(start);
 							
 							//replacements.put(start, merged);
@@ -532,7 +539,7 @@ public class Aggregator {
 								
 								// Step 1: clone the path from 'start'[outPortSources[0]] to 'end' (excluding) and connect it from 'merged'[outPort]
 								// (mark all cloned blocks to be removed)
-								IProcessingBlock origin = graph.getOutgoingConnectors(start).get(outPortSources.get(i).get(0)).getDestBlock();
+								IProcessingBlock origin = graph.getOutgoingConnector(start, outPortSources.get(i).get(0)).getDestBlock();
 								
 								IProcessingBlock last = clonePath(graph, 
 										origin, 
@@ -551,7 +558,7 @@ public class Aggregator {
 									// Step 2: clone the subtree going out of 'end'[outPortSources[1]] and connect it from the last block of the path cloned above
 									// (mark all cloned blocks to be removed)
 									cloneSubTree(graph, 
-											graph.getOutgoingConnectors(end).get(outPortSources.get(i).get(1)).getDestBlock(), 
+											graph.getOutgoingConnector(end, outPortSources.get(i).get(1)).getDestBlock(), 
 											last, (last == merged ? i : 0), 
 											blocksToAdd, connectorsToAdd, 
 											blocksToRemove, connectorsToRemove);
@@ -612,9 +619,9 @@ public class Aggregator {
 					Set<IConnector> connectorsToAdd = new HashSet<>();
 					
 					for (IConnector next : nextConnectors) {
-						// TODO: This must be done on the cloned blocks, can't do that on original graph
+						// This must be done on the cloned blocks, can't do that on original graph
 						// However, after the changes, 'end' does not exist in the graph anymore...
-						// TODO: In fact this should be separated into two actions:
+						// In fact this should be separated into two actions:
 						// 1. Merge the classifiers, and mark the clones of the block that was before 'end'
 						// 2. Search the paths from 'merged' to these marked clones for merging statics
 						List<IProcessingBlock> path;
@@ -795,13 +802,70 @@ public class Aggregator {
 		for (IProcessingBlock block : merged.getBlocks()) {
 			if (block instanceof HeaderClassifier) {
 				HeaderClassifier classifier = (HeaderClassifier)block;
-				int i = 0;
-				System.out.println("Rules for classifier " + classifier.getId() + ":");
-				for (HeaderClassifierRule rule: classifier.getRules()) {
-					System.out.println(String.format("%s --> [%d]", rule.getMatch(), i++));
-				}
+				printRules(classifier);
 			}
 		}
 	}
+	
+	private static void printRules(HeaderClassifier classifier) {
+		int i = 0;
+		System.out.println("Rules for classifier " + classifier.getId() + ":");
+		for (HeaderClassifierRule rule: classifier.getRules()) {
+			System.out.println(String.format("%s --> [%d]", rule.getMatch(), i++));
+		}
+	}
+
+	private static Aggregator _instance;
+	
+	private List<BoxApplication> apps;
+	private Map<ILocationSpecifier, IProcessingGraph> aggregated;
+	
+	private Aggregator() {
+		this.apps = new ArrayList<>();
+	}
+	
+	public static IApplicationAggregator getInstance() {
+		if (_instance == null) {
+			synchronized (Aggregator.class) {
+				if (_instance == null) {
+					_instance = new Aggregator();
+				}
+			}
+		}
+		return _instance;
+	}
+	
+	@Override
+	public void addApplications(List<BoxApplication> apps) {
+		this.apps.addAll(apps);
+	}
+
+	@Override
+	public void addApplication(BoxApplication app) {
+		this.apps.add(app);
+	}
+
+	@Override
+	public void performAggregation() {
+		synchronized (this) {
+			// TODO: The following should be done for each OBI location specifier
+			Collection<ILocationSpecifier> obiLocationSpecifiers = null; // TODO: <-- Replace this null!!!
+			for (ILocationSpecifier loc : obiLocationSpecifiers) {
+				IProcessingGraph last = null;
+				for (BoxApplication app : this.apps) {
+					// TODO: Complete here
+					// current = app.getProcessingGraph(); // This method does not exist now
+					// last = merge(last, current);
+				}
+				this.aggregated.put(loc, last);
+			}
+		}
+	}
+
+	@Override
+	public IProcessingGraph getProcessingGraph(ILocationSpecifier loc) {
+		return this.aggregated.get(loc);
+	}
+	
 	
 }
