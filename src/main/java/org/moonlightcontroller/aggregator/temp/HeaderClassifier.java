@@ -108,7 +108,6 @@ public class HeaderClassifier extends AbstractProcessingBlock implements IClassi
 		//Collections.reverse(rules);
 		
 		// Remove duplicate rules
-		// TODO: Fix here, it does not work correctly
 		Set<Integer> toRemove = new HashSet<>();
 		for (int i = 0; i < rules.size(); i++) {
 			for (int j = i + 1; j < rules.size(); j++) {
