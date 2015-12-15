@@ -5,6 +5,7 @@ public abstract class AbstractProcessingBlock implements IProcessingBlock {
 	
 	protected abstract AbstractProcessingBlock spawn(String id);
 	private boolean cloned = false;
+	private IProcessingBlock original = null;
 	
 	@Override
 	public IProcessingBlock clone() {
@@ -15,9 +16,19 @@ public abstract class AbstractProcessingBlock implements IProcessingBlock {
 			newId = String.format("%s::%s", this.getId(), UUIDGenerator.getSystemInstance().getUUID().toString());
 		}
 		AbstractProcessingBlock clone = this.spawn(newId);
+		if (this.cloned) {
+			clone.original = this.original;
+		} else {
+			clone.original = this;
+		}
 		clone.cloned = true;
 		
 		return clone;
+	}
+	
+	@Override
+	public IProcessingBlock getOriginalInstance() {
+		return this.original;
 	}
 	
 	@Override
