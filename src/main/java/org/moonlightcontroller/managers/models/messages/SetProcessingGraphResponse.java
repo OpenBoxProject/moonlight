@@ -3,19 +3,22 @@ package org.moonlightcontroller.managers.models.messages;
 public class SetProcessingGraphResponse implements IMessage {
 
 	private int xid;
-	
-	public SetProcessingGraphResponse(int xid) {
+	private String type;
+	public SetProcessingGraphResponse(String type, int xid) {
 		this.xid = xid;
 	}
-	
-	@Override
 	public int getXid() {
 		return xid;
 	}
-
-	@Override
-	public String getType() {
-		return "SetProcessingGraphResponse";
+	public void setXid(int xid) {
+		this.xid = xid;
 	}
+	public String getType() {
+		return type;
+	}
+	public void setType(String type) {
+		this.type = type;
+	}
+	
 
 }

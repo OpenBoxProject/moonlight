@@ -1,19 +1,25 @@
 package org.moonlightcontroller.managers.models.messages;
 
-import org.moonlightcontroller.processing.IProcessingGraph;
+import java.util.List;
+import org.moonlightcontroller.processing.JsonBlock;
+import org.moonlightcontroller.processing.JsonConnector;
 
 public class SetProcessingGraphRequest implements IMessage {
 
 	private String type;
 	private int xid;
 	private int dpid;
-	private IProcessingGraph graph;
+	private List<String> modules;
+	private List<JsonBlock> blocks;
+	private List<JsonConnector> connectors;
 	
-	public SetProcessingGraphRequest(int xid, int dpid, IProcessingGraph graph) {
+	public SetProcessingGraphRequest(int xid, int dpid, List<String> modules, List<JsonBlock> blocks, List<JsonConnector> connectors) {
 		this.type = "SetProcessingGraphRequest";
 		this.xid = xid;
 		this.dpid = dpid;
-		this.graph = graph;
+		this.modules = modules;
+		this.blocks = blocks;
+		this.connectors = connectors;
 	}
 	
 	@Override
@@ -30,29 +36,27 @@ public class SetProcessingGraphRequest implements IMessage {
 		return dpid;
 	}
 
-	public IProcessingGraph getProcessingGraph() {
-		return graph;
+	public List<String> getModules() {
+		return modules;
 	}
-	
-	public static class Builder {
-		private int xid;
-		private int dpid;
-		private IProcessingGraph graph;
-		
-		public Builder setXid(int xid) {
-			this.xid = xid;
-			return this;
-		}
-		public Builder setDpid(int dpid) {
-			this.dpid = dpid;
-			return this;
-		}
-		public Builder setProcessingGraph(IProcessingGraph graph) {
-			this.graph = graph;
-			return this;
-		}
-		public SetProcessingGraphRequest build() {
-			return new SetProcessingGraphRequest(xid, dpid, graph);
-		}
+
+	public void setModules(List<String> modules) {
+		this.modules = modules;
+	}
+
+	public List<JsonBlock> getBlocks() {
+		return blocks;
+	}
+
+	public void setBlocks(List<JsonBlock> blocks) {
+		this.blocks = blocks;
+	}
+
+	public List<JsonConnector> getConnectors() {
+		return connectors;
+	}
+
+	public void setConnectors(List<JsonConnector> connectors) {
+		this.connectors = connectors;
 	}
 }

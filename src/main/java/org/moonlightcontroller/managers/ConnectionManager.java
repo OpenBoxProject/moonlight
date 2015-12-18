@@ -6,10 +6,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
-
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
-
 import org.moonlightcontroller.aggregator.ApplicationAggregator;
 import org.moonlightcontroller.managers.models.ConnectionInstance;
 import org.moonlightcontroller.managers.models.IRequestSender;
@@ -18,15 +16,19 @@ import org.moonlightcontroller.managers.models.messages.IMessage;
 import org.moonlightcontroller.managers.models.messages.KeepAlive;
 import org.moonlightcontroller.managers.models.messages.SetProcessingGraphRequest;
 import org.moonlightcontroller.managers.models.messages.SetProcessingGraphResponse;
+import org.moonlightcontroller.processing.IConnector;
+import org.moonlightcontroller.processing.IProcessingBlock;
 import org.moonlightcontroller.processing.IProcessingGraph;
+import org.moonlightcontroller.processing.JsonBlock;
+import org.moonlightcontroller.processing.JsonConnector;
 import org.openboxprotocol.protocol.topology.ILocationSpecifier;
 import org.openboxprotocol.protocol.topology.InstanceLocationSpecifier;
 import org.openboxprotocol.protocol.topology.TopologyManager;
 
 public class ConnectionManager implements IConnectionManager, ISouthboundClient{
-	
+
 	private final static Logger LOG = Logger.getLogger(ConnectionManager.class.getName());
-	
+
 	Map<InstanceLocationSpecifier, ConnectionInstance> instancesMapping;
 	Map<Integer, IMessage> messagesMapping;
 	Map<Integer, IRequestSender> requestSendersMapping;
@@ -92,9 +94,12 @@ public class ConnectionManager implements IConnectionManager, ISouthboundClient{
 					.setCapabilities(message.getCapabilities())
 					.build();
 			instancesMapping.put(key, value);
-			
+
 			IProcessingGraph processingGraph = ApplicationAggregator.getInstance().getProcessingGraph(key);
-			SetProcessingGraphRequest processMessage = new SetProcessingGraphRequest(xid, dpid, processingGraph);
+			List<JsonBlock> blocks = translateBlocks(processingGraph.getBlocks());
+			List<JsonConnector> connectors = translateConnectors(processingGraph.getConnectors());
+
+			SetProcessingGraphRequest processMessage = new SetProcessingGraphRequest(xid, dpid, null, blocks, connectors);
 			IRequestSender requestSender = requestSendersMapping.get(xid);
 			value.sendRequest(processMessage, requestSender);
 			return okResponse();
@@ -104,6 +109,26 @@ public class ConnectionManager implements IConnectionManager, ISouthboundClient{
 			e.printStackTrace();
 			return internalErrorResponse();
 		}
+	}
+
+	private List<JsonConnector> translateConnectors(List<IConnector> connectors) {
+		return connectors.stream().map(connector -> translateConnector(connector)).collect(Collectors.toList());
+	}
+
+	private JsonConnector translateConnector(IConnector connector) {
+		return new JsonConnector(connector.getSourceBlockId(), 
+				connector.getSourceOutputPort(), 
+				connector.getDestinatinBlockId(),
+				0);
+	}
+
+
+	private List<JsonBlock> translateBlocks(List<IProcessingBlock> blocks) {
+		return blocks.stream().map(block -> translateBlock(block)).collect(Collectors.toList());
+	}
+
+	private JsonBlock translateBlock(IProcessingBlock block) {
+		return new JsonBlock(block.getBlockType(), block.getId(), block.getConfiguration());
 	}
 
 	private Response internalErrorResponse() {
@@ -116,7 +141,7 @@ public class ConnectionManager implements IConnectionManager, ISouthboundClient{
 		if (originMessage == null) {
 			return internalErrorResponse();
 		}
-		
+
 		if (originMessage instanceof SetProcessingGraphRequest) {
 			int dpid = ((SetProcessingGraphRequest)originMessage).getDpid();
 			InstanceLocationSpecifier loc = new InstanceLocationSpecifier(dpid +"", dpid);
@@ -124,7 +149,7 @@ public class ConnectionManager implements IConnectionManager, ISouthboundClient{
 			instance.setProcessingGraphConfiged(true);
 			return okResponse();
 		}
-		
+
 		return Response.status(Status.BAD_REQUEST).build();
 	}
 
@@ -138,6 +163,6 @@ public class ConnectionManager implements IConnectionManager, ISouthboundClient{
 		int xid = connectionInstance.sendRequest(message, requestSender);
 		messagesMapping.put(xid, message);
 		requestSendersMapping.put(xid, requestSender);
-		
+
 	}
 }
