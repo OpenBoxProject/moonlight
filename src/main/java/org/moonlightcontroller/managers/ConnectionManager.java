@@ -1,6 +1,7 @@
 package org.moonlightcontroller.managers;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -21,6 +22,8 @@ import org.moonlightcontroller.managers.models.messages.SetProcessingGraphRespon
 import org.moonlightcontroller.processing.IConnector;
 import org.moonlightcontroller.processing.IProcessingBlock;
 import org.moonlightcontroller.processing.IProcessingGraph;
+import org.moonlightcontroller.processing.JsonBlock;
+import org.moonlightcontroller.processing.JsonConnector;
 import org.openboxprotocol.protocol.topology.ILocationSpecifier;
 import org.openboxprotocol.protocol.topology.InstanceLocationSpecifier;
 import org.openboxprotocol.protocol.topology.TopologyManager;
@@ -96,8 +99,8 @@ public class ConnectionManager implements IConnectionManager, ISouthboundClient{
 			instancesMapping.put(key, value);
 			
 			IProcessingGraph processingGraph = ApplicationAggregator.getInstance().getProcessingGraph(key);
-			List<IProcessingBlock> blocks = processingGraph.getBlocks();
-			List<IConnector> connectors = processingGraph.getConnectors();
+			List<JsonBlock> blocks = translateBlocks(processingGraph.getBlocks());
+			List<JsonConnector> connectors = translateConnectors(processingGraph.getConnectors());
 			
 			SetProcessingGraphRequest processMessage = new SetProcessingGraphRequest(xid, dpid, null, blocks, connectors);
 			IRequestSender requestSender = requestSendersMapping.get(xid);
@@ -109,6 +112,35 @@ public class ConnectionManager implements IConnectionManager, ISouthboundClient{
 			e.printStackTrace();
 			return internalErrorResponse();
 		}
+	}
+
+	private List<JsonConnector> translateConnectors(List<IConnector> connectors) {
+		List<JsonConnector> jConnectors = new ArrayList<>();
+		for (IConnector connector : connectors) {
+			jConnectors.addAll(translateConnector(connector));
+		}
+
+		return jConnectors;
+	}
+
+	private List<JsonConnector> translateConnector(IConnector connector) {
+		List<Integer> dst_ports = connector.getDestBlock().getPorts();
+		List<JsonConnector> connectors = new ArrayList<>();
+		dst_ports.stream().forEach(dst_port -> connectors.add(new JsonConnector(connector.getSourceBlockId(), 
+				connector.getSourceOutputPort(), 
+				connector.getDestinatinBlockId(),
+				dst_port)));
+		
+		return connectors;
+	}
+
+
+	private List<JsonBlock> translateBlocks(List<IProcessingBlock> blocks) {
+		return blocks.stream().map(block -> translateBlock(block)).collect(Collectors.toList());
+	}
+
+	private JsonBlock translateBlock(IProcessingBlock block) {
+		return new JsonBlock(block.getBlockType(), block.getId(), block.getConfiguration());
 	}
 
 	private Response internalErrorResponse() {

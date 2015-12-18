@@ -1,8 +1,8 @@
 package org.moonlightcontroller.managers.models.messages;
 
 import java.util.List;
-import org.moonlightcontroller.processing.IConnector;
-import org.moonlightcontroller.processing.IProcessingBlock;
+import org.moonlightcontroller.processing.JsonBlock;
+import org.moonlightcontroller.processing.JsonConnector;
 
 public class SetProcessingGraphRequest implements IMessage {
 
@@ -10,18 +10,16 @@ public class SetProcessingGraphRequest implements IMessage {
 	private int xid;
 	private int dpid;
 	private List<String> modules;
-	private List<IProcessingBlock> blocks;
-//	private Map<String, Object> blocks;
-//	private List<JConnector> connectors;
-	private List<IConnector> connectors;
+	private List<JsonBlock> blocks;
+	private List<JsonConnector> connectors;
 	
-	public SetProcessingGraphRequest(int xid, int dpid, List<String> modules, List<IProcessingBlock> blocks, List<IConnector> connectors) {
+	public SetProcessingGraphRequest(int xid, int dpid, List<String> modules, List<JsonBlock> blocks, List<JsonConnector> connectors) {
 		this.type = "SetProcessingGraphRequest";
 		this.xid = xid;
 		this.dpid = dpid;
 		this.modules = modules;
-		this.setBlocks(blocks);
-		this.setConnectors(connectors);
+		this.blocks = blocks;
+		this.connectors = connectors;
 	}
 	
 	@Override
@@ -46,36 +44,19 @@ public class SetProcessingGraphRequest implements IMessage {
 		this.modules = modules;
 	}
 
-	public List<IProcessingBlock> getBlocks() {
+	public List<JsonBlock> getBlocks() {
 		return blocks;
 	}
 
-	public void setBlocks(List<IProcessingBlock> blocks) {
+	public void setBlocks(List<JsonBlock> blocks) {
 		this.blocks = blocks;
 	}
 
-	public List<IConnector> getConnectors() {
+	public List<JsonConnector> getConnectors() {
 		return connectors;
 	}
 
-	public void setConnectors(List<IConnector> connectors) {
+	public void setConnectors(List<JsonConnector> connectors) {
 		this.connectors = connectors;
 	}
-
-//	public Map<String, Object> getBlocks() {
-//		return blocks;
-//	}
-//
-//	public void setBlocks(Map<String, Object> blocks) {
-//		this.blocks = blocks;
-//	}
-//
-//	public List<JConnector> getConnectors() {
-//		return connectors;
-//	}
-//
-//	public void setConnectors(List<JConnector> connectors) {
-//		this.connectors = connectors;
-//	}
-
 }
