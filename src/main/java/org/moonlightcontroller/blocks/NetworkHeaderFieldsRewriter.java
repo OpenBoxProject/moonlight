@@ -1,17 +1,17 @@
-package org.moonlightcontroller.aggregator.temp;
-public class NetworkHeaderFieldsRewriter extends AbstractProcessingBlock {
+package org.moonlightcontroller.blocks;
 
-	private String id;
-	
-	public NetworkHeaderFieldsRewriter(String id) {
-		this.id = id;
+import java.util.Map;
+
+import org.moonlightcontroller.blocks.Alert.Builder;
+import org.moonlightcontroller.processing.BlockClass;
+import org.moonlightcontroller.processing.ProcessingBlock;
+
+public class NetworkHeaderFieldsRewriter extends ProcessingBlock {
+
+	private NetworkHeaderFieldsRewriter(String id) {
+		super(id);
 	}
 	
-	@Override
-	public String getId() {
-		return this.id;
-	}
-
 	@Override
 	public BlockClass getBlockClass() {
 		return BlockClass.BLOCK_CLASS_MODIFIER;
@@ -23,7 +23,20 @@ public class NetworkHeaderFieldsRewriter extends AbstractProcessingBlock {
 	}
 
 	@Override
-	protected AbstractProcessingBlock spawn(String id) {
+	protected ProcessingBlock spawn(String id) {
 		return new NetworkHeaderFieldsRewriter(id);
+	}
+
+	@Override
+	protected void putConfiguration(Map<String, String> config) {
+		// No config for 'NetworkHeaderFieldsRewriter'
+	}
+	
+	public static class Builder extends ProcessingBlock.Builder {
+		@Override
+		public NetworkHeaderFieldsRewriter build(){
+			this.addPort();
+			return new NetworkHeaderFieldsRewriter(super.id);
+		}
 	}
 }

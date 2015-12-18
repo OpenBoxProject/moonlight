@@ -5,8 +5,13 @@ import java.util.List;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
+import org.moonlightcontroller.blocks.Discard;
+import org.moonlightcontroller.processing.BlockClass;
+import org.moonlightcontroller.processing.Connector;
+import org.moonlightcontroller.processing.IConnector;
+import org.moonlightcontroller.processing.IProcessingBlock;
+import org.moonlightcontroller.processing.IProcessingGraph;
 import org.moonlightcontroller.processing.MutableProcessingGraph;
-
 
 class GraphUtils {
 	
@@ -117,9 +122,7 @@ class GraphUtils {
 				// Add new blocks and connectors to output graph
 				pg.addBlocks(newBlocks).addConnectors(newConnectors);
 			}
-		}
-		
+		}	
 		return pg;
 	}
-	
 }

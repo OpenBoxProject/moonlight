@@ -1,9 +1,11 @@
-package org.moonlightcontroller.aggregator.temp;
+package org.moonlightcontroller.blocks;
 
 import java.util.List;
 
 import org.moonlightcontroller.aggregator.Tupple.Pair;
 import org.moonlightcontroller.exceptions.MergeException;
+import org.moonlightcontroller.processing.IProcessingBlock;
+import org.moonlightcontroller.processing.IProcessingGraph;
 import org.openboxprotocol.protocol.Priority;
 
 public interface IClassifierProcessingBlock extends IProcessingBlock {

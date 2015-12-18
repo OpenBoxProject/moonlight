@@ -5,7 +5,7 @@ import java.util.Map;
 import org.moonlightcontroller.processing.BlockClass;
 import org.moonlightcontroller.processing.ProcessingBlock;
 
-public class ToDevice extends AbstractProcessingBlock {
+public class ToDevice extends ProcessingBlock {
 
 	private String devname;
 
@@ -38,19 +38,7 @@ public class ToDevice extends AbstractProcessingBlock {
 
 	@Override
 	public String getBlockType() {
-		return "ToDevice"
-	}
-
-	@Override
-	public String toShortString() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public ProcessingBlock clone() {
-		// TODO Auto-generated method stub
-		return null;
+		return "ToDevice";
 	}
 
 	@Override
@@ -59,7 +47,7 @@ public class ToDevice extends AbstractProcessingBlock {
 	}
     
 	@Override
-	protected AbstractProcessingBlock spawn(String id) {
-		return new ToDevice(id);
+	protected ProcessingBlock spawn(String id) {
+		return new ToDevice(id, this.getDevice());
 	}
 }

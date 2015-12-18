@@ -10,16 +10,31 @@ import java.util.Queue;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import org.moonlightcontroller.aggregator.temp.HeaderClassifier;
-import org.moonlightcontroller.aggregator.temp.HeaderClassifier.HeaderClassifierRule;
+import org.moonlightcontroller.aggregator.Tupple.Pair;
 import org.moonlightcontroller.bal.BoxApplication;
+import org.moonlightcontroller.blocks.Alert;
+import org.moonlightcontroller.blocks.Discard;
+import org.moonlightcontroller.blocks.FromDevice;
+import org.moonlightcontroller.blocks.HeaderClassifier;
+import org.moonlightcontroller.blocks.HeaderClassifier.HeaderClassifierRule;
+import org.moonlightcontroller.blocks.IClassifierProcessingBlock;
+import org.moonlightcontroller.blocks.IStaticProcessingBlock;
+import org.moonlightcontroller.blocks.NetworkHeaderFieldsRewriter;
+import org.moonlightcontroller.blocks.ToDevice;
 import org.moonlightcontroller.exceptions.MergeException;
+import org.moonlightcontroller.processing.BlockClass;
+import org.moonlightcontroller.processing.Connector;
+import org.moonlightcontroller.processing.IConnector;
+import org.moonlightcontroller.processing.IProcessingBlock;
+import org.moonlightcontroller.processing.IProcessingGraph;
 import org.moonlightcontroller.processing.MutableProcessingGraph;
 import org.moonlightcontroller.processing.ProcessingGraph;
 import org.openboxprotocol.protocol.HeaderField;
 import org.openboxprotocol.protocol.OpenBoxHeaderMatch;
 import org.openboxprotocol.protocol.Priority;
 import org.openboxprotocol.protocol.topology.ILocationSpecifier;
+import org.openboxprotocol.protocol.topology.InstanceLocationSpecifier;
+import org.openboxprotocol.protocol.topology.TopologyManager;
 import org.openboxprotocol.types.EthType;
 import org.openboxprotocol.types.IPv4Address;
 import org.openboxprotocol.types.IpProto;
@@ -90,40 +105,7 @@ public class ApplicationAggregator implements IApplicationAggregator {
 		
 		return result;
 	}
-	
-	/*
-	private static void cloneStraightPath(IProcessingGraph graph, IProcessingBlock from, IProcessingBlock to,
-			List<IProcessingBlock> blocks, List<IConnector> connectors) {
-		IProcessingBlock current = from;
-		IProcessingBlock parent = null;
-		int parentPort = 0;
 		
-		while (true) {
-			if (parent != null) {
-				connectors.add(new Connector.Builder()
-						.setSourceBlock(parent)
-						.setSourceOutputPort(parentPort)
-						.setDestBlock(current)
-						.build());
-			}
-			
-			blocks.add(current.clone());
-			
-			if (current == to) {
-				break;
-			}
-			
-			List<IProcessingBlock> successors = graph.getSuccessors(current);
-			if (successors.size() > 1) {
-				throw new IllegalArgumentException("Path has branches");
-			} else if (successors.size() == 0) {
-				throw new IllegalArgumentException("No path found");
-			}
-			current = successors.get(0);
-		}
-	}
-	*/
-	
 	/**
 	 * Clones a path from <code>from</code> to <code>to</code>, if such path exists.
 	 * 
@@ -168,7 +150,10 @@ public class ApplicationAggregator implements IApplicationAggregator {
 			
 			IProcessingBlock newCurrent = from.clone();
 			bta.add(newCurrent);
-			cta.add(new Connector(parent, parentPort, newCurrent));
+			cta.add(new Connector.Builder()
+					.setSourceBlock(parent)
+					.setSourceOutputPort(parentPort)
+					.setDestBlock(newCurrent).build());
 			btr.add(from);
 			ctr.add(outs.get(0));
 			
@@ -204,7 +189,11 @@ public class ApplicationAggregator implements IApplicationAggregator {
 			Collection<IProcessingBlock> blocks, Collection<IConnector> connectors,
 			Set<IProcessingBlock> blocksToRemove, Set<IConnector> connectorsToRemove) {
 		IProcessingBlock newCurrent = current.clone();
-		IConnector newConnector = new Connector(parent, parentPort, newCurrent);
+		IConnector newConnector = new Connector.Builder()
+				.setSourceBlock(parent)
+				.setSourceOutputPort(parentPort)
+				.setDestBlock(newCurrent)
+				.build();
 		blocksToRemove.add(current);
 		blocks.add(newCurrent);
 		connectors.add(newConnector);
@@ -216,245 +205,6 @@ public class ApplicationAggregator implements IApplicationAggregator {
 	}	
 	
 	private static String _lastGraphStr = "";
-	
-	/*
-	private static void compress(MutableProcessingGraph graph, IProcessingBlock current, 
-			IProcessingBlock parent, int parentPort,
-			IProcessingBlock start, int startOutPort,
-			Map<IProcessingBlock, IProcessingBlock> replacements) {
-		
-		if (AGGREGATOR_DEBUG) {
-			System.out.println("[DEBUG current: " + current.toShortString() + 
-							   ", parent: " + (parent == null ? "null" : parent.toShortString() + 
-									   " (Port: " + parentPort + ")") + 
-							   ", start: " + ((start == null) ? "null" : start.toShortString() + " (Port: " + startOutPort + ")"));
-		}
-		
-		// The problem is merging classifiers, modifiers and shapers (denoted from now - dynamic).
-		// Also, statics cannot be reordered across such dynamic blocks.
-		// So on every path, we find such blocks and try to work out the ones in between them.
-		if (current.getBlockClass() == BlockClass.BLOCK_CLASS_CLASSIFIER ||
-				current.getBlockClass() == BlockClass.BLOCK_CLASS_MODIFIER ||
-				current.getBlockClass() == BlockClass.BLOCK_CLASS_SHAPER) {
-			if (start == null) {
-				// This is the first dynamic block we see (at this point of time)
-				// We recurse on all output paths, marking this block as "start"
-				graph.getOutgoingConnectors(current).stream()
-					.forEach(c -> compress(graph, c.getDestBlock(),
-							current, c.getSourceOutputPort(),
-							current, c.getSourceOutputPort(),
-							replacements));
-				return;
-			} else {
-				// start is not null - we now have an end dynamic block
-				IProcessingBlock end = current;
-				List<IConnector> nextConnectors;
-				
-				if (replacements.containsKey(start))
-					start = replacements.get(start);
-				
-				Set<IProcessingBlock> lastBeforeEnd = new HashSet<>();
-
-				IProcessingBlock newStart;
-				IProcessingBlock newCurrent = current;
-
-				// If both blocks are classifiers of the same type we can merge them
-				if (start.getBlockClass() == BlockClass.BLOCK_CLASS_CLASSIFIER &&
-						end.getBlockClass() == BlockClass.BLOCK_CLASS_CLASSIFIER &&
-						start instanceof IClassifierProcessingBlock &&
-						end instanceof IClassifierProcessingBlock &&
-						((IClassifierProcessingBlock)start).canMergeWith((IClassifierProcessingBlock)end)) {
-					// Merge classifiers
-					Set<IProcessingBlock> blocksToRemove = new HashSet<>();
-					Set<IConnector> connectorsToRemove = new HashSet<>();
-					Set<IProcessingBlock> blocksToAdd = new HashSet<>();
-					Set<IConnector> connectorsToAdd = new HashSet<>();
-
-					List<Pair<Integer>> outPortSources = new ArrayList<>();
-					
-					try {
-						IProcessingBlock merged = ((IClassifierProcessingBlock)start).mergeWith((IClassifierProcessingBlock)end, graph, outPortSources);
-						
-						blocksToRemove.add(start);
-						
-						replacements.put(start, merged);
-						replacements.put(end, merged);
-						
-						for (int i = 0; i < outPortSources.size(); i++) {
-							// For each out port we have a pair (a, b). We should go over the path from 'start' out port a 
-							// to 'end', and clone all blocks on the way except for 'end'. When reaching 'end', should take 
-							// the sub-tree from 'end' out port b, clone it, and connect to 'end's parent.
-							// On the way, we should mark all cloned blocks to remove.
-							
-							// Step 1: clone the path from 'start'[outPortSources[0]] to 'end' (excluding) and connect it from 'merged'[outPort]
-							// (mark all cloned blocks to be removed)
-							IProcessingBlock origin = graph.getOutgoingConnectors(start).get(outPortSources.get(i).get(0)).getDestBlock();
-							
-							IProcessingBlock last = clonePath(graph, 
-									origin, 
-									end, 
-									merged, 
-									i, 
-									blocksToAdd, connectorsToAdd, 
-									blocksToRemove, connectorsToRemove);
-							
-							if (last != null) { // <- There was an actual such path
-								if (outPortSources.get(i).get(0) == startOutPort) {
-									// Marking 'last' for later use when looking for statics to merge
-									lastBeforeEnd.add(last);
-								}
-								
-								// Step 2: clone the subtree going out of 'end'[outPortSources[1]] and connect it from the last block of the path cloned above
-								// (mark all cloned blocks to be removed)
-								cloneSubTree(graph, 
-										graph.getOutgoingConnectors(end).get(outPortSources.get(i).get(1)).getDestBlock(), 
-										last, (last == merged ? i : 0), 
-										blocksToAdd, connectorsToAdd, 
-										blocksToRemove, connectorsToRemove);
-							} else {
-								// Retain existing connectors
-								connectorsToAdd.add(new Connector(merged, i, origin));
-							}
-						}
-						// Replace 'start' with 'merged'
-						blocksToAdd.add(merged);
-						blocksToRemove.add(start);
-						graph.getIncomingConnectors(start).forEach(c -> connectorsToAdd.add(new Connector(c.getSourceBlock(), c.getSourceOutputPort(), merged)));
-						graph.getIncomingConnectors(start).forEach(c -> connectorsToRemove.add(c));
-						
-						blocksToRemove.add(end);
-						
-						List<IConnector> incoming = graph.getIncomingConnectors(end);
-						incoming.forEach(c -> connectorsToRemove.add(c));
-
-						newStart = merged;
-						newCurrent = merged;
-						
-						// Update graph
-						blocksToRemove.forEach(b -> graph.removeBlock(b));
-						connectorsToRemove.forEach(c -> graph.removeConnector(c));
-						blocksToAdd.forEach(b -> graph.addBlock(b));
-						connectorsToAdd.forEach(c -> graph.addConnector(c));
-						
-						//graph.getConnectors()
-						//	.removeIf(c -> (!graph.getBlocks().contains(c.getSourceBlock()) || !graph.getBlocks().contains(c.getDestBlock()))); 
-
-						if (AGGREGATOR_DEBUG) {
-							String newGraphStr = graph.toString();
-							if (!newGraphStr.equals(_lastGraphStr)) {
-								System.out.println("Graph changed! New graph:\n" + newGraphStr);
-								_lastGraphStr = newGraphStr;
-							}
-						}
-
-					} catch (MergeException e) {
-						// Cannot merge classifier
-						newStart = start;
-					}
-				} else {
-					// Cannot merge classifier
-					newStart = start;
-				}
-				// For each connector going out from start (or merged), find statics to merge
-				// until 'end'
-				nextConnectors = graph.getOutgoingConnectors(newStart);
-
-				Set<IProcessingBlock> blocksToRemove = new HashSet<>();
-				Set<IConnector> connectorsToRemove = new HashSet<>();
-				Set<IProcessingBlock> blocksToAdd = new HashSet<>();
-				Set<IConnector> connectorsToAdd = new HashSet<>();
-				
-				for (IConnector next : nextConnectors) {
-					// This must be done on the cloned blocks, can't do that on original graph
-					// However, after the changes, 'end' does not exist in the graph anymore...
-					// In fact this should be separated into two actions:
-					// 1. Merge the classifiers, and mark the clones of the block that was before 'end'
-					// 2. Search the paths from 'merged' to these marked clones for merging statics
-					List<IProcessingBlock> path;
-					path = getStraightStaticsPath(graph, next.getDestBlock());
-
-					if (path == null) {
-						continue;
-					}
-
-					for (int i = 0; i < path.size(); i++) {
-						IProcessingBlock v1 = path.get(i);
-						for (int j = i + 1; j < path.size() - 1; j++) {
-							IProcessingBlock v2 = path.get(j);
-							if (v1.getBlockType().equals(v2.getBlockType()) &&
-									!blocksToRemove.contains(v1) &&
-									!blocksToRemove.contains(v2) &&
-									v1 instanceof IStaticProcessingBlock &&
-									v2 instanceof IStaticProcessingBlock &&
-									((IStaticProcessingBlock)v1).canMergeWith((IStaticProcessingBlock)v2)) {
-								// Found statics to merge
-								try {
-									IStaticProcessingBlock merged = ((IStaticProcessingBlock)v1).mergeWith((IStaticProcessingBlock)v2);
-									blocksToRemove.add(v1);
-									blocksToRemove.add(v2);
-									IConnector v1incoming = graph.getIncomingConnectors(v1).get(0);
-									IConnector v1outgoing = graph.getOutgoingConnectors(v1).get(0);
-									IConnector v2incoming = graph.getIncomingConnectors(v2).get(0);
-									IConnector v2outgoing = graph.getOutgoingConnectors(v2).get(0);
-									connectorsToAdd.add(new Connector(v1incoming.getSourceBlock(), v1incoming.getSourceOutputPort(), merged));
-									connectorsToAdd.add(new Connector(merged, 0, v2outgoing.getDestBlock()));
-									connectorsToRemove.add(v1incoming);
-									connectorsToRemove.add(v1outgoing);
-									connectorsToRemove.add(v2incoming);
-									connectorsToRemove.add(v2outgoing);
-									blocksToAdd.add(merged);
-									replacements.put(v1, merged);
-									replacements.put(v2, merged);
-								} catch (MergeException e) {
-									// Cannot actually merge these blocks
-									// Do nothing
-								}
-							}
-						}
-					}
-					
-				}
-
-				blocksToRemove.forEach(b -> graph.removeBlock(b));
-				connectorsToRemove.forEach(c -> graph.removeConnector(c));
-				blocksToAdd.forEach(b -> graph.addBlock(b));
-				connectorsToAdd.forEach(c -> graph.addConnector(c));
-				
-				//graph.getConnectors()
-				//	.removeIf(c -> (!graph.getBlocks().contains(c.getSourceBlock()) || !graph.getBlocks().contains(c.getDestBlock()))); 
-
-				if (AGGREGATOR_DEBUG) {
-					String newGraphStr = graph.toString();
-					if (!newGraphStr.equals(_lastGraphStr)) {
-						System.out.println("Graph changed! New graph:\n" + newGraphStr);
-						_lastGraphStr = newGraphStr;
-					}
-				}
-				
-				// Recurse on successors
-				final IProcessingBlock nstemp = newStart;
-				final IProcessingBlock nctemp = newCurrent; 
-				
-				graph.getOutgoingConnectors(newCurrent).stream()
-					.forEach(c -> compress(graph, c.getDestBlock(),
-							nctemp, c.getSourceOutputPort(),
-							nstemp, c.getSourceOutputPort(),
-							replacements));
-			}
-			
-			
-		} else {
-			// Skip Terminals, Statics
-			final IProcessingBlock tempstart = start;
-			
-			graph.getOutgoingConnectors(current).stream()
-				.forEach(c -> compress(graph, c.getDestBlock(),
-						current, c.getSourceOutputPort(),
-						tempstart, startOutPort,
-						replacements));			
-		}
-	}
-	*/
 	
 	/**
 	 * Compresses the lengths of paths in a normalized graph by merging classifiers and statics.
@@ -574,13 +324,21 @@ public class ApplicationAggregator implements IApplicationAggregator {
 											blocksToRemove, connectorsToRemove);
 								} else {
 									// Retain existing connectors
-									connectorsToAdd.add(new Connector(merged, i, origin));
+									connectorsToAdd.add(new Connector.Builder()
+											.setSourceBlock(merged)
+											.setSourceOutputPort(i)
+											.setDestBlock(origin)
+											.build());
 								}
 							}
 							// Replace 'start' with 'merged'
 							blocksToAdd.add(merged);
 							blocksToRemove.add(start);
-							graph.getIncomingConnectors(start).forEach(c -> connectorsToAdd.add(new Connector(c.getSourceBlock(), c.getSourceOutputPort(), merged)));
+							graph.getIncomingConnectors(start).forEach(c -> connectorsToAdd.add(new Connector.Builder()
+									.setSourceBlock(c.getSourceBlock())
+									.setSourceOutputPort(c.getSourceOutputPort())
+									.setDestBlock(merged)
+									.build()));
 							graph.getIncomingConnectors(start).forEach(c -> connectorsToRemove.add(c));
 							
 							blocksToRemove.add(end);
@@ -660,8 +418,16 @@ public class ApplicationAggregator implements IApplicationAggregator {
 										IConnector v1outgoing = graph.getOutgoingConnectors(v1).get(0);
 										IConnector v2incoming = graph.getIncomingConnectors(v2).get(0);
 										IConnector v2outgoing = graph.getOutgoingConnectors(v2).get(0);
-										connectorsToAdd.add(new Connector(v1incoming.getSourceBlock(), v1incoming.getSourceOutputPort(), merged));
-										connectorsToAdd.add(new Connector(merged, 0, v2outgoing.getDestBlock()));
+										connectorsToAdd.add(new Connector.Builder()
+												.setSourceBlock(v1incoming.getSourceBlock())
+												.setSourceOutputPort(v1incoming.getSourceOutputPort())
+												.setDestBlock(merged)
+												.build());
+										connectorsToAdd.add(new Connector.Builder()
+												.setSourceBlock(merged)
+												.setSourceOutputPort(0)
+												.setDestBlock(v2outgoing.getDestBlock())
+												.build());
 										connectorsToRemove.add(v1incoming);
 										connectorsToRemove.add(v1outgoing);
 										connectorsToRemove.add(v2incoming);
@@ -756,7 +522,11 @@ public class ApplicationAggregator implements IApplicationAggregator {
 			for (IProcessingBlock clone : s) {
 				if (clone != leader) {
 					List<IConnector> ins = graph.getIncomingConnectors(clone);
-					ins.forEach(c -> graph.addConnector(new Connector(c.getSourceBlock(), c.getSourceOutputPort(), leader)));
+					ins.forEach(c -> graph.addConnector(new Connector.Builder()
+							.setSourceBlock(c.getSourceBlock())
+							.setSourceOutputPort(c.getSourceOutputPort())
+							.setDestBlock(leader)
+							.build()));
 					ins.forEach(c -> graph.removeConnector(c));
 				}
 			}
@@ -768,64 +538,85 @@ public class ApplicationAggregator implements IApplicationAggregator {
 	public static void main(String[] args) throws Exception {
 		
 		HeaderClassifierRule[] firewallRules = {
-				new HeaderClassifierRule(
+				new HeaderClassifierRule.Builder()
+					.setHeaderMatch(
 						new OpenBoxHeaderMatch.Builder()
 							.setExact(HeaderField.ETH_TYPE, EthType.IPv4)
 							.setExact(HeaderField.IP_PROTO, IpProto.TCP)
 							.setExact(HeaderField.TCP_DST, TransportPort.of(80))
-							.build(),
-						Priority.CRITICAL, 0),
-				new HeaderClassifierRule(
+							.build())
+					.setPriority(Priority.CRITICAL)
+					.setOrder(0)
+					.build(),
+				new HeaderClassifierRule.Builder()
+					.setHeaderMatch(
 						new OpenBoxHeaderMatch.Builder()
 							.setExact(HeaderField.ETH_TYPE, EthType.IPv4)
 							.setMasked(HeaderField.IPV4_SRC, IPv4Address.of("202.101.0.0"), IPv4Address.of("255.255.0.0"))
-							.build(),
-						Priority.MEDIUM, 1),
-				new HeaderClassifierRule(
-						new OpenBoxHeaderMatch.Builder().build(),
-						Priority.DEFAULT, 2)
+							.build())
+					.setPriority(Priority.MEDIUM)
+					.setOrder(1)
+					.build(),
+				new HeaderClassifierRule.Builder()
+					.setHeaderMatch(new OpenBoxHeaderMatch.Builder().build())
+					.setPriority(Priority.DEFAULT)
+					.setOrder(2)
+					.build()
+						
 		};
 		
 		IProcessingBlock[] firewallBlocks = {
-				new FromDevice("FromDevice-Firewall"),
-				new HeaderClassifier("HeaderClassifier-Firewall", ImmutableList.copyOf(firewallRules), Priority.CRITICAL),
-				new Discard("Discard-Firewall"),
-				new Alert("Alert-Firewall", "FIREWALL ALERT"),
-				new ToDevice("ToDevice-Firewall")
+				new FromDevice.Builder().setId("FromDevice-Firewall").build(),
+				new HeaderClassifier.Builder()
+				.setRules(ImmutableList.copyOf(firewallRules)) 
+				.setPriority(Priority.CRITICAL)
+				.setId("HeaderClassifier-Firewall")
+				.build(),
+				new Discard.Builder().setId("Discard-Firewall").build(),
+				new Alert.Builder().setMessage("FIREWALL ALERT").setId("Alert-Firewall").build(),
+				new ToDevice.Builder().setId("ToDevice-Firewall").build(),
 		};
 		IConnector[] firewallConnectors = {
-				new Connector(firewallBlocks[0], 0, firewallBlocks[1]),
-				new Connector(firewallBlocks[1], 0, firewallBlocks[2]),
-				new Connector(firewallBlocks[1], 1, firewallBlocks[3]),
-				new Connector(firewallBlocks[1], 2, firewallBlocks[4]),
-				new Connector(firewallBlocks[3], 0, firewallBlocks[4])
+				new Connector.Builder().setSourceBlock(firewallBlocks[0]).setSourceOutputPort(0).setDestBlock(firewallBlocks[1]).build(),
+				new Connector.Builder().setSourceBlock(firewallBlocks[1]).setSourceOutputPort(0).setDestBlock(firewallBlocks[2]).build(),
+				new Connector.Builder().setSourceBlock(firewallBlocks[1]).setSourceOutputPort(1).setDestBlock(firewallBlocks[3]).build(),
+				new Connector.Builder().setSourceBlock(firewallBlocks[1]).setSourceOutputPort(2).setDestBlock(firewallBlocks[4]).build(),
+				new Connector.Builder().setSourceBlock(firewallBlocks[3]).setSourceOutputPort(0).setDestBlock(firewallBlocks[4]).build(),
 		};
 		
 		HeaderClassifierRule[] lbRules = {
-				new HeaderClassifierRule(
+				new HeaderClassifierRule.Builder()
+					.setHeaderMatch(
 						new OpenBoxHeaderMatch.Builder()
 							.setExact(HeaderField.ETH_TYPE, EthType.IPv4)
 							.setExact(HeaderField.IPV4_DST, IPv4Address.of("10.0.0.1"))
-							.build(),
-						Priority.VERY_HIGH, 0),
-				new HeaderClassifierRule(
-						new OpenBoxHeaderMatch.Builder().build(),
-						Priority.DEFAULT, 1)
+							.build())
+						.setPriority(Priority.VERY_HIGH)
+						.setOrder(0)
+						.build(),
+				new HeaderClassifierRule.Builder()
+					.setHeaderMatch(new OpenBoxHeaderMatch.Builder().build())
+					.setPriority(Priority.DEFAULT)
+					.setOrder(1)
+					.build()
 		};
 		
 		IProcessingBlock[] lbBlocks = {
-				new FromDevice("FromDevice-LB"),
-				new HeaderClassifier("HeaderClassifier-LB", ImmutableList.copyOf(lbRules), Priority.MEDIUM),
-				new Alert("Alert-LB", "LOAD BALANCER ALERT"),
-				new NetworkHeaderFieldsRewriter("NetworkHeaderFieldsRewriter-LB"),
-				new ToDevice("ToDevice-LB")
+				new FromDevice.Builder().setId("FromDevice-LB").build(),
+				new HeaderClassifier.Builder()
+					.setPriority(Priority.MEDIUM)
+					.setRules(ImmutableList.copyOf(lbRules))
+					.setId("HeaderClassifier-LB").build(),
+				new Alert.Builder().setMessage("LOAD BALANCER ALERT").setId("Alert-LB").build(),
+				new NetworkHeaderFieldsRewriter.Builder().setId("NetworkHeaderFieldsRewriter-LB").build(),
+				new ToDevice.Builder().setId("ToDevice-LB").build(),
 		};
 		IConnector[] lbConnectors = {
-				new Connector(lbBlocks[0], 0, lbBlocks[1]),
-				new Connector(lbBlocks[1], 0, lbBlocks[2]),
-				new Connector(lbBlocks[1], 1, lbBlocks[4]),
-				new Connector(lbBlocks[2], 0, lbBlocks[3]),
-				new Connector(lbBlocks[3], 0, lbBlocks[4])
+				new Connector.Builder().setSourceBlock(lbBlocks[0]).setSourceOutputPort(0).setDestBlock(lbBlocks[1]).build(),
+				new Connector.Builder().setSourceBlock(lbBlocks[1]).setSourceOutputPort(0).setDestBlock(lbBlocks[2]).build(),
+				new Connector.Builder().setSourceBlock(lbBlocks[1]).setSourceOutputPort(1).setDestBlock(lbBlocks[4]).build(),
+				new Connector.Builder().setSourceBlock(lbBlocks[2]).setSourceOutputPort(0).setDestBlock(lbBlocks[3]).build(),
+				new Connector.Builder().setSourceBlock(lbBlocks[3]).setSourceOutputPort(0).setDestBlock(lbBlocks[4]).build(),
 		};
 		
 		IProcessingGraph a = new ProcessingGraph.Builder()
@@ -879,6 +670,7 @@ public class ApplicationAggregator implements IApplicationAggregator {
 	
 	private ApplicationAggregator() {
 		this.apps = new ArrayList<>();
+		this.aggregated = new HashMap<>();
 	}
 	
 	public static IApplicationAggregator getInstance() {
@@ -906,8 +698,8 @@ public class ApplicationAggregator implements IApplicationAggregator {
 	public void performAggregation() {
 		synchronized (this) {
 			// TODO: The following should be done for each OBI location specifier
-			Collection<ILocationSpecifier> obiLocationSpecifiers = null; // TODO: <-- Replace this null!!!
-			for (ILocationSpecifier loc : obiLocationSpecifiers) {
+			List<InstanceLocationSpecifier> obiLocationSpecifiers = TopologyManager.getInstance().getAllEndpoints(); 
+			for (InstanceLocationSpecifier loc : obiLocationSpecifiers) {
 				IProcessingGraph last = null;
 				for (BoxApplication app : this.apps) {
 					// TODO: Complete here
@@ -923,6 +715,4 @@ public class ApplicationAggregator implements IApplicationAggregator {
 	public IProcessingGraph getProcessingGraph(ILocationSpecifier loc) {
 		return this.aggregated.get(loc);
 	}
-	
-	
 }

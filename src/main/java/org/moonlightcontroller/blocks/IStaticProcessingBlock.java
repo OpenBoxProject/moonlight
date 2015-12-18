@@ -1,6 +1,7 @@
-package org.moonlightcontroller.aggregator.temp;
+package org.moonlightcontroller.blocks;
 
 import org.moonlightcontroller.exceptions.MergeException;
+import org.moonlightcontroller.processing.IProcessingBlock;
 
 public interface IStaticProcessingBlock extends IProcessingBlock {
 

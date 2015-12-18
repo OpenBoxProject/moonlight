@@ -1,23 +1,22 @@
-package org.moonlightcontroller.aggregator.temp;
+package org.moonlightcontroller.blocks;
 
+import java.util.Map;
+
+import org.moonlightcontroller.aggregator.UUIDGenerator;
 import org.moonlightcontroller.exceptions.MergeException;
+import org.moonlightcontroller.processing.BlockClass;
+import org.moonlightcontroller.processing.ProcessingBlock;
 
 
-public class Alert extends AbstractProcessingBlock implements IStaticProcessingBlock {
+public class Alert extends ProcessingBlock implements IStaticProcessingBlock {
 
-	private String id;
 	private String message;
 	
-	public Alert(String id, String message) {
-		this.id = id;
+	private Alert(String id, String message) {
+		super(id);
 		this.message = message;
 	}
-	
-	@Override
-	public String getId() {
-		return this.id;
-	}
-	
+		
 	public String getMessage() {
 		return message;
 	}
@@ -33,7 +32,7 @@ public class Alert extends AbstractProcessingBlock implements IStaticProcessingB
 	}
 
 	@Override
-	protected AbstractProcessingBlock spawn(String id) {
+	protected ProcessingBlock spawn(String id) {
 		return new Alert(id, this.message);
 	}
 
@@ -48,9 +47,29 @@ public class Alert extends AbstractProcessingBlock implements IStaticProcessingB
 	public IStaticProcessingBlock mergeWith(IStaticProcessingBlock other) throws MergeException {
 		if (other instanceof Alert) {
 			Alert o = (Alert)other;
-			return new Alert("MERGED##" + this.id + "##" + other.getId() + "##" + UUIDGenerator.getSystemInstance().getUUID().toString(), this.message + ";;" + o.message);
+			return new Alert("MERGED##" + this.getId() + "##" + other.getId() + "##" + UUIDGenerator.getSystemInstance().getUUID().toString(), this.message + ";;" + o.message);
 		} else {
 			throw new MergeException("Cannot merge statics of different type");
+		}
+	}
+	
+	@Override
+	protected void putConfiguration(Map<String, String> config) {
+		// TODO: Does alert have config?
+	}
+	
+	public static class Builder extends ProcessingBlock.Builder {
+		private String msg;
+		
+		@Override
+		public Alert build(){
+			this.addPort();
+			return new Alert(super.id, msg);
+		}
+		
+		public Builder setMessage(String msg){
+			this.msg = msg;
+			return this;
 		}
 	}
 }

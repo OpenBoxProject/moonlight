@@ -19,6 +19,10 @@ public interface IProcessingBlock {
 	// Clone the block but give it a unique ID
 	public IProcessingBlock clone();
 	
+	public boolean isClone();
+	
+	public IProcessingBlock getOriginalInstance();
+	
 	public interface Builder {
 		public Builder addPort();
 		public IProcessingBlock build();

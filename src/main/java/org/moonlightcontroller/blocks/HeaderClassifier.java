@@ -1,43 +1,56 @@
 package org.moonlightcontroller.blocks;
 
-import java.util.HashMap;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import java.util.stream.Collectors;
 
+import org.moonlightcontroller.aggregator.Tupple.Pair;
+import org.moonlightcontroller.aggregator.UUIDGenerator;
+import org.moonlightcontroller.exceptions.MergeException;
 import org.moonlightcontroller.processing.BlockClass;
+import org.moonlightcontroller.processing.IProcessingGraph;
 import org.moonlightcontroller.processing.ProcessingBlock;
 import org.openboxprotocol.protocol.HeaderMatch;
+import org.openboxprotocol.protocol.Priority;
 
-public class HeaderClassifier extends AbstractProcessingBlock implements IClassifierProcessingBlock {
+import com.google.common.collect.ImmutableList;
 
-	private Map<HeaderMatch, Integer> headerToPort;
+public class HeaderClassifier extends ProcessingBlock implements IClassifierProcessingBlock {
+
 	private List<? extends HeaderClassifierRule> rules;
 	private Priority priority;
 	
-	private HeaderClassifier(String id, Map<HeaderMatch, Integer> headerToPort) {
+	private HeaderClassifier(String id, List<? extends HeaderClassifierRule> rules, Priority p) {
 		super(id);
-		this.headerToPort = headerToPort;
+		this.priority = p;
+		this.rules = rules;
 	}
-	
-	public int getPort(HeaderMatch hf) {
-		return this.headerToPort.get(hf);
-	}
-	
-	public static class Builder extends ProcessingBlock.Builder {
-		private Map<HeaderMatch, Integer> headerToPort;
 		
+	public static class Builder extends ProcessingBlock.Builder {
+		private ArrayList<? extends HeaderClassifierRule> rules;
+		private Priority priority;
+			
 		public Builder() {
 			super();
-			this.headerToPort = new HashMap<>();
+			this.rules = new ArrayList<>();
 		}
-		
-		public Builder addMatch(HeaderMatch hf) {
-			super.addPort();
-			this.headerToPort.put(hf, super.portCount);
+				
+		public Builder setPriority(Priority p){
+			this.priority = p;
+			return this;
+		}
+
+		public Builder setRules(List<? extends HeaderClassifierRule> rules){
+			this.rules = new ArrayList<>(rules);
 			return this;
 		}
 
 		public HeaderClassifier build(){
-			return new HeaderClassifier(super.id, this.headerToPort);
+			return new HeaderClassifier(super.id, this.rules, this.priority);
 		}
 	}
 
@@ -63,21 +76,9 @@ public class HeaderClassifier extends AbstractProcessingBlock implements IClassi
 	public String getBlockType() {
 		return "HeaderClassifier";
 	}
-
-	@Override
-	public String toShortString() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public ProcessingBlock clone() {
-		// TODO Auto-generated method stub
-				return null;
-	}
 	
 	@Override
-	protected AbstractProcessingBlock spawn(String id) {
+	protected ProcessingBlock spawn(String id) {
 		return new HeaderClassifier(id, this.getRules(), this.priority);
 	}
 
@@ -152,7 +153,8 @@ public class HeaderClassifier extends AbstractProcessingBlock implements IClassi
 
 		Priority newP = (this.priority.compareTo(o.priority) > 0 ? this.priority : o.priority);
 		
-		IClassifierProcessingBlock merged = new HeaderClassifier("MERGED##" + this.id + "##" + other.getId() + "##" + UUIDGenerator.getSystemInstance().getUUID().toString(), rules, newP);
+		IClassifierProcessingBlock merged = 
+				new HeaderClassifier("MERGED##" + this.getId() + "##" + other.getId() + "##" + UUIDGenerator.getSystemInstance().getUUID().toString(), rules, newP);
 		
 		for (HeaderClassifierRuleWithSources r : rules) {
 			outPortSources.add(r.sources);
@@ -166,7 +168,10 @@ public class HeaderClassifier extends AbstractProcessingBlock implements IClassi
 		private Priority priority;
 		private int order;
 		
-		public HeaderClassifierRule(HeaderMatch match, Priority p, int order) {
+		private HeaderClassifierRule(){	
+		}
+		
+		private HeaderClassifierRule(HeaderMatch match, Priority p, int order) {
 			this.match = match;
 			this.priority = p;
 			this.order = order;
@@ -196,6 +201,33 @@ public class HeaderClassifier extends AbstractProcessingBlock implements IClassi
 		@Override
 		public String toString() {
 			return String.format("[HeaderClassifierRule: priority: %s, order: %d, match: %s]", this.priority.name(), this.order, this.match.toString());
+		}
+		
+		public static class Builder {
+			private HeaderClassifierRule rule;
+
+			public Builder(){
+				this.rule = new HeaderClassifierRule();
+			}
+			
+			public Builder setHeaderMatch(HeaderMatch match){
+				this.rule.match = match;
+				return this;
+			}
+			
+			public Builder setPriority(Priority p){
+				this.rule.priority = p;
+				return this;
+			}
+			
+			public Builder setOrder(int o){
+				this.rule.order = 0;
+				return this;
+			}
+			
+			public HeaderClassifierRule build(){
+				return new HeaderClassifierRule(this.rule.match, this.rule.priority, this.rule.order);
+			}
 		}
 	}
 	

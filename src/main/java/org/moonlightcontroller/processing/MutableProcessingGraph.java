@@ -5,7 +5,7 @@ import java.util.List;
 import java.util.Set;
 
 
-class MutableProcessingGraph extends ProcessingGraph {
+public class MutableProcessingGraph extends ProcessingGraph {
 
 	public MutableProcessingGraph(IProcessingGraph graph) {
 		super(graph);

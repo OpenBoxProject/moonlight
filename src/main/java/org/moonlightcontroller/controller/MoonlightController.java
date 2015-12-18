@@ -3,6 +3,7 @@ package org.moonlightcontroller.controller;
 import java.util.List;
 
 import org.moonlightcontroller.aggregator.ApplicationAggregator;
+import org.moonlightcontroller.aggregator.IApplicationAggregator;
 import org.moonlightcontroller.bal.BoxApplication;
 import org.moonlightcontroller.events.EventManager;
 import org.moonlightcontroller.events.IEventManager;
@@ -31,7 +32,7 @@ public class MoonlightController {
 	public void start(){
 		List<BoxApplication> apps = this.registry.getApplications();
 		
-		ApplicationAggregator aggregator = ApplicationAggregator.getInstance();
+		IApplicationAggregator aggregator = ApplicationAggregator.getInstance();
 		aggregator.addApplications(apps);
 		aggregator.performAggregation();
 		
