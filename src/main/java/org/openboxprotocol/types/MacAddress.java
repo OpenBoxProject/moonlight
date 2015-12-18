@@ -1,6 +1,6 @@
 package org.openboxprotocol.types;
 
-import org.moonlightcontroller.exceptions.JSONParseException;
+import org.openboxprotocol.exceptions.JSONParseException;
 
 public class MacAddress implements ValueType<MacAddress> {
 

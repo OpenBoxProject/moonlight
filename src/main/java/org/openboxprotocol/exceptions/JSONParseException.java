@@ -1,5 +1,6 @@
-package org.moonlightcontroller.exceptions;
+package org.openboxprotocol.exceptions;
 
+import org.moonlightcontroller.exceptions.ParseException;
 
 public class JSONParseException extends ParseException {
 

@@ -1,7 +1,7 @@
 package org.openboxprotocol.types;
 
-import org.moonlightcontroller.exceptions.JSONParseException;
 import org.moonlightcontroller.exceptions.ParseException;
+import org.openboxprotocol.exceptions.JSONParseException;
 
 public class IPv4Address implements ValueType<IPv4Address> {
 
