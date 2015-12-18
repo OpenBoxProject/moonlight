@@ -5,7 +5,7 @@ import java.util.Map;
 import org.moonlightcontroller.processing.BlockClass;
 import org.moonlightcontroller.processing.ProcessingBlock;
 
-public class Discard extends ProcessingBlock {
+public class Discard extends AbstractProcessingBlock {
 	private Discard(String id) {
 		super(id);
 	}
@@ -19,14 +19,18 @@ public class Discard extends ProcessingBlock {
 	}
 
 	@Override
+	public String getId() {
+		return this.id;
+	}
+
+	@Override
 	public BlockClass getBlockClass() {
 		return BlockClass.BLOCK_CLASS_TERMINAL;
 	}
 
 	@Override
 	public String getBlockType() {
-		// TODO Auto-generated method stub
-		return null;
+		return "Discard";
 	}
 
 	@Override
@@ -46,4 +50,8 @@ public class Discard extends ProcessingBlock {
 		// No config for 'Discard'
 	}
 
+	@Override
+	protected AbstractProcessingBlock spawn(String id) {
+		return new Discard(id);
+	}
 }
