@@ -2,7 +2,7 @@ package org.moonlightcontroller.aggregator.temp;
 
 import java.util.List;
 
-import org.moonlightcontroller.aggregator.temp.Tupple.Pair;
+import org.moonlightcontroller.aggregator.Tupple.Pair;
 import org.moonlightcontroller.exceptions.MergeException;
 import org.openboxprotocol.protocol.Priority;
 

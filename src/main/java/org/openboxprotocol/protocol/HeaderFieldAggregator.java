@@ -1,4 +1,4 @@
-package org.moonlightcontroller.aggregator.temp;
+package org.openboxprotocol.protocol;
 
 import java.util.List;
 

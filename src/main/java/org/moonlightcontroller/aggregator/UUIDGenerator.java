@@ -1,4 +1,4 @@
-package org.moonlightcontroller.aggregator.temp;
+package org.moonlightcontroller.aggregator;
 
 import java.util.Random;
 import java.util.UUID;

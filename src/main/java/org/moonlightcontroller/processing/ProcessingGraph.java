@@ -1,4 +1,4 @@
-package org.moonlightcontroller.aggregator.temp;
+package org.moonlightcontroller.processing;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
