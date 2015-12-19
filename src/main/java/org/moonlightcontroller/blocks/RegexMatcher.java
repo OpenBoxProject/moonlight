@@ -54,4 +54,9 @@ public class RegexMatcher extends ProcessingBlock {
 		config.put("payload_only", this.payload_only? "true" : "false");
 		config.put("match_all", this.match_all? "true" : "false");
 	}
+
+	@Override
+	protected ProcessingBlock spawn(String id) {
+		return new RegexMatcher(id, pattern, payload_only, match_all);
+	}
 }

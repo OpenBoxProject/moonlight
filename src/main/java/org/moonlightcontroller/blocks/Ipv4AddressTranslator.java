@@ -96,5 +96,10 @@ public class Ipv4AddressTranslator extends ProcessingBlock {
 		config.put("reap_interval", this.reap_interval+ "");
 		config.put("mapping_capacity", this.mapping_capacity+ "");
 	}
+
+	@Override
+	protected ProcessingBlock spawn(String id) {
+		return new Ipv4AddressTranslator(id, input_spec, tcp_done_timeout, tcp_nodata_timeout, tcp_guarantee, udp_timeout, udp_streaming_timeout, udp_guarantee, reap_interval, mapping_capacity);
+	}
 }
 class ipv4_translator_rules{}

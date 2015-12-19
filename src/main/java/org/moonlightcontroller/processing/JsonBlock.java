@@ -7,6 +7,9 @@ public class JsonBlock {
 	private String name;
 	private Map<String, String> config;
 	
+	public JsonBlock(){	
+	}
+	
 	public JsonBlock(String type, String name, Map<String, String> config) {
 		this.type = type;
 		this.name = name;

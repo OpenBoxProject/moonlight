@@ -68,4 +68,9 @@ public class NetworkDirectionSwap extends ProcessingBlock {
 		config.put("tcp", this.tcp? "true" : "false");
 		config.put("udp", this.udp? "true" : "false");
 	}
+
+	@Override
+	protected ProcessingBlock spawn(String id) {
+		return new NetworkDirectionSwap(id, ethernet, ipv4, ipv6, tcp, udp);
+	}
 }

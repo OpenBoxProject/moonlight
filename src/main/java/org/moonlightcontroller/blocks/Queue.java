@@ -40,4 +40,9 @@ public class Queue extends ProcessingBlock {
 	protected void putConfiguration(Map<String, String> config) {
 		config.put("capacity", this.capacity+ "");
 	}
+
+	@Override
+	protected ProcessingBlock spawn(String id) {
+		return new Queue(id, capacity);
+	}
 }

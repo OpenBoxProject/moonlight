@@ -40,4 +40,9 @@ public class ContentClassifier extends ProcessingBlock {
 	protected void putConfiguration(Map<String, String> config) {
 		config.put("pattern", this.pattern.toString());
 	}
+
+	@Override
+	protected ProcessingBlock spawn(String id) {
+		return new ContentClassifier(id, this.pattern);
+	}
 }

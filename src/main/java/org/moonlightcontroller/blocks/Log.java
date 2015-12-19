@@ -61,4 +61,9 @@ public class Log extends ProcessingBlock {
 		config.put("attach_packet", this.attach_packet? "true" : "false");
 		config.put("packet_size", this.packet_size+ "");
 	}
+
+	@Override
+	protected ProcessingBlock spawn(String id) {
+		return new Log(id, message, severity, attach_packet, packet_size);
+	}
 }

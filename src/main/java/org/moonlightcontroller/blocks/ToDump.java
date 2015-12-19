@@ -40,4 +40,9 @@ public class ToDump extends ProcessingBlock {
 	protected void putConfiguration(Map<String, String> config) {
 		config.put("filename", this.filename);
 	}
+
+	@Override
+	protected ProcessingBlock spawn(String id) {
+		return new ToDump(id, filename);
+	}
 }

@@ -25,20 +25,7 @@ public class ToDevice extends ProcessingBlock {
 
 	@Override
 	public String getBlockType() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public String toShortString() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public ProcessingBlock clone() {
-		// TODO Auto-generated method stub
-		return null;
+		return "ToDevice";
 	}
 
 	@Override
@@ -46,4 +33,8 @@ public class ToDevice extends ProcessingBlock {
 		config.put("devname", devname);
 	}
     
+	@Override
+	protected ProcessingBlock spawn(String id) {
+		return new ToDevice(id, this.getDevice());
+	}
 }

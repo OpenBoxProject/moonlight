@@ -13,11 +13,11 @@ public class SetProcessingGraphRequest implements IMessage {
 	private List<JsonBlock> blocks;
 	private List<JsonConnector> connectors;
 	
-	// Default constructor to support Jersy
-	public SetProcessingGraphRequest() {}
+	public SetProcessingGraphRequest(){
+	}
 	
 	public SetProcessingGraphRequest(int xid, int dpid, List<String> modules, List<JsonBlock> blocks, List<JsonConnector> connectors) {
-		this.type = this.getClass().getName();
+		this.type = "SetProcessingGraphRequest";
 		this.xid = xid;
 		this.dpid = dpid;
 		this.modules = modules;
@@ -62,9 +62,10 @@ public class SetProcessingGraphRequest implements IMessage {
 	public void setConnectors(List<JsonConnector> connectors) {
 		this.connectors = connectors;
 	}
-	
+
 	@Override
 	public void setXid(int xid) {
-		this.xid = xid;
+		
 	}
 }
+

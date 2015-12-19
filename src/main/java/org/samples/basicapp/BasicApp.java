@@ -1,11 +1,13 @@
 package org.samples.basicapp;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import org.moonlightcontroller.bal.BoxApplication;
 import org.moonlightcontroller.blocks.FromDevice;
 import org.moonlightcontroller.blocks.HeaderClassifier;
+import org.moonlightcontroller.blocks.HeaderClassifier.HeaderClassifierRule;
 import org.moonlightcontroller.blocks.ToDevice;
 import org.moonlightcontroller.processing.Connector;
 import org.openboxprotocol.protocol.HeaderField;
@@ -25,40 +27,42 @@ public class BasicApp extends BoxApplication {
 		System.out.println("KOKO" + statements.get(0).getLocation().getId());
 		this.setStatements(statements);
 	}
-	
+
 	private List<IStatement> createStatements() {
-		
+
 		HeaderMatch h1 = new OpenBoxHeaderMatch.Builder().setExact(HeaderField.TCP_DST, new TransportPort(22)).build();
 		HeaderMatch h2 = new OpenBoxHeaderMatch.Builder().setExact(HeaderField.TCP_DST, TransportPort.ANY).build();
-		
 		ArrayList<IStatement> statements = new ArrayList<>();
 		FromDevice from = new FromDevice("BasicApp", 0, "eth0", true, true);
 		ToDevice to1 = new ToDevice("BasicApp", "eth1");
 		ToDevice to2 = new ToDevice("BasicApp", "eth2");
-		HeaderClassifier classify = new HeaderClassifier("BasicApp");
-		classify.addMatch(h1);
-		classify.addMatch(h2);
+		HeaderClassifier classify = new HeaderClassifier.Builder()
+				.setRules(new ArrayList<HeaderClassifierRule>(Arrays.asList(
+						new HeaderClassifierRule.Builder().setHeaderMatch(h1).setPriority(Priority.HIGH).setOrder(0).build(),
+						new HeaderClassifierRule.Builder().setHeaderMatch(h2).setPriority(Priority.HIGH).setOrder(1).build())))
+				.setPriority(Priority.HIGH)
+				.build();
 		IStatement st = new Statement.Builder()
-			.setLocation(new InstanceLocationSpecifier("ep1", 1000))
-			.addBlock(from)
-			.addBlock(to1)
-			.addBlock(classify)
-			.addConnector(new Connector.Builder()
-				.setSourceBlock(from)
-				.setSourceOutputPort(from.getOutputPort())
-				.setDestBlock(classify)
-				.build())
-			.addConnector(new Connector.Builder()
-				.setSourceBlock(classify)
-				.setSourceOutputPort(classify.getPort(h1))
-				.setDestBlock(to1)
-				.build())
-			.addConnector(new Connector.Builder()
-				.setSourceBlock(classify)
-				.setSourceOutputPort(classify.getPort(h2))
-				.setDestBlock(to2)
-				.build())
-			.build();
+				.setLocation(new InstanceLocationSpecifier("ep1", 1000))
+				.addBlock(from)
+				.addBlock(to1)
+				.addBlock(classify)
+				.addConnector(new Connector.Builder()
+						.setSourceBlock(from)
+						.setSourceOutputPort(from.getOutputPort())
+						.setDestBlock(classify)
+						.build())
+				.addConnector(new Connector.Builder()
+						.setSourceBlock(classify)
+						.setSourceOutputPort(0)
+						.setDestBlock(to1)
+						.build())
+				.addConnector(new Connector.Builder()
+						.setSourceBlock(classify)
+						.setSourceOutputPort(1)
+						.setDestBlock(to2)
+						.build())
+				.build();
 		statements.add(st);
 		return statements;
 	}

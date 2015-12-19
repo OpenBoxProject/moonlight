@@ -40,5 +40,10 @@ public class HeaderPayloadClassifier extends ProcessingBlock {
 	protected void putConfiguration(Map<String, String> config) {
 		config.put("match", this.match.toString());
 	}
+
+	@Override
+	protected ProcessingBlock spawn(String id) {
+		return new HeaderPayloadClassifier(id, match);
+	}
 }
 class compound_matches {}

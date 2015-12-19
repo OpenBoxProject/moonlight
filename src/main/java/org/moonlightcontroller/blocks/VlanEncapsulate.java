@@ -61,4 +61,9 @@ public class VlanEncapsulate extends ProcessingBlock {
 		config.put("vlan_pcp", this.vlan_pcp+ "");
 		config.put("ethertype", this.ethertype+ "");
 	}
+
+	@Override
+	protected ProcessingBlock spawn(String id) {
+		return new VlanEncapsulate(id, vlan_vid, vlan_dei, vlan_pcp, ethertype);
+	}
 }

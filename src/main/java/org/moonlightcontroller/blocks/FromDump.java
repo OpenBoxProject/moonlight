@@ -54,4 +54,9 @@ public class FromDump extends ProcessingBlock {
 		config.put("timing", this.timing? "true" : "false");
 		config.put("active", this.active? "true" : "false");
 	}
+
+	@Override
+	protected ProcessingBlock spawn(String id) {
+		return new FromDump(id, filename, timing, active);
+	}
 }

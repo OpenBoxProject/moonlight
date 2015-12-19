@@ -112,9 +112,13 @@ public class ConnectionManager implements IConnectionManager, ISouthboundClient{
 			instancesMapping.put(key, value);
 
 			IProcessingGraph processingGraph = ApplicationAggregator.getInstance().getProcessingGraph(key);
-			List<JsonBlock> blocks = translateBlocks(processingGraph.getBlocks());
-			List<JsonConnector> connectors = translateConnectors(processingGraph.getConnectors());
-
+			List<JsonBlock> blocks = null;
+			List<JsonConnector> connectors = null;
+			if (processingGraph != null){
+				blocks = translateBlocks(processingGraph.getBlocks());
+				connectors = translateConnectors(processingGraph.getConnectors());
+			}
+			
 			SetProcessingGraphRequest processMessage = new SetProcessingGraphRequest(xid, dpid, null, blocks, connectors);
 			IRequestSender requestSender = requestSendersMapping.get(xid);
 			value.sendRequest(processMessage, requestSender);

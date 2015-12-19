@@ -40,4 +40,9 @@ public class DecIpTtl extends ProcessingBlock {
 	protected void putConfiguration(Map<String, String> config) {
 		config.put("active", this.active? "true" : "false");
 	}
+
+	@Override
+	protected ProcessingBlock spawn(String id) {
+		return new DecIpTtl(id, this.active);
+	}
 }

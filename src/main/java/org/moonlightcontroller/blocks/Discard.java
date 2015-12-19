@@ -17,24 +17,16 @@ public class Discard extends ProcessingBlock {
 
 	@Override
 	public String getBlockType() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public String toShortString() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public ProcessingBlock clone() {
-		// TODO Auto-generated method stub
-		return null;
+		return "Discard";
 	}
 
 	@Override
 	protected void putConfiguration(Map<String, String> config) {
 		// No config for 'Discard'
+	}
+
+	@Override
+	protected ProcessingBlock spawn(String id) {
+		return new Discard(id);
 	}
 }

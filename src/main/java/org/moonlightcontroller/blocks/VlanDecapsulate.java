@@ -33,4 +33,10 @@ public class VlanDecapsulate extends ProcessingBlock {
 	@Override
 	protected void putConfiguration(Map<String, String> config) {
 	}
+
+	@Override
+	protected ProcessingBlock spawn(String id) {
+		return new VlanDecapsulate(id);
+		
+	}
 }

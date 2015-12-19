@@ -60,28 +60,7 @@ public class Connector implements IConnector {
 		public Builder(){
 			this.conn = new Connector();
 		}
-		/*
-		@Override
-		public org.moonlightcontroller.processing.IConnector.Builder setSourceBlockId(
-				String src) {
-			this.conn.sourceBlock = src;
-			return this;
-		}
-
-		@Override
-		public org.moonlightcontroller.processing.IConnector.Builder setDestinationBlockId(
-				String dst) {
-			this.conn.destinationBlock = dst;
-			return this;
-		}
-
-		@Override
-		public org.moonlightcontroller.processing.IConnector.Builder setSourceBlockPort(
-				int port) {
-			this.conn.sourcePort = port;
-			return this;
-		}
-		*/
+		
 		@Override
 		public IConnector build() {
 			return this.conn;
@@ -108,6 +87,5 @@ public class Connector implements IConnector {
 			return this;
 		}
 	}
-
 }
 

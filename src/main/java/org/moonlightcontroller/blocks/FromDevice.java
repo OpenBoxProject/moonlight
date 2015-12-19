@@ -44,20 +44,7 @@ public class FromDevice extends ProcessingBlock {
 
 	@Override
 	public String getBlockType() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public String toShortString() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public ProcessingBlock clone() {
-		// TODO Auto-generated method stub
-		return null;
+		return "FromDevice";
 	}
 
 	@Override
@@ -67,4 +54,8 @@ public class FromDevice extends ProcessingBlock {
 		config.put("promisc", this.promisc ? "true" : "false");
 	}
 	
+	@Override
+	protected ProcessingBlock spawn(String id) {
+		return new FromDevice(id, this.output, this.devname, this.sniffer, this.promisc);
+	}
 }

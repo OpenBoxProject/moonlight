@@ -1,6 +1,6 @@
 package org.openboxprotocol.types;
 
-import org.openboxprotocol.protocol.parsing.JSONParseException;
+import org.openboxprotocol.exceptions.JSONParseException;
 
 public class TransportPort implements ValueType<TransportPort> {
 
@@ -17,8 +17,7 @@ public class TransportPort implements ValueType<TransportPort> {
 
 	@Override
 	public TransportPort applyMask(TransportPort mask) {
-		// TODO Auto-generated method stub
-		return null;
+		return new TransportPort(this.port & mask.port);
 	}
 
 	public static TransportPort fromJson(Object json) throws JSONParseException {
@@ -34,5 +33,14 @@ public class TransportPort implements ValueType<TransportPort> {
 	@Override
 	public boolean equals(Object other) {
 		return (other instanceof TransportPort) && ((TransportPort)other).port == this.port;
+	}
+	
+	@Override
+	public String toString() {
+		return Integer.toString(port);
+	}
+	
+	public static TransportPort of(int port) {
+		return new TransportPort(port);
 	}
 }

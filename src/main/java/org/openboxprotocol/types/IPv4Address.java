@@ -1,6 +1,7 @@
 package org.openboxprotocol.types;
 
-import org.openboxprotocol.protocol.parsing.JSONParseException;
+import org.moonlightcontroller.exceptions.ParseException;
+import org.openboxprotocol.exceptions.JSONParseException;
 
 public class IPv4Address implements ValueType<IPv4Address> {
 
@@ -14,8 +15,7 @@ public class IPv4Address implements ValueType<IPv4Address> {
 
 	@Override
 	public IPv4Address applyMask(IPv4Address mask) {
-		// TODO Auto-generated method stub
-		return null;
+		return new IPv4Address(this.ip & mask.ip);
 	}
 	
 	@Override
@@ -28,15 +28,30 @@ public class IPv4Address implements ValueType<IPv4Address> {
 		return (other instanceof IPv4Address) && ((IPv4Address)other).ip == this.ip;
 	}
 	
-	public static IPv4Address fromJson(Object json) throws JSONParseException {
-		if (!(json instanceof String)) {
-			throw new JSONParseException("Invalid value for IPv4 address: " + json);
+	private String toStringValue = null;
+	
+	@Override
+	public String toString() {
+		if (toStringValue == null) {
+			synchronized (this) {
+				if (toStringValue == null) {
+					long v = this.ip;
+					String[] parts = new String[4];
+					for (int i = 0; i < 4; i++) {
+						parts[3 - i] = Long.toString(v & 0x0FF);
+						v >>= 8;
+					}
+					toStringValue = String.join(".", parts);
+				}
+			}
 		}
-		
-		String addr = (String)json;
+		return toStringValue;
+	}
+	
+	private static IPv4Address fromString(String addr) throws ParseException {
 		String[] parts = addr.split("\\.");
 		if (parts.length != 4)
-			throw new JSONParseException("Invalid value for IPv4 address: " + addr);
+			throw new ParseException("Invalid value for IPv4 address: " + addr);
 		try {
 			long ip = 0;
 			for (int i = 0; i < 4; i++) {
@@ -46,8 +61,25 @@ public class IPv4Address implements ValueType<IPv4Address> {
 			}
 			return new IPv4Address(ip);
 		} catch (Exception e) {
-			throw new JSONParseException("Invalid value for IPv4 address: " + addr);
+			throw new ParseException("Invalid value for IPv4 address: " + addr);
 		}
+	}
+	
+	public static IPv4Address fromJson(Object json) throws JSONParseException {
+		if (!(json instanceof String)) {
+			throw new JSONParseException("Invalid value for IPv4 address: " + json);
+		}
+		
+		String addr = (String)json;
+		try {
+			return fromString(addr);
+		} catch (ParseException e) {
+			throw new JSONParseException(e.getMessage());
+		}
+	}
+	
+	public static IPv4Address of(String addr) throws ParseException {
+		return fromString(addr);
 	}
 
 }

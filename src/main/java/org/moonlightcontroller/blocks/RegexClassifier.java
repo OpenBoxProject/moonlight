@@ -47,4 +47,9 @@ public class RegexClassifier extends ProcessingBlock {
 		config.put("pattern", this.pattern.toString());
 		config.put("payload_only", this.payload_only? "true" : "false");
 	}
+
+	@Override
+	protected ProcessingBlock spawn(String id) {
+		return new RegexClassifier(id, pattern, payload_only);
+	}
 }
