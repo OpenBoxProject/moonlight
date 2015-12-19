@@ -13,7 +13,7 @@ import org.openboxprotocol.types.ValueType;
 import org.openboxprotocol.types.VlanPcp;
 import org.openboxprotocol.types.VlanVid;
 
-public class HeaderField<F extends ValueType<F>> {
+public class HeaderField<F extends ValueType<F>> implements Comparable<HeaderField<?>> {
 	
 	private final String name;
 	public final HeaderFields id;
@@ -92,6 +92,11 @@ public class HeaderField<F extends ValueType<F>> {
 		return name;
 	}
 	
+	@Override
+	public String toString() {
+		return name;
+	}
+	
 	public boolean arePrerequisitesOK(HeaderMatch match) {
 		for (Prerequisite<?> p : this.prerequisites) {
 			if (!p.isSatisfied(match)) {
@@ -99,5 +104,10 @@ public class HeaderField<F extends ValueType<F>> {
 			}
 		}
 		return true;
+	}
+
+	@Override
+	public int compareTo(HeaderField<?> o) {
+		return this.id.ordinal() - o.id.ordinal();
 	}
 }

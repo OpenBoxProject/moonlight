@@ -1,5 +1,6 @@
 package org.openboxprotocol.protocol;
 
+import org.moonlightcontroller.exceptions.MergeException;
 import org.openboxprotocol.types.Masked;
 import org.openboxprotocol.types.ValueType;
 
@@ -12,6 +13,8 @@ public interface HeaderMatch {
     public Iterable<HeaderField<?>> getMatchFields();
 
     public Builder createBuilder();
+    
+	public HeaderMatch mergeWith(HeaderMatch other) throws MergeException;
 
     interface Builder {
         public <F extends ValueType<F>> Builder setExact(HeaderField<F> field, F value) throws UnsupportedOperationException;

@@ -1,6 +1,6 @@
 package org.openboxprotocol.types;
 
-import org.openboxprotocol.protocol.parsing.JSONParseException;
+import org.openboxprotocol.exceptions.JSONParseException;
 
 public class EthType implements ValueType<EthType> {
 
@@ -10,6 +10,11 @@ public class EthType implements ValueType<EthType> {
 	private static final int ETH_TYPE_VLAN = 0x8100;
 	private static final int ETH_TYPE_IPv4 = 0x0800;
 	private static final int ETH_TYPE_IPv6 = 0x86DD;
+	
+	private static final String ETH_TYPE_ARP_STR = "arp";
+	private static final String ETH_TYPE_VLAN_STR = "vlan";
+	private static final String ETH_TYPE_IPv4_STR = "ipv4";
+	private static final String ETH_TYPE_IPv6_STR = "ipv6";
 	
 	public static final EthType ARP = new EthType(ETH_TYPE_ARP);
 	public static final EthType VLAN = new EthType(ETH_TYPE_VLAN);
@@ -39,6 +44,22 @@ public class EthType implements ValueType<EthType> {
 	@Override
 	public boolean equals(Object other) {
 		return (other instanceof EthType) && ((EthType)other).ethType == this.ethType;
+	}
+	
+	@Override
+	public String toString() {
+		switch (ethType) {
+		case ETH_TYPE_ARP:
+			return ETH_TYPE_ARP_STR;
+		case ETH_TYPE_IPv4:
+			return ETH_TYPE_IPv4_STR;
+		case ETH_TYPE_IPv6:
+			return ETH_TYPE_IPv6_STR;
+		case ETH_TYPE_VLAN:
+			return ETH_TYPE_VLAN_STR;
+		default:
+			return "0x" + Integer.toHexString(ethType).toUpperCase();
+		}
 	}
 	
 	public static EthType of(int ethType) {

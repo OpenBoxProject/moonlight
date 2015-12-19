@@ -6,6 +6,9 @@ public class JsonConnector {
 	private String dst;
 	private int dst_port;
 	
+	public JsonConnector(){
+	}
+	
 	public JsonConnector(String src, int src_port, String dst, int dst_port) {
 		this.src = src;
 		this.src_port = src_port;

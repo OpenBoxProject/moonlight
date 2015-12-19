@@ -1,6 +1,6 @@
 package org.openboxprotocol.types;
 
-import org.openboxprotocol.protocol.parsing.JSONParseException;
+import org.openboxprotocol.exceptions.JSONParseException;
 
 public class IpEcn implements ValueType<IpEcn> {
 

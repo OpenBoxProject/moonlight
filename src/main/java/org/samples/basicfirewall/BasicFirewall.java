@@ -1,6 +1,7 @@
 package org.samples.basicfirewall;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.logging.Logger;
 
@@ -9,6 +10,7 @@ import org.moonlightcontroller.blocks.Discard;
 import org.moonlightcontroller.blocks.FromDevice;
 import org.moonlightcontroller.blocks.HeaderClassifier;
 import org.moonlightcontroller.blocks.ToDevice;
+import org.moonlightcontroller.blocks.HeaderClassifier.HeaderClassifierRule;
 import org.moonlightcontroller.events.IHandleClient;
 import org.moonlightcontroller.events.IInstanceUpListener;
 import org.moonlightcontroller.events.InstanceUpArgs;
@@ -17,6 +19,7 @@ import org.openboxprotocol.protocol.HeaderField;
 import org.openboxprotocol.protocol.HeaderMatch;
 import org.openboxprotocol.protocol.IStatement;
 import org.openboxprotocol.protocol.OpenBoxHeaderMatch;
+import org.openboxprotocol.protocol.Priority;
 import org.openboxprotocol.protocol.Statement;
 import org.openboxprotocol.protocol.topology.IApplicationTopology;
 import org.openboxprotocol.protocol.topology.InstanceLocationSpecifier;
@@ -45,7 +48,12 @@ public class BasicFirewall extends BoxApplication{
 		ArrayList<IStatement> statements = new ArrayList<>();
 		FromDevice from = new FromDevice.Builder().setDevice("eth0").setPromisc(true).setSniffer(true).build();
 		ToDevice to = new ToDevice.Builder().setDevice("eth1").build();
-		HeaderClassifier classify = new HeaderClassifier.Builder().addMatch(h1).addMatch(h2).build();
+		HeaderClassifier classify = new HeaderClassifier.Builder()
+				.setRules(new ArrayList<HeaderClassifierRule>(Arrays.asList(
+						new HeaderClassifierRule.Builder().setHeaderMatch(h1).setPriority(Priority.HIGH).setOrder(0).build(),
+						new HeaderClassifierRule.Builder().setHeaderMatch(h2).setPriority(Priority.HIGH).setOrder(1).build())))
+				.setPriority(Priority.HIGH)
+				.build();
 		Discard discard = new Discard.Builder().build();
 		IStatement st = new Statement.Builder()
 			.setLocation(new InstanceLocationSpecifier("ep1", 1000))
@@ -59,12 +67,12 @@ public class BasicFirewall extends BoxApplication{
 				.build())
 			.addConnector(new Connector.Builder()
 				.setSourceBlock(classify)
-				.setSourceOutputPort(classify.getPort(h1))
+				.setSourceOutputPort(0)
 				.setDestBlock(to)
 				.build())
 			.addConnector(new Connector.Builder()
 				.setSourceBlock(classify)
-				.setSourceOutputPort(classify.getPort(h2))
+				.setSourceOutputPort(1)
 				.setDestBlock(discard)
 				.build())
 			.build();
