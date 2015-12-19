@@ -32,10 +32,12 @@ public class BasicApp extends BoxApplication {
 		HeaderMatch h2 = new OpenBoxHeaderMatch.Builder().setExact(HeaderField.TCP_DST, TransportPort.ANY).build();
 		
 		ArrayList<IStatement> statements = new ArrayList<>();
-		FromDevice from = new FromDevice.Builder().setDevice("eth0").setPromisc(true).setSniffer(true).build();
-		ToDevice to1 = new ToDevice.Builder().setDevice("eth1").build();
-		ToDevice to2 = new ToDevice.Builder().setDevice("eth2").build();
-		HeaderClassifier classify = new HeaderClassifier.Builder().addMatch(h1).addMatch(h2).build();
+		FromDevice from = new FromDevice("BasicApp", 0, "eth0", true, true);
+		ToDevice to1 = new ToDevice("BasicApp", "eth1");
+		ToDevice to2 = new ToDevice("BasicApp", "eth2");
+		HeaderClassifier classify = new HeaderClassifier("BasicApp");
+		classify.addMatch(h1);
+		classify.addMatch(h2);
 		IStatement st = new Statement.Builder()
 			.setLocation(new InstanceLocationSpecifier("ep1", 1000))
 			.addBlock(from)

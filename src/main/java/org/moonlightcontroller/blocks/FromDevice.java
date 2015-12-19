@@ -12,12 +12,13 @@ public class FromDevice extends ProcessingBlock {
 	private boolean sniffer;
 	private boolean promisc;
 	
-	private FromDevice(String id, int output, String devname, boolean sniffer, boolean promisc) {
+	public FromDevice(String id, int output, String devname, boolean sniffer, boolean promisc) {
 		super(id);
 		this.output = output;
 		this.devname = devname;
 		this.sniffer = sniffer;
 		this.promisc = promisc;
+		this.addPort();
 	}
 	
 	public int getOutputPort() {
@@ -35,34 +36,6 @@ public class FromDevice extends ProcessingBlock {
 	public boolean isPromisc() {
 		return promisc;
 	}	
-	
-	public static class Builder extends ProcessingBlock.Builder {
-		private int output;
-		private String devname;
-		private boolean sniffer;
-		private boolean promisc;
-		
-		public Builder setDevice(String device){
-			this.devname = device;
-			return this;
-		}
-		
-		public Builder setSniffer(boolean sniffer){
-			this.sniffer = sniffer;
-			return this;
-		}
-		
-		public Builder setPromisc(boolean promisc){
-			this.promisc = promisc;
-			return this;
-		}
-	
-		@Override
-		public FromDevice build(){
-			this.addPort();
-			return new FromDevice(super.id, this.output, this.devname, this.sniffer, this.promisc);
-		}
-	}
 
 	@Override
 	public BlockClass getBlockClass() {

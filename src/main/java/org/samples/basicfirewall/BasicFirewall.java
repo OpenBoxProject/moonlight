@@ -43,10 +43,12 @@ public class BasicFirewall extends BoxApplication{
 		HeaderMatch h2 = new OpenBoxHeaderMatch.Builder().setExact(HeaderField.TCP_DST, TransportPort.ANY).build();
 		
 		ArrayList<IStatement> statements = new ArrayList<>();
-		FromDevice from = new FromDevice.Builder().setDevice("eth0").setPromisc(true).setSniffer(true).build();
-		ToDevice to = new ToDevice.Builder().setDevice("eth1").build();
-		HeaderClassifier classify = new HeaderClassifier.Builder().addMatch(h1).addMatch(h2).build();
-		Discard discard = new Discard.Builder().build();
+		FromDevice from = new FromDevice("BasicFirewall", 0, "eth0", true, true);
+		ToDevice to = new ToDevice("BasicFirewall", "eth1");
+		HeaderClassifier classify = new HeaderClassifier("BasicFirewall");
+		classify.addMatch(h1);
+		classify.addMatch(h2);
+		Discard discard = new Discard("BasicFirewall");
 		IStatement st = new Statement.Builder()
 			.setLocation(new InstanceLocationSpecifier("ep1", 1000))
 			.addBlock(from)
