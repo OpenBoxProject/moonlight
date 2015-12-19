@@ -11,28 +11,31 @@ public class ToDump extends ProcessingBlock {
 		super(id);
 		this.filename = filename;
 	}
+
 	public String getFilename() {
 		return filename;
 	}
-	public void setFilename(String filename) {
-		this.filename = filename;
-	}
+
 	@Override
 	public String getBlockType() {
 		return null;
 	}
+
 	@Override
 	public String toShortString() {
 		return null;
 	}
+
 	@Override
 	public ProcessingBlock clone() {
 		return null;
 	}
+
 	@Override
 	public BlockClass getBlockClass() {
 		return BlockClass.BLOCK_CLASS_TERMINAL;
 	}
+
 	@Override
 	protected void putConfiguration(Map<String, String> config) {
 		config.put("filename", this.filename);

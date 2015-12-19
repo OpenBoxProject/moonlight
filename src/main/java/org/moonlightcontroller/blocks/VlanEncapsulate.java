@@ -17,46 +17,43 @@ public class VlanEncapsulate extends ProcessingBlock {
 		this.vlan_pcp = vlan_pcp;
 		this.ethertype = ethertype;
 	}
+
 	public int getVlan_vid() {
 		return vlan_vid;
 	}
+
 	public int getVlan_dei() {
 		return vlan_dei;
 	}
+
 	public int getVlan_pcp() {
 		return vlan_pcp;
 	}
+
 	public int getEthertype() {
 		return ethertype;
 	}
-	public void setVlan_vid(int vlan_vid) {
-		this.vlan_vid = vlan_vid;
-	}
-	public void setVlan_dei(int vlan_dei) {
-		this.vlan_dei = vlan_dei;
-	}
-	public void setVlan_pcp(int vlan_pcp) {
-		this.vlan_pcp = vlan_pcp;
-	}
-	public void setEthertype(int ethertype) {
-		this.ethertype = ethertype;
-	}
+
 	@Override
 	public String getBlockType() {
 		return null;
 	}
+
 	@Override
 	public String toShortString() {
 		return null;
 	}
+
 	@Override
 	public ProcessingBlock clone() {
 		return null;
 	}
+
 	@Override
 	public BlockClass getBlockClass() {
 		return BlockClass.BLOCK_CLASS_MODIFIER;
 	}
+
 	@Override
 	protected void putConfiguration(Map<String, String> config) {
 		config.put("vlan_vid", this.vlan_vid+ "");

@@ -11,28 +11,31 @@ public class DecIpTtl extends ProcessingBlock {
 		super(id);
 		this.active = active;
 	}
+
 	public boolean getActive() {
 		return active;
 	}
-	public void setActive(boolean active) {
-		this.active = active;
-	}
+
 	@Override
 	public String getBlockType() {
 		return null;
 	}
+
 	@Override
 	public String toShortString() {
 		return null;
 	}
+
 	@Override
 	public ProcessingBlock clone() {
 		return null;
 	}
+
 	@Override
 	public BlockClass getBlockClass() {
 		return BlockClass.BLOCK_CLASS_MODIFIER;
 	}
+
 	@Override
 	protected void putConfiguration(Map<String, String> config) {
 		config.put("active", this.active? "true" : "false");

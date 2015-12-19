@@ -13,34 +13,35 @@ public class RegexClassifier extends ProcessingBlock {
 		this.pattern = pattern;
 		this.payload_only = payload_only;
 	}
+
 	public String[] getPattern() {
 		return pattern;
 	}
+
 	public boolean getPayload_only() {
 		return payload_only;
 	}
-	public void setPattern(String[] pattern) {
-		this.pattern = pattern;
-	}
-	public void setPayload_only(boolean payload_only) {
-		this.payload_only = payload_only;
-	}
+
 	@Override
 	public String getBlockType() {
 		return null;
 	}
+
 	@Override
 	public String toShortString() {
 		return null;
 	}
+
 	@Override
 	public ProcessingBlock clone() {
 		return null;
 	}
+
 	@Override
 	public BlockClass getBlockClass() {
 		return BlockClass.BLOCK_CLASS_CLASSIFIER;
 	}
+
 	@Override
 	protected void putConfiguration(Map<String, String> config) {
 		config.put("pattern", this.pattern.toString());

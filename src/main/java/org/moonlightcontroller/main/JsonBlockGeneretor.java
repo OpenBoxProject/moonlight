@@ -89,20 +89,14 @@ public class JsonBlockGeneretor {
 
 		//close constructor 
 		sb.append("\t}\n");
-
+		sb.append("\n");
+		
 		// create getters
 		for (ConfigurationObject config : currentClass.getConfiguration()) {
 			sb.append("\tpublic " + config.getType() + " get" + getName(config.getName()) + "() {\n");
 			sb.append("\t\treturn " + config.getName() + ";\n");
 			sb.append("\t}\n");
-		}
-
-		// create setters
-		for (ConfigurationObject config : currentClass.getConfiguration()) {
-			sb.append("\tpublic void set" + getName(config.getName()) + "(" + 
-					config.getType() + " " + config.getName() + ") {\n"); 
-			sb.append("\t\tthis." + config.getName() + " = " + config.getName() + ";\n");
-			sb.append("\t}\n");
+			sb.append("\n");
 		}
 
 		// create methods from ProcessingBlock inheritance
@@ -116,6 +110,7 @@ public class JsonBlockGeneretor {
 					+ "\tpublic "+ method + " {\n" +
 					"\t\treturn null;\n"
 					+ "\t}\n");
+			sb.append("\n");
 		}
 		
 		// build getBlockClass
@@ -123,6 +118,7 @@ public class JsonBlockGeneretor {
 				+ "\tpublic BlockClass getBlockClass() {\n" +
 				"\t\treturn " + blockClassMapping.get(currentClass.getBlockClass()) + ";\n"
 				+ "\t}\n");
+		sb.append("\n");
 		
 		//build putConfiguration method
 		sb.append("\t@Override\n"

@@ -15,40 +15,39 @@ public class RegexMatcher extends ProcessingBlock {
 		this.payload_only = payload_only;
 		this.match_all = match_all;
 	}
+
 	public String[] getPattern() {
 		return pattern;
 	}
+
 	public boolean getPayload_only() {
 		return payload_only;
 	}
+
 	public boolean getMatch_all() {
 		return match_all;
 	}
-	public void setPattern(String[] pattern) {
-		this.pattern = pattern;
-	}
-	public void setPayload_only(boolean payload_only) {
-		this.payload_only = payload_only;
-	}
-	public void setMatch_all(boolean match_all) {
-		this.match_all = match_all;
-	}
+
 	@Override
 	public String getBlockType() {
 		return null;
 	}
+
 	@Override
 	public String toShortString() {
 		return null;
 	}
+
 	@Override
 	public ProcessingBlock clone() {
 		return null;
 	}
+
 	@Override
 	public BlockClass getBlockClass() {
 		return BlockClass.BLOCK_CLASS_CLASSIFIER;
 	}
+
 	@Override
 	protected void putConfiguration(Map<String, String> config) {
 		config.put("pattern", this.pattern.toString());

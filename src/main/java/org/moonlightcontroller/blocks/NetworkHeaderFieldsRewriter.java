@@ -38,100 +38,79 @@ public class NetworkHeaderFieldsRewriter extends ProcessingBlock {
 		this.udp_src = udp_src;
 		this.udp_dst = udp_dst;
 	}
+
 	public MacAddress getEth_src() {
 		return eth_src;
 	}
+
 	public MacAddress getEth_dst() {
 		return eth_dst;
 	}
+
 	public int getEth_type() {
 		return eth_type;
 	}
+
 	public int getIpv4_proto() {
 		return ipv4_proto;
 	}
+
 	public int getIpv4_dscp() {
 		return ipv4_dscp;
 	}
+
 	public int getIpv4_ecn() {
 		return ipv4_ecn;
 	}
+
 	public int getIpv4_ttl() {
 		return ipv4_ttl;
 	}
+
 	public IPv4Address getIpv4_src() {
 		return ipv4_src;
 	}
+
 	public IPv4Address getIpv4_dst() {
 		return ipv4_dst;
 	}
+
 	public int getTcp_src() {
 		return tcp_src;
 	}
+
 	public int getTcp_dst() {
 		return tcp_dst;
 	}
+
 	public int getUdp_src() {
 		return udp_src;
 	}
+
 	public int getUdp_dst() {
 		return udp_dst;
 	}
-	public void setEth_src(MacAddress eth_src) {
-		this.eth_src = eth_src;
-	}
-	public void setEth_dst(MacAddress eth_dst) {
-		this.eth_dst = eth_dst;
-	}
-	public void setEth_type(int eth_type) {
-		this.eth_type = eth_type;
-	}
-	public void setIpv4_proto(int ipv4_proto) {
-		this.ipv4_proto = ipv4_proto;
-	}
-	public void setIpv4_dscp(int ipv4_dscp) {
-		this.ipv4_dscp = ipv4_dscp;
-	}
-	public void setIpv4_ecn(int ipv4_ecn) {
-		this.ipv4_ecn = ipv4_ecn;
-	}
-	public void setIpv4_ttl(int ipv4_ttl) {
-		this.ipv4_ttl = ipv4_ttl;
-	}
-	public void setIpv4_src(IPv4Address ipv4_src) {
-		this.ipv4_src = ipv4_src;
-	}
-	public void setIpv4_dst(IPv4Address ipv4_dst) {
-		this.ipv4_dst = ipv4_dst;
-	}
-	public void setTcp_src(int tcp_src) {
-		this.tcp_src = tcp_src;
-	}
-	public void setTcp_dst(int tcp_dst) {
-		this.tcp_dst = tcp_dst;
-	}
-	public void setUdp_src(int udp_src) {
-		this.udp_src = udp_src;
-	}
-	public void setUdp_dst(int udp_dst) {
-		this.udp_dst = udp_dst;
-	}
+
 	@Override
 	public String getBlockType() {
 		return null;
 	}
+
 	@Override
 	public String toShortString() {
 		return null;
 	}
+
 	@Override
 	public ProcessingBlock clone() {
 		return null;
 	}
+
 	@Override
 	public BlockClass getBlockClass() {
 		return BlockClass.BLOCK_CLASS_MODIFIER;
 	}
+
 	@Override
 	protected void putConfiguration(Map<String, String> config) {
 		config.put("eth_src", this.eth_src.toString());
