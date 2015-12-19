@@ -13,16 +13,18 @@ public class SetProcessingGraphResponse implements IMessage {
 		this.type = this.getClass().getName();
 	}
 	
+	@Override
 	public int getXid() {
 		return xid;
 	}
+	
+	@Override
 	public void setXid(int xid) {
 		this.xid = xid;
 	}
+	
+	@Override
 	public String getType() {
 		return type;
-	}
-	public void setType(String type) {
-		this.type = type;
 	}
 }

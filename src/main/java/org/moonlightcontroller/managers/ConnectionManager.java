@@ -11,13 +11,8 @@ import javax.ws.rs.core.Response.Status;
 import org.moonlightcontroller.aggregator.ApplicationAggregator;
 import org.moonlightcontroller.managers.models.ConnectionInstance;
 import org.moonlightcontroller.managers.models.IRequestSender;
+import org.moonlightcontroller.managers.models.messages.*;
 import org.moonlightcontroller.managers.models.messages.Error;
-import org.moonlightcontroller.managers.models.messages.Hello;
-import org.moonlightcontroller.managers.models.messages.IMessage;
-import org.moonlightcontroller.managers.models.messages.KeepAlive;
-import org.moonlightcontroller.managers.models.messages.ReadResponse;
-import org.moonlightcontroller.managers.models.messages.SetProcessingGraphRequest;
-import org.moonlightcontroller.managers.models.messages.SetProcessingGraphResponse;
 import org.moonlightcontroller.processing.IConnector;
 import org.moonlightcontroller.processing.IProcessingBlock;
 import org.moonlightcontroller.processing.IProcessingGraph;
@@ -155,7 +150,7 @@ public class ConnectionManager implements IConnectionManager, ISouthboundClient{
 		return Response.status(Status.INTERNAL_SERVER_ERROR).build();
 	}
 
-	public Response handleProcessingGraphResponse(SetProcessingGraphResponse message) {
+	public Response handleSetProcessingGraphResponse(SetProcessingGraphResponse message) {
 		IMessage originMessage = messagesMapping.get(message.getXid());
 
 		if (originMessage == null) {
@@ -197,5 +192,35 @@ public class ConnectionManager implements IConnectionManager, ISouthboundClient{
 		IRequestSender iRequestSender = requestSendersMapping.get(message.getXid());
 		iRequestSender.onFailure(message);
 		return okResponse();
+	}
+
+	public Response handleListCapabilitiesResponse(ListCapabilitiesResponse message) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public Response handleGetParametersResponse(GetParametersResponse message) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public Response handleWriteResponse(WriteResponse message) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public Response handleAlert(Alert message) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public Response handleSetParametersResponse(SetParametersResponse message) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public Response handleGlobalStatsResponse(GlobalStatsResponse message) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 }

@@ -4,6 +4,9 @@ public class GetParametersRequest implements IMessage {
 	private String type;
 	private int xid;
 	
+	// Default constructor to support Jersy
+	public GetParametersRequest() {}
+	
 	public GetParametersRequest(int xid) {
 		this.xid = xid;
 		this.type = this.getClass().getName();

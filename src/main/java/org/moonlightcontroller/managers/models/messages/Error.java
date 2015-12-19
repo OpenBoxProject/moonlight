@@ -40,31 +40,15 @@ public class Error implements IResponseMessage {
 		return error_type;
 	}
 
-	public void setError_type(String error_type) {
-		this.error_type = error_type;
-	}
-
 	public String getError_subtype() {
 		return error_subtype;
-	}
-
-	public void setError_subtype(String error_subtype) {
-		this.error_subtype = error_subtype;
 	}
 
 	public String getMessage() {
 		return message;
 	}
 
-	public void setMessage(String message) {
-		this.message = message;
-	}
-
 	public String getExtended_message() {
 		return extended_message;
-	}
-
-	public void setExtended_message(String extended_message) {
-		this.extended_message = extended_message;
 	}
 }

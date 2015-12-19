@@ -19,18 +19,24 @@ public class ReadResponse implements IMessage {
 		this.result = result;
 	}
 	
+	@Override
 	public String getType() {
 		return type;
 	}
+	
+	@Override
 	public int getXid() {
 		return xid;
 	}
+	
 	public String getBlockId() {
 		return blockId;
 	}
+	
 	public String getReadHandle() {
 		return readHandle;
 	}
+	
 	public String getResult() {
 		return result;
 	}

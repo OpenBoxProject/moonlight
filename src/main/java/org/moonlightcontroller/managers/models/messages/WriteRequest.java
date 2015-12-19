@@ -19,14 +19,17 @@ public class WriteRequest implements IMessage {
 		this.value = value;
 	}
 	
+	@Override
 	public String getType() {
 		return type;
 	}
 	
+	@Override
 	public int getXid() {
 		return xid;
 	}
 
+	@Override
 	public void setXid(int xid) {
 		this.xid = xid;
 	}

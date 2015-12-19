@@ -17,15 +17,20 @@ public class WriteResponse implements IMessage {
 		this.writeHandle = writeHandle;
 	}
 
+	@Override
 	public String getType() {
 		return type;
 	}
+	
+	@Override
 	public int getXid() {
 		return xid;
 	}
+	
 	public String getBlockId() {
 		return blockId;
 	}
+	
 	public String getWriteHandle() {
 		return writeHandle;
 	}
