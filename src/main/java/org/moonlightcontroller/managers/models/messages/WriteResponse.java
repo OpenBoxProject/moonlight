@@ -19,4 +19,8 @@ public class WriteResponse implements IMessage {
 	public String getWriteHandle() {
 		return writeHandle;
 	}
+	@Override
+	public void setXid(int xid) {
+		
+	}
 }

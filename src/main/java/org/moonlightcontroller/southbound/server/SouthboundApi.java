@@ -10,8 +10,10 @@ import javax.ws.rs.core.Response;
 
 import org.moonlightcontroller.managers.ConnectionManager;
 import org.moonlightcontroller.managers.models.messages.SetProcessingGraphResponse;
+import org.moonlightcontroller.managers.models.messages.ErrorMessage;
 import org.moonlightcontroller.managers.models.messages.Hello;
 import org.moonlightcontroller.managers.models.messages.KeepAlive;
+import org.moonlightcontroller.managers.models.messages.ReadResponse;
 
 @Path("/message/")
 public class SouthboundApi {
@@ -34,6 +36,20 @@ public class SouthboundApi {
 	@Consumes(MediaType.APPLICATION_JSON)
 	public Response keepalive(KeepAlive message) {
 		return ConnectionManager.getInstance().handleKeepaliveRequest(message);
+	}
+	
+	@POST
+	@Path("ReadResponse")
+	@Consumes(MediaType.APPLICATION_JSON)
+	public Response ReadResponse(ReadResponse message) {
+		return ConnectionManager.getInstance().handleReadResponse(message);
+	}
+	
+	@POST
+	@Path("Error")
+	@Consumes(MediaType.APPLICATION_JSON)
+	public Response Error(ErrorMessage message) {
+		return ConnectionManager.getInstance().handleErrorMessage(message);
 	}
 
 	@POST
@@ -65,13 +81,6 @@ public class SouthboundApi {
 	}
 
 	@POST
-	@Path("ReadResponse")
-	@Consumes(MediaType.TEXT_PLAIN)
-	public String ReadResponse() {
-		return "Test";
-	}
-
-	@POST
 	@Path("WriteResponse")
 	@Consumes(MediaType.TEXT_PLAIN)
 	public String WriteResponse() {
@@ -89,13 +98,6 @@ public class SouthboundApi {
 	@Path("Alert")
 	@Consumes(MediaType.TEXT_PLAIN)
 	public String Alert() {
-		return "Test";
-	}
-
-	@POST
-	@Path("Error")
-	@Consumes(MediaType.TEXT_PLAIN)
-	public String Error() {
 		return "Test";
 	}
 }

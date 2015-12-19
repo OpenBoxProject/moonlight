@@ -31,4 +31,9 @@ public class ReadResponse implements IMessage {
 	public String getResult() {
 		return result;
 	}
+	
+	@Override
+	public void setXid(int xid) {
+		
+	}
 }
