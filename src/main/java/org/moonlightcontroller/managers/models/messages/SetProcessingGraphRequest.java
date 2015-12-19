@@ -13,6 +13,9 @@ public class SetProcessingGraphRequest implements IMessage {
 	private List<JsonBlock> blocks;
 	private List<JsonConnector> connectors;
 	
+	public SetProcessingGraphRequest(){
+	}
+	
 	public SetProcessingGraphRequest(int xid, int dpid, List<String> modules, List<JsonBlock> blocks, List<JsonConnector> connectors) {
 		this.type = "SetProcessingGraphRequest";
 		this.xid = xid;
