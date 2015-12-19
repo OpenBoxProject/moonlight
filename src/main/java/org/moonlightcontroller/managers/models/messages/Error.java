@@ -1,6 +1,6 @@
 package org.moonlightcontroller.managers.models.messages;
 
-public class ErrorMessage implements IResponseMessage {
+public class Error implements IResponseMessage {
 
 	private int xid;
 	private String type; 
@@ -9,10 +9,12 @@ public class ErrorMessage implements IResponseMessage {
 	private String message;
 	private String extended_message;
 	
-	
-	public ErrorMessage (int xid, String error_type, String error_subtype, String message, String extended_message) {
+	// Default constructor to support Jersy
+	public Error() {}
+		
+	public Error (int xid, String error_type, String error_subtype, String message, String extended_message) {
 		this.xid = xid;
-		this.type = "Error";
+		this.type = this.getClass().getName();
 		this.error_type = error_type;
 		this.error_subtype = error_subtype;
 		this.message = message;

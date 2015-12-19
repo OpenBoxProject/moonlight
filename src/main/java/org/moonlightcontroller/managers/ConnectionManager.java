@@ -11,7 +11,7 @@ import javax.ws.rs.core.Response.Status;
 import org.moonlightcontroller.aggregator.ApplicationAggregator;
 import org.moonlightcontroller.managers.models.ConnectionInstance;
 import org.moonlightcontroller.managers.models.IRequestSender;
-import org.moonlightcontroller.managers.models.messages.ErrorMessage;
+import org.moonlightcontroller.managers.models.messages.Error;
 import org.moonlightcontroller.managers.models.messages.Hello;
 import org.moonlightcontroller.managers.models.messages.IMessage;
 import org.moonlightcontroller.managers.models.messages.KeepAlive;
@@ -189,7 +189,7 @@ public class ConnectionManager implements IConnectionManager, ISouthboundClient{
 		return okResponse();
 	}
 	
-	public Response handleErrorMessage(ErrorMessage message) {
+	public Response handleErrorMessage(Error message) {
 		IRequestSender iRequestSender = requestSendersMapping.get(message.getXid());
 		iRequestSender.onFailure(message);
 		return okResponse();

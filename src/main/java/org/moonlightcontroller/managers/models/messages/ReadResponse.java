@@ -8,6 +8,9 @@ public class ReadResponse implements IMessage {
 	private String readHandle;
 	private String result;
 	
+	// Default constructor to support Jersy
+	public ReadResponse () {}
+	
 	public ReadResponse(int xid, String blockId, String readHandle, String result) {
 		this.type = this.getClass().getName();
 		this.xid = xid;

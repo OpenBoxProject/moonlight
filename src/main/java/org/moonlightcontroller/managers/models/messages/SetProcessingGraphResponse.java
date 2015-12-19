@@ -4,9 +4,15 @@ public class SetProcessingGraphResponse implements IMessage {
 
 	private int xid;
 	private String type;
-	public SetProcessingGraphResponse(String type, int xid) {
+
+	// Default constructor to support Jersy
+	public SetProcessingGraphResponse() {}
+		
+	public SetProcessingGraphResponse(int xid) {
 		this.xid = xid;
+		this.type = this.getClass().getName();
 	}
+	
 	public int getXid() {
 		return xid;
 	}
@@ -19,6 +25,4 @@ public class SetProcessingGraphResponse implements IMessage {
 	public void setType(String type) {
 		this.type = type;
 	}
-	
-
 }

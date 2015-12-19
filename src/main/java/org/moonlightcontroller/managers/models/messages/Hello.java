@@ -10,11 +10,12 @@ public class Hello implements IMessage {
 	private String version;
 	private Map<String, List<String>> capabilities;
 	
-	public Hello() {
-	}
+	// Default constructor to support Jersy
+	public Hello() {}
 	
-	public Hello(int xid, int dpid, String version, String type, Map<String, List<String>> capabilities) {
-		this.type = type;
+	
+	public Hello(int xid, int dpid, String version, Map<String, List<String>> capabilities) {
+		this.type = this.getClass().getName();
 		this.xid = xid;
 		this.dpid = dpid;
 		this.version = version;

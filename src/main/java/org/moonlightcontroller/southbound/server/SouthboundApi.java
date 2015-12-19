@@ -10,7 +10,7 @@ import javax.ws.rs.core.Response;
 
 import org.moonlightcontroller.managers.ConnectionManager;
 import org.moonlightcontroller.managers.models.messages.SetProcessingGraphResponse;
-import org.moonlightcontroller.managers.models.messages.ErrorMessage;
+import org.moonlightcontroller.managers.models.messages.Error;
 import org.moonlightcontroller.managers.models.messages.Hello;
 import org.moonlightcontroller.managers.models.messages.KeepAlive;
 import org.moonlightcontroller.managers.models.messages.ReadResponse;
@@ -48,7 +48,7 @@ public class SouthboundApi {
 	@POST
 	@Path("Error")
 	@Consumes(MediaType.APPLICATION_JSON)
-	public Response Error(ErrorMessage message) {
+	public Response Error(Error message) {
 		return ConnectionManager.getInstance().handleErrorMessage(message);
 	}
 

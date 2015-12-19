@@ -5,8 +5,11 @@ public class KeepAlive implements IMessage {
 	private int xid;
 	private int dpid;
 
-	public KeepAlive(String type, int xid, int dpid) {
-		this.type = type;
+	// Default constructor to support Jersy
+	public KeepAlive() {}
+		
+	public KeepAlive(int xid, int dpid) {
+		this.type = this.getClass().getName();
 		this.xid = xid;
 		this.dpid = dpid;
 	}

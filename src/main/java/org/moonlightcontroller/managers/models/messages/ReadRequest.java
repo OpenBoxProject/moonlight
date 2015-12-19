@@ -7,6 +7,9 @@ public class ReadRequest implements IMessage {
 	private String blockId;
 	private String readHandle;
 	
+	// Default constructor to support Jersy
+	public ReadRequest() {}
+	
 	public ReadRequest(String block, String handle) {
 		this.type = this.getClass().getName();
 		this.blockId = block;

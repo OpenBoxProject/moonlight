@@ -9,6 +9,9 @@ public class WriteRequest implements IMessage {
 	private String writeHandle;
 	private String value;
 	
+	// Default constructor to support Jersy
+	public WriteRequest() {}
+	
 	public WriteRequest(String block, String handle, String value) {
 		this.type = this.getClass().getName();
 		this.blockId = block;
