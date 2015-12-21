@@ -1,22 +1,25 @@
 package org.moonlightcontroller.bal;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.moonlightcontroller.events.IAlertListener;
 import org.moonlightcontroller.events.IHandleClient;
 import org.moonlightcontroller.events.IInstanceDownListener;
 import org.moonlightcontroller.events.IInstanceUpListener;
+import org.moonlightcontroller.processing.IProcessingGraph;
 import org.openboxprotocol.protocol.IStatement;
 import org.openboxprotocol.protocol.Priority;
 import org.openboxprotocol.protocol.topology.IApplicationTopology;
+import org.openboxprotocol.protocol.topology.ILocationSpecifier;
 
 public abstract class BoxApplication {
 	
 	protected String name;
 	
 	private Priority priority;
-	private List<IStatement> statements;
+	private Map<ILocationSpecifier, IStatement> statements;
 	private IAlertListener alertListener;
 	private IInstanceDownListener instanceDownListener;
 	private IInstanceUpListener instanceUpListener;
@@ -28,7 +31,7 @@ public abstract class BoxApplication {
 	public BoxApplication(String name, Priority priority) {
 		this.name = name;
 		this.priority = priority;
-		this.statements = new ArrayList<IStatement>();
+		this.statements = new HashMap<>();
 	}
 	
 	public String getName() {
@@ -39,8 +42,14 @@ public abstract class BoxApplication {
 		return priority;
 	}
 			
-	public List<IStatement> getStatemens() {
-		return this.statements;
+	public Collection<IStatement> getStatemens() {
+		return this.statements.values();
+	}
+	
+	public IProcessingGraph getProcessingGraph(ILocationSpecifier loc) {
+		if (!this.statements.containsKey(loc))
+			return null;
+		return this.statements.get(loc).getProcessingGraph();
 	}
 	
 	public void handleAppStart(IApplicationTopology top, IHandleClient handles) {
@@ -64,8 +73,10 @@ public abstract class BoxApplication {
 		return this.instanceUpListener;
 	}
 
-	protected void setStatements(List<IStatement> statements) {
-		this.statements = statements;
+	protected void setStatements(Collection<IStatement> statements) {
+		for (IStatement st: statements) {
+			this.statements.put(st.getLocation(), st);
+		}
 	}
 
 	protected void setAlertListener(IAlertListener al){

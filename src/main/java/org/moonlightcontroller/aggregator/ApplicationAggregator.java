@@ -204,7 +204,7 @@ public class ApplicationAggregator implements IApplicationAggregator {
 		}
 	}	
 	
-	private static String _lastGraphStr = "";
+	//private static String _lastGraphStr = "";
 	
 	/**
 	 * Compresses the lengths of paths in a normalized graph by merging classifiers and statics.
@@ -703,8 +703,8 @@ public class ApplicationAggregator implements IApplicationAggregator {
 				IProcessingGraph last = null;
 				for (BoxApplication app : this.apps) {
 					// TODO: Complete here
-					// current = app.getProcessingGraph(); // This method does not exist now
-					// last = merge(last, current);
+					IProcessingGraph current = app.getProcessingGraph(loc); // This method does not exist now
+					last = merge(last, current);
 				}
 				this.aggregated.put(loc, last);
 			}

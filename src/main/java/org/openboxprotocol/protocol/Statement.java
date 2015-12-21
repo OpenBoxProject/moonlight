@@ -1,16 +1,11 @@
 package org.openboxprotocol.protocol;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import org.moonlightcontroller.processing.IConnector;
-import org.moonlightcontroller.processing.ProcessingBlock;
+import org.moonlightcontroller.processing.IProcessingGraph;
 import org.openboxprotocol.protocol.topology.ILocationSpecifier;
 
 public class Statement implements IStatement{
 
-	private List<ProcessingBlock> blocks;
-	private List<IConnector> connectors;
+	private IProcessingGraph graph;
 	private ILocationSpecifier location;
 	
 	@Override
@@ -19,64 +14,30 @@ public class Statement implements IStatement{
 	}
 
 	@Override
-	public List<ProcessingBlock> getBlocks() {
-		return blocks;
-	}
-
-	@Override
-	public List<IConnector> getConnectors() {
-		return connectors;
+	public IProcessingGraph getProcessingGraph() {
+		return graph;
 	}
 
 	private Statement(Builder builder) {
-		this.blocks = builder.blocks;
-		this.connectors = builder.connectors;
+		this.graph = builder.graph;
 		this.location = builder.location;
 	}
 	
 	public static class Builder implements IStatement.Builder {
 
-		private ArrayList<ProcessingBlock> blocks;
-		private ArrayList<IConnector> connectors;
+		private IProcessingGraph graph;
 		private ILocationSpecifier location;
 		
-		public Builder() {
-			this.blocks = new ArrayList<>();
-			this.connectors = new ArrayList<>();
-		}
-		
 		@Override
-		public org.openboxprotocol.protocol.IStatement.Builder setLocation(
+		public Builder setLocation(
 				ILocationSpecifier locspec) {
 			this.location = locspec;
 			return this;
 		}
 
 		@Override
-		public org.openboxprotocol.protocol.IStatement.Builder addBlock(
-				ProcessingBlock block) {
-			this.blocks.add(block);
-			return this;
-		}
-
-		@Override
-		public org.openboxprotocol.protocol.IStatement.Builder setBlocks(
-				List<ProcessingBlock> blocks) {
-			this.blocks = new ArrayList<>(blocks);
-			return this;
-		}
-
-		@Override
-		public org.openboxprotocol.protocol.IStatement.Builder addConnector(
-				IConnector connector) {
-			this.connectors.add(connector);
-			return this;
-		}
-
-		@Override
-		public org.openboxprotocol.protocol.IStatement.Builder setConnectors(
-				List<IConnector> connectors) {
-			this.connectors = new ArrayList<>(connectors);
+		public Builder setProcessingGraph(IProcessingGraph graph) {
+			this.graph = graph;
 			return this;
 		}
 
