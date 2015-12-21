@@ -47,6 +47,10 @@ public abstract class BoxApplication {
 	}
 	
 	public IProcessingGraph getProcessingGraph(ILocationSpecifier loc) {
+		// TODO: This should fetch the 'lowest' processing graph that exists for the given location
+		// E.g., if 'loc' is an OBI under segment s1.1 which is in segment s1, and there is no graph
+		// for the OBI location specifier, but there are graphs for s1.1 and for s1, then this method
+		// should return the graph for s1.1
 		if (!this.statements.containsKey(loc))
 			return null;
 		return this.statements.get(loc).getProcessingGraph();
