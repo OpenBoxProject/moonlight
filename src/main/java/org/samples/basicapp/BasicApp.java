@@ -34,26 +34,22 @@ public class BasicApp extends BoxApplication {
 	}
 
 	private List<IStatement> createStatements() {
-
 		HeaderMatch h1 = new OpenBoxHeaderMatch.Builder().setExact(HeaderField.TCP_DST, new TransportPort(22)).build();
 		HeaderMatch h2 = new OpenBoxHeaderMatch.Builder().setExact(HeaderField.TCP_DST, TransportPort.ANY).build();
-		ArrayList<IStatement> statements = new ArrayList<>();
-		FromDevice from = new FromDevice("BasicApp", 0, "eth0", true, true);
+		ArrayList<HeaderClassifierRule> rules = new ArrayList<HeaderClassifierRule>(Arrays.asList(
+				new HeaderClassifierRule.Builder().setHeaderMatch(h1).setPriority(Priority.HIGH).setOrder(0).build(),
+				new HeaderClassifierRule.Builder().setHeaderMatch(h2).setPriority(Priority.HIGH).setOrder(1).build()));
+		FromDevice from = new FromDevice("BasicApp", "eth0", true, true);
 		ToDevice to1 = new ToDevice("BasicApp", "eth1");
 		ToDevice to2 = new ToDevice("BasicApp", "eth2");
-		HeaderClassifier classify = new HeaderClassifier.Builder()
-				.setRules(new ArrayList<HeaderClassifierRule>(Arrays.asList(
-						new HeaderClassifierRule.Builder().setHeaderMatch(h1).setPriority(Priority.HIGH).setOrder(0).build(),
-						new HeaderClassifierRule.Builder().setHeaderMatch(h2).setPriority(Priority.HIGH).setOrder(1).build())))
-				.setPriority(Priority.HIGH)
-				.build();
+		HeaderClassifier classify = new HeaderClassifier("BasicApp", rules, Priority.HIGH);
 
 		IProcessingGraph graph = new ProcessingGraph.Builder()
 			.setBlocks(ImmutableList.of(from, to1, classify, to2))
 			.setConnectors(ImmutableList.of(
 				new Connector.Builder()
 					.setSourceBlock(from)
-					.setSourceOutputPort(from.getOutputPort())
+					.setSourceOutputPort(0)
 					.setDestBlock(classify)
 					.build(),
 				new Connector.Builder()

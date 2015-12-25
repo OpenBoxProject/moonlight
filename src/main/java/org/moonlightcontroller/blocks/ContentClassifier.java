@@ -1,10 +1,17 @@
 package org.moonlightcontroller.blocks;
 
 import org.moonlightcontroller.processing.ProcessingBlock;
-import java.util.Map;
-import org.moonlightcontroller.processing.BlockClass;
+import org.openboxprotocol.protocol.Priority;
 
-public class ContentClassifier extends ProcessingBlock {
+import java.util.List;
+import java.util.Map;
+
+import org.moonlightcontroller.aggregator.Tupple.Pair;
+import org.moonlightcontroller.exceptions.MergeException;
+import org.moonlightcontroller.processing.BlockClass;
+import org.moonlightcontroller.processing.IProcessingGraph;
+
+public class ContentClassifier extends ProcessingBlock implements IClassifierProcessingBlock{
 	private String[] pattern;
 
 	public ContentClassifier(String id, String[] pattern) {
@@ -18,17 +25,7 @@ public class ContentClassifier extends ProcessingBlock {
 
 	@Override
 	public String getBlockType() {
-		return null;
-	}
-
-	@Override
-	public String toShortString() {
-		return null;
-	}
-
-	@Override
-	public ProcessingBlock clone() {
-		return null;
+		return this.getClass().getName();
 	}
 
 	@Override
@@ -44,5 +41,24 @@ public class ContentClassifier extends ProcessingBlock {
 	@Override
 	protected ProcessingBlock spawn(String id) {
 		return new ContentClassifier(id, this.pattern);
+	}
+
+	@Override
+	public Priority getPriority() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public boolean canMergeWith(IClassifierProcessingBlock other) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public IClassifierProcessingBlock mergeWith(IClassifierProcessingBlock other, IProcessingGraph containingGraph,
+			List<Pair<Integer>> outPortSources) throws MergeException {
+		// TODO Auto-generated method stub
+		return null;
 	}
 }

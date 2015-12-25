@@ -7,24 +7,24 @@ import org.moonlightcontroller.processing.ProcessingBlock;
 
 public class FromDevice extends ProcessingBlock {
 
-	private int output;
 	private String devname;
 	private boolean sniffer;
 	private boolean promisc;
 	
-	public FromDevice(String id, int output, String devname, boolean sniffer, boolean promisc) {
+	public FromDevice(String id, String devname) {
 		super(id);
-		this.output = output;
+		this.devname = devname;
+		this.addPort();
+	}
+	
+	public FromDevice(String id, String devname, boolean sniffer, boolean promisc) {
+		super(id);
 		this.devname = devname;
 		this.sniffer = sniffer;
 		this.promisc = promisc;
 		this.addPort();
 	}
 	
-	public int getOutputPort() {
-		return this.output;
-	}
-
 	public String getDevname() {
 		return devname;
 	}
@@ -44,7 +44,7 @@ public class FromDevice extends ProcessingBlock {
 
 	@Override
 	public String getBlockType() {
-		return "FromDevice";
+		return this.getClass().getName();
 	}
 
 	@Override
@@ -56,6 +56,6 @@ public class FromDevice extends ProcessingBlock {
 	
 	@Override
 	protected ProcessingBlock spawn(String id) {
-		return new FromDevice(id, this.output, this.devname, this.sniffer, this.promisc);
+		return new FromDevice(id, this.devname, this.sniffer, this.promisc);
 	}
 }

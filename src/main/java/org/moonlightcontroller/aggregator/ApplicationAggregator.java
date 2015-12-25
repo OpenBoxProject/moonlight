@@ -568,14 +568,10 @@ public class ApplicationAggregator implements IApplicationAggregator {
 		};
 		
 		IProcessingBlock[] firewallBlocks = {
-				new FromDevice("FromDevice-Firewall", 0, "", true, true),
-				new HeaderClassifier.Builder()
-				.setRules(ImmutableList.copyOf(firewallRules)) 
-				.setPriority(Priority.CRITICAL)
-				.setId("HeaderClassifier-Firewall")
-				.build(),
+				new FromDevice("FromDevice-Firewall", ""),
+				new HeaderClassifier("HeaderClassifier-Firewall", ImmutableList.copyOf(firewallRules), Priority.CRITICAL),
 				new Discard("Discard-Firewall"),
-				new Alert.Builder().setMessage("FIREWALL ALERT").setId("Alert-Firewall").build(),
+				new Alert("Alert-Firewall", "FIREWALL ALERT"),
 				new ToDevice("ToDevice-Firewall", ""),
 		};
 		IConnector[] firewallConnectors = {
@@ -604,13 +600,10 @@ public class ApplicationAggregator implements IApplicationAggregator {
 		};
 		
 		IProcessingBlock[] lbBlocks = {
-				new FromDevice("FromDevice-LB", 0, "", true, true),
-				new HeaderClassifier.Builder()
-					.setPriority(Priority.MEDIUM)
-					.setRules(ImmutableList.copyOf(lbRules))
-					.setId("HeaderClassifier-LB").build(),
-				new Alert.Builder().setMessage("LOAD BALANCER ALERT").setId("Alert-LB").build(),
-				new NetworkHeaderFieldsRewriter.Builder().setId("NetworkHeaderFieldsRewriter-LB").build(),
+				new FromDevice("FromDevice-LB", "", true, true),
+				new HeaderClassifier("HeaderClassifier-LB", ImmutableList.copyOf(lbRules), Priority.MEDIUM),
+				new Alert("Alert-LB", "LOAD BALANCER ALERT"),
+				new NetworkHeaderFieldsRewriter("NetworkHeaderFieldsRewriter-LB"),
 				new ToDevice("ToDevice-LB", ""),
 		};
 		IConnector[] lbConnectors = {

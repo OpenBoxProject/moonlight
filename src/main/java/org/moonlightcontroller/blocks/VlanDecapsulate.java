@@ -12,17 +12,7 @@ public class VlanDecapsulate extends ProcessingBlock {
 
 	@Override
 	public String getBlockType() {
-		return null;
-	}
-
-	@Override
-	public String toShortString() {
-		return null;
-	}
-
-	@Override
-	public ProcessingBlock clone() {
-		return null;
+		return this.getClass().getName();
 	}
 
 	@Override

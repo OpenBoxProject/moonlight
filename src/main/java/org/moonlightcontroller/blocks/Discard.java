@@ -6,6 +6,7 @@ import org.moonlightcontroller.processing.BlockClass;
 import org.moonlightcontroller.processing.ProcessingBlock;
 
 public class Discard extends ProcessingBlock {
+	
 	public Discard(String id) {
 		super(id);
 	}
@@ -17,7 +18,7 @@ public class Discard extends ProcessingBlock {
 
 	@Override
 	public String getBlockType() {
-		return "Discard";
+		return this.getClass().getName();
 	}
 
 	@Override

@@ -4,11 +4,11 @@ import java.util.List;
 import java.util.Map;
 
 public class Hello implements IMessage {
-	private String type;
-	private int xid;
-	private int dpid;
-	private String version;
-	private Map<String, List<String>> capabilities;
+	public String type;
+	public int xid;
+	public int dpid;
+	public String version;
+	public Map<String, List<String>> capabilities;
 	
 	// Default constructor to support Jersy
 	public Hello() {}

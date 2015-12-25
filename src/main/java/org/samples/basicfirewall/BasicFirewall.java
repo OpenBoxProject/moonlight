@@ -49,26 +49,22 @@ public class BasicFirewall extends BoxApplication{
 
 		HeaderMatch h1 = new OpenBoxHeaderMatch.Builder().setExact(HeaderField.TCP_DST, new TransportPort(22)).build();
 		HeaderMatch h2 = new OpenBoxHeaderMatch.Builder().setExact(HeaderField.TCP_DST, TransportPort.ANY).build();
-
-		ArrayList<IStatement> statements = new ArrayList<>();
-
-		FromDevice from = new FromDevice("BasicFirewall", 0, "eth0", true, true);
-		ToDevice to = new ToDevice("BasicFirewall", "eth1");
-		HeaderClassifier classify = new HeaderClassifier.Builder()
-				.setRules(new ArrayList<HeaderClassifierRule>(Arrays.asList(
-						new HeaderClassifierRule.Builder().setHeaderMatch(h1).setPriority(Priority.HIGH).setOrder(0).build(),
-						new HeaderClassifierRule.Builder().setHeaderMatch(h2).setPriority(Priority.HIGH).setOrder(1).build())))
-				.setPriority(Priority.HIGH)
-				.build();
-
-		Discard discard = new Discard("BasicFirewall");
 		
+		ArrayList<HeaderClassifierRule> rules = new ArrayList<HeaderClassifierRule>(Arrays.asList(
+				new HeaderClassifierRule.Builder().setHeaderMatch(h1).setPriority(Priority.HIGH).setOrder(0).build(),
+				new HeaderClassifierRule.Builder().setHeaderMatch(h2).setPriority(Priority.HIGH).setOrder(1).build()));
+
+		FromDevice from = new FromDevice("BasicFirewall", "eth0", true, true);
+		ToDevice to = new ToDevice("BasicFirewall", "eth1");
+		HeaderClassifier classify = new HeaderClassifier("BasicFirewall", rules, Priority.HIGH);
+		Discard discard = new Discard("BasicFirewall");
+
 		IProcessingGraph graph = new ProcessingGraph.Builder()
 			.setBlocks(ImmutableList.of(from, to, classify, discard))
 			.setConnectors(ImmutableList.of(
 				new Connector.Builder()
 					.setSourceBlock(from)
-					.setSourceOutputPort(from.getOutputPort())
+					.setSourceOutputPort(0)
 					.setDestBlock(classify)
 					.build(),
 				new Connector.Builder()

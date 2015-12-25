@@ -9,6 +9,11 @@ public class FromDump extends ProcessingBlock {
 	private boolean timing;
 	private boolean active;
 
+	public FromDump(String id, String filename) {
+		super(id);
+		this.filename = filename;
+	}
+	
 	public FromDump(String id, String filename, boolean timing, boolean active) {
 		super(id);
 		this.filename = filename;
@@ -30,17 +35,7 @@ public class FromDump extends ProcessingBlock {
 
 	@Override
 	public String getBlockType() {
-		return null;
-	}
-
-	@Override
-	public String toShortString() {
-		return null;
-	}
-
-	@Override
-	public ProcessingBlock clone() {
-		return null;
+		return this.getClass().getName();
 	}
 
 	@Override

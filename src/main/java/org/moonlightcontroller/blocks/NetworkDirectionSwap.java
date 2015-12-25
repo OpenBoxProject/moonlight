@@ -11,6 +11,10 @@ public class NetworkDirectionSwap extends ProcessingBlock {
 	private boolean tcp;
 	private boolean udp;
 
+	public NetworkDirectionSwap(String id) {
+		super(id);
+	}
+
 	public NetworkDirectionSwap(String id, boolean ethernet, boolean ipv4, boolean ipv6, boolean tcp, boolean udp) {
 		super(id);
 		this.ethernet = ethernet;
@@ -42,17 +46,7 @@ public class NetworkDirectionSwap extends ProcessingBlock {
 
 	@Override
 	public String getBlockType() {
-		return null;
-	}
-
-	@Override
-	public String toShortString() {
-		return null;
-	}
-
-	@Override
-	public ProcessingBlock clone() {
-		return null;
+		return this.getClass().getName();
 	}
 
 	@Override
