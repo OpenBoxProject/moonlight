@@ -118,9 +118,7 @@ public class ConnectionInstance implements IConnectionInstance {
 	}
 
 	@Override
-	public int sendRequest(IMessage message, IRequestSender requestSender) {
-		int xid = XidGenerator.generateXid();
+	public void sendRequest(IMessage message, IRequestSender requestSender) {
 		client.sendMessage(message);
-		return xid;
 	}
 }

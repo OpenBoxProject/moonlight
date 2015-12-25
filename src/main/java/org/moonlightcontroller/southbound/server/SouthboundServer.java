@@ -31,7 +31,9 @@ public class SouthboundServer implements ISouthboundServer {
         try {
             this.jetty.start();
             this.jetty.join();
-        } finally {
+        } catch(Exception e) {
+        	System.out.println(e.toString());
+        }finally {
             this.jetty.destroy();
         }
 	}

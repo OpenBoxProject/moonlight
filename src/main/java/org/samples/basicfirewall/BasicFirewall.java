@@ -80,7 +80,7 @@ public class BasicFirewall extends BoxApplication{
 			.build();
 		
 		IStatement st = new Statement.Builder()
-			.setLocation(new InstanceLocationSpecifier("ep1", 1000))
+			.setLocation(new InstanceLocationSpecifier("ep1", 2130706433))
 			.setProcessingGraph(graph)
 			.build();
 		
