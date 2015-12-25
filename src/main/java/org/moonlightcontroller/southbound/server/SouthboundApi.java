@@ -39,7 +39,7 @@ public class SouthboundApi {
 	@Path("ReadResponse")
 	@Consumes(MediaType.APPLICATION_JSON)
 	public Response ReadResponse(ReadResponse message) {
-		return ConnectionManager.getInstance().handleReadResponse(message);
+		return ConnectionManager.getInstance().handleResponse(message);
 	}
 	
 	@POST

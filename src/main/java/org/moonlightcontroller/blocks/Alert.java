@@ -56,6 +56,7 @@ public class Alert extends ProcessingBlock implements IStaticProcessingBlock {
 	@Override
 	protected void putConfiguration(Map<String, String> config) {
 		// TODO: Does alert have config?
+		// add message and other fields from JSON file (NOT ONLY HERE)
 	}
 	
 	public static class Builder extends ProcessingBlock.Builder {

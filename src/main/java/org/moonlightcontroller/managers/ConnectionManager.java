@@ -182,7 +182,7 @@ public class ConnectionManager implements IConnectionManager, ISouthboundClient{
 
 	}
 
-	public Response handleReadResponse(ReadResponse message) {
+	public Response handleResponse(IMessage message) {
 		IRequestSender iRequestSender = requestSendersMapping.get(message.getXid());
 		iRequestSender.onSuccess(message);
 		return okResponse();
@@ -195,32 +195,18 @@ public class ConnectionManager implements IConnectionManager, ISouthboundClient{
 	}
 
 	public Response handleListCapabilitiesResponse(ListCapabilitiesResponse message) {
-		// TODO Auto-generated method stub
+		// see read response + update ListCapabilities in connectionInstansce
 		return null;
 	}
 
-	public Response handleGetParametersResponse(GetParametersResponse message) {
-		// TODO Auto-generated method stub
-		return null;
-	}
 
-	public Response handleWriteResponse(WriteResponse message) {
-		// TODO Auto-generated method stub
-		return null;
-	}
 
 	public Response handleAlert(Alert message) {
-		// TODO Auto-generated method stub
+		// through ApplicationAggregator 
+		// call ApplicationAggregator and send this alert
+		// dan need to handle in ApplicationAggregator 
 		return null;
 	}
 
-	public Response handleSetParametersResponse(SetParametersResponse message) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	public Response handleGlobalStatsResponse(GlobalStatsResponse message) {
-		// TODO Auto-generated method stub
-		return null;
-	}
+	
 }
