@@ -747,4 +747,9 @@ public class ApplicationAggregator implements IApplicationAggregator {
 		
 		return flattened;
 	}
+	
+	@Override
+	public void handleAlert(org.moonlightcontroller.managers.models.messages.Alert message) {
+		// TODO: Complete here
+	}
 }
