@@ -43,9 +43,7 @@ import org.openboxprotocol.types.IpProto;
 import org.openboxprotocol.types.TransportPort;
 
 import com.google.common.collect.ImmutableList;
-
-import jersey.repackaged.com.google.common.collect.Maps;
-
+import com.google.common.collect.Maps;
 
 public class ApplicationAggregator implements IApplicationAggregator {
 	
