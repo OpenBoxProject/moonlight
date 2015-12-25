@@ -58,11 +58,11 @@ public class ConnectionManager implements IConnectionManager, ISouthboundClient{
 			LOG.warning("InstanceLocationSpecifier wasn't found for ip=" + ip);
 			return new InstanceLocationSpecifier(ip+"", ip);
 		}
-		
+
 		if (locs.size() > 1) {
 			LOG.warning("Found more than a single InstanceLocationSpecifier for ip=" + ip);
 		}
-		
+
 		return locs.get(0);
 	}
 
@@ -113,7 +113,7 @@ public class ConnectionManager implements IConnectionManager, ISouthboundClient{
 				blocks = translateBlocks(processingGraph.getBlocks());
 				connectors = translateConnectors(processingGraph.getConnectors());
 			}
-			
+
 			SetProcessingGraphRequest processMessage = new SetProcessingGraphRequest(xid, dpid, null, blocks, connectors);
 			IRequestSender requestSender = requestSendersMapping.get(xid);
 			value.sendRequest(processMessage, requestSender);
@@ -146,10 +146,6 @@ public class ConnectionManager implements IConnectionManager, ISouthboundClient{
 		return new JsonBlock(block.getBlockType(), block.getId(), block.getConfiguration());
 	}
 
-	private Response internalErrorResponse() {
-		return Response.status(Status.INTERNAL_SERVER_ERROR).build();
-	}
-
 	public Response handleSetProcessingGraphResponse(SetProcessingGraphResponse message) {
 		IMessage originMessage = messagesMapping.get(message.getXid());
 
@@ -165,7 +161,15 @@ public class ConnectionManager implements IConnectionManager, ISouthboundClient{
 			return okResponse();
 		}
 
+		return badRequestResponse();
+	}
+
+	private Response badRequestResponse() {
 		return Response.status(Status.BAD_REQUEST).build();
+	}
+	
+	private Response internalErrorResponse() {
+		return Response.status(Status.INTERNAL_SERVER_ERROR).build();
 	}
 
 	private Response okResponse() {
@@ -187,7 +191,7 @@ public class ConnectionManager implements IConnectionManager, ISouthboundClient{
 		iRequestSender.onSuccess(message);
 		return okResponse();
 	}
-	
+
 	public Response handleErrorMessage(Error message) {
 		IRequestSender iRequestSender = requestSendersMapping.get(message.getXid());
 		iRequestSender.onFailure(message);
@@ -196,17 +200,26 @@ public class ConnectionManager implements IConnectionManager, ISouthboundClient{
 
 	public Response handleListCapabilitiesResponse(ListCapabilitiesResponse message) {
 		// see read response + update ListCapabilities in connectionInstansce
-		return null;
+		try {
+			int xid = message.getXid();
+			ConnectionInstance connectionInstance = instancesMapping.get(xid);
+			connectionInstance.setCapabilities(message.getCapabilities());
+		} catch (NullPointerException e) {
+			return badRequestResponse();
+		}
+		
+		return handleResponse(message);
 	}
 
 
 
 	public Response handleAlert(Alert message) {
-		// through ApplicationAggregator 
 		// call ApplicationAggregator and send this alert
 		// dan need to handle in ApplicationAggregator 
-		return null;
+		
+		ApplicationAggregator.getInstance().handleAlert(message);
+		return okResponse();
 	}
 
-	
+
 }

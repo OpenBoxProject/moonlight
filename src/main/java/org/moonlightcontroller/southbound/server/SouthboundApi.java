@@ -60,28 +60,28 @@ public class SouthboundApi {
 	@Path("SetParametersResponse")
 	@Consumes(MediaType.APPLICATION_JSON)
 	public Response SetParametersResponse(SetParametersResponse message) {
-		return ConnectionManager.getInstance().handleSetParametersResponse(message);
+		return ConnectionManager.getInstance().handleResponse(message);
 	}
 
 	@POST
 	@Path("GetParametersResponse")
 	@Consumes(MediaType.APPLICATION_JSON)
 	public Response GetParametersResponse(GetParametersResponse message) {
-		return ConnectionManager.getInstance().handleGetParametersResponse(message);
+		return ConnectionManager.getInstance().handleResponse(message);
 	}
 
 	@POST
 	@Path("GlobalStatsResponse")
 	@Consumes(MediaType.APPLICATION_JSON)
 	public Response GlobalStatsResponse(GlobalStatsResponse message) {
-		return ConnectionManager.getInstance().handleGlobalStatsResponse(message);
+		return ConnectionManager.getInstance().handleResponse(message);
 	}
 
 	@POST
 	@Path("WriteResponse")
 	@Consumes(MediaType.APPLICATION_JSON)
 	public Response WriteResponse(WriteResponse message) {
-		return ConnectionManager.getInstance().handleWriteResponse(message);
+		return ConnectionManager.getInstance().handleResponse(message);
 	}
 
 	@POST
