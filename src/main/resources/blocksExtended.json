@@ -1,0 +1,1870 @@
+{
+  "classes": [
+    {
+      "type": "NetworkDirectionSwap",
+      "blockClass": "M",
+      "configuration": [
+        {
+          "name": "ethernet",
+          "required": false,
+          "type": "boolean",
+          "description": ""
+        },
+        {
+          "name": "ipv4",
+          "required": false,
+          "type": "boolean",
+          "description": ""
+        },
+        {
+          "name": "ipv6",
+          "required": false,
+          "type": "boolean",
+          "description": ""
+        },
+        {
+          "name": "tcp",
+          "required": false,
+          "type": "boolean",
+          "description": ""
+        },
+        {
+          "name": "udp",
+          "required": false,
+          "type": "boolean",
+          "description": ""
+        }
+      ],
+      "read_handlers": [
+        {
+          "name": "ethernet",
+          "type": "boolean",
+          "description": ""
+        },
+        {
+          "name": "ipv4",
+          "type": "boolean",
+          "description": ""
+        },
+        {
+          "name": "ipv6",
+          "type": "boolean",
+          "description": ""
+        },
+        {
+          "name": "tcp",
+          "type": "boolean",
+          "description": ""
+        },
+        {
+          "name": "udp",
+          "type": "boolean",
+          "description": ""
+        }
+      ],
+      "write_handlers": [
+        {
+          "name": "ethernet",
+          "type": "boolean",
+          "description": ""
+        },
+        {
+          "name": "ipv4",
+          "type": "boolean",
+          "description": ""
+        },
+        {
+          "name": "ipv6",
+          "type": "boolean",
+          "description": ""
+        },
+        {
+          "name": "tcp",
+          "type": "boolean",
+          "description": ""
+        },
+        {
+          "name": "udp",
+          "type": "boolean",
+          "description": ""
+        }
+      ]
+    },
+    {
+      "type": "DecIpTtl",
+      "blockClass": "M",
+      "configuration": [
+        {
+          "name": "active",
+          "required": false,
+          "type": "boolean",
+          "description": ""
+        }
+      ],
+      "read_handlers": [
+        {
+          "name": "count",
+          "type": "int",
+          "description": ""
+        },
+        {
+          "name": "byte_count",
+          "type": "int",
+          "description": ""
+        },
+        {
+          "name": "rate",
+          "type": "number",
+          "description": ""
+        },
+        {
+          "name": "byte_rate",
+          "type": "number",
+          "description": ""
+        },
+        {
+          "name": "active",
+          "type": "boolean",
+          "description": ""
+        }
+      ],
+      "write_handlers": [
+        {
+          "name": "reset_counts",
+          "type": "null",
+          "description": ""
+        },
+        {
+          "name": "active",
+          "type": "boolean",
+          "description": ""
+        }
+      ]
+    },
+    {
+      "type": "HeaderPayloadClassifier",
+      "blockClass": "C",
+      "configuration": [
+        {
+          "name": "match",
+          "required": true,
+          "type": "compound_matches",
+          "description": ""
+        }
+      ],
+      "read_handlers": [
+        {
+          "name": "count",
+          "type": "int",
+          "description": ""
+        },
+        {
+          "name": "byte_count",
+          "type": "int",
+          "description": ""
+        },
+        {
+          "name": "rate",
+          "type": "number",
+          "description": ""
+        },
+        {
+          "name": "byte_rate",
+          "type": "number",
+          "description": ""
+        }
+      ],
+      "write_handlers": [
+        {
+          "name": "reset_counts",
+          "type": "null",
+          "description": ""
+        }
+      ]
+    },
+    {
+      "type": "Log",
+      "blockClass": "St",
+      "configuration": [
+        {
+          "name": "message",
+          "required": true,
+          "type": "String",
+          "description": ""
+        },
+        {
+          "name": "severity",
+          "required": false,
+          "type": "int",
+          "description": ""
+        },
+        {
+          "name": "attach_packet",
+          "required": false,
+          "type": "boolean",
+          "description": ""
+        },
+        {
+          "name": "packet_size",
+          "required": false,
+          "type": "int",
+          "description": ""
+        }
+      ],
+      "read_handlers": [
+        
+      ],
+      "write_handlers": [
+        
+      ]
+    },
+    {
+      "type": "RegexMatcher",
+      "blockClass": "C",
+      "configuration": [
+        {
+          "name": "pattern",
+          "required": true,
+          "type": "array",
+          "description": ""
+        },
+        {
+          "name": "payload_only",
+          "required": false,
+          "type": "boolean",
+          "description": ""
+        },
+        {
+          "name": "match_all",
+          "required": false,
+          "type": "boolean",
+          "description": ""
+        }
+      ],
+      "read_handlers": [
+        {
+          "name": "count",
+          "type": "int",
+          "description": ""
+        },
+        {
+          "name": "byte_count",
+          "type": "int",
+          "description": ""
+        },
+        {
+          "name": "rate",
+          "type": "number",
+          "description": ""
+        },
+        {
+          "name": "byte_rate",
+          "type": "number",
+          "description": ""
+        },
+        {
+          "name": "payload_only",
+          "type": "boolean",
+          "description": ""
+        },
+        {
+          "name": "match_all",
+          "type": "boolean",
+          "description": ""
+        }
+      ],
+      "write_handlers": [
+        {
+          "name": "reset_counts",
+          "type": "null",
+          "description": ""
+        },
+        {
+          "name": "payload_only",
+          "type": "boolean",
+          "description": ""
+        },
+        {
+          "name": "match_all",
+          "type": "boolean",
+          "description": ""
+        }
+      ]
+    },
+    {
+      "type": "FromDump",
+      "blockClass": "T",
+      "configuration": [
+        {
+          "name": "filename",
+          "required": true,
+          "type": "String",
+          "description": ""
+        },
+        {
+          "name": "timing",
+          "required": false,
+          "type": "boolean",
+          "description": ""
+        },
+        {
+          "name": "active",
+          "required": false,
+          "type": "boolean",
+          "description": ""
+        }
+      ],
+      "read_handlers": [
+        {
+          "name": "count",
+          "type": "int",
+          "description": ""
+        },
+        {
+          "name": "byte_count",
+          "type": "int",
+          "description": ""
+        },
+        {
+          "name": "rate",
+          "type": "number",
+          "description": ""
+        },
+        {
+          "name": "byte_rate",
+          "type": "int",
+          "description": ""
+        },
+        {
+          "name": "drops",
+          "type": "String",
+          "description": ""
+        }
+      ],
+      "write_handlers": [
+        {
+          "name": "reset_counts",
+          "type": "null",
+          "description": ""
+        },
+        {
+          "name": "active",
+          "type": "boolean",
+          "description": ""
+        }
+      ]
+    },
+    {
+      "type": "Ipv4AddressTranslator",
+      "blockClass": "M",
+      "configuration": [
+        {
+          "name": "input_spec",
+          "required": true,
+          "type": "ipv4_translator_rules",
+          "description": ""
+        },
+        {
+          "name": "tcp_done_timeout",
+          "required": false,
+          "type": "int",
+          "description": ""
+        },
+        {
+          "name": "tcp_nodata_timeout",
+          "required": false,
+          "type": "int",
+          "description": ""
+        },
+        {
+          "name": "tcp_guarantee",
+          "required": false,
+          "type": "int",
+          "description": ""
+        },
+        {
+          "name": "udp_timeout",
+          "required": false,
+          "type": "int",
+          "description": ""
+        },
+        {
+          "name": "udp_streaming_timeout",
+          "required": false,
+          "type": "int",
+          "description": ""
+        },
+        {
+          "name": "udp_guarantee",
+          "required": false,
+          "type": "int",
+          "description": ""
+        },
+        {
+          "name": "reap_interval",
+          "required": false,
+          "type": "int",
+          "description": ""
+        },
+        {
+          "name": "mapping_capacity",
+          "required": false,
+          "type": "int",
+          "description": ""
+        }
+      ],
+      "read_handlers": [
+        {
+          "name": "mapping_count",
+          "type": "int",
+          "description": ""
+        },
+        {
+          "name": "mapping_failures",
+          "type": "int",
+          "description": ""
+        },
+        {
+          "name": "length",
+          "type": "int",
+          "description": ""
+        },
+        {
+          "name": "capacity",
+          "type": "int",
+          "description": ""
+        },
+        {
+          "name": "tcp_mapping",
+          "type": "String",
+          "description": ""
+        },
+        {
+          "name": "udp_mapping",
+          "type": "String",
+          "description": ""
+        }
+      ],
+      "write_handlers": [
+        {
+          "name": "capacity",
+          "type": "int",
+          "description": ""
+        }
+      ]
+    },
+    {
+      "type": "Alert",
+      "blockClass": "St",
+      "configuration": [
+        {
+          "name": "message",
+          "required": true,
+          "type": "String",
+          "description": ""
+        },
+        {
+          "name": "severity",
+          "required": false,
+          "type": "int",
+          "description": ""
+        },
+        {
+          "name": "attach_packet",
+          "required": false,
+          "type": "boolean",
+          "description": ""
+        },
+        {
+          "name": "packet_size",
+          "required": false,
+          "type": "int",
+          "description": ""
+        }
+      ],
+      "read_handlers": [
+        
+      ],
+      "write_handlers": [
+        
+      ]
+    },
+    {
+      "type": "Queue",
+      "blockClass": "Sh",
+      "configuration": [
+        {
+          "name": "capacity",
+          "required": false,
+          "type": "int",
+          "description": ""
+        }
+      ],
+      "read_handlers": [
+        {
+          "name": "length",
+          "type": "int",
+          "description": ""
+        },
+        {
+          "name": "highwater_length",
+          "type": "int",
+          "description": ""
+        },
+        {
+          "name": "drops",
+          "type": "int",
+          "description": ""
+        },
+        {
+          "name": "capacity",
+          "type": "int",
+          "description": ""
+        }
+      ],
+      "write_handlers": [
+        {
+          "name": "reset_counts",
+          "type": "int",
+          "description": ""
+        },
+        {
+          "name": "reset",
+          "type": "int",
+          "description": ""
+        }
+      ]
+    },
+    {
+      "type": "RegexClassifier",
+      "blockClass": "C",
+      "configuration": [
+        {
+          "name": "pattern",
+          "required": true,
+          "type": "array",
+          "description": ""
+        },
+        {
+          "name": "payload_only",
+          "required": false,
+          "type": "boolean",
+          "description": ""
+        }
+      ],
+      "read_handlers": [
+        {
+          "name": "count",
+          "type": "int",
+          "description": ""
+        },
+        {
+          "name": "byte_count",
+          "type": "int",
+          "description": ""
+        },
+        {
+          "name": "rate",
+          "type": "number",
+          "description": ""
+        },
+        {
+          "name": "byte_rate",
+          "type": "number",
+          "description": ""
+        },
+        {
+          "name": "payload_only",
+          "type": "boolean",
+          "description": ""
+        }
+      ],
+      "write_handlers": [
+        {
+          "name": "reset_counts",
+          "type": "null",
+          "description": ""
+        },
+        {
+          "name": "payload_only",
+          "type": "boolean",
+          "description": ""
+        }
+      ]
+    },
+    {
+      "type": "FromDevice",
+      "blockClass": "T",
+      "configuration": [
+        {
+          "name": "devname",
+          "required": true,
+          "type": "String",
+          "description": ""
+        },
+        {
+          "name": "sniffer",
+          "required": false,
+          "type": "boolean",
+          "description": ""
+        },
+        {
+          "name": "promisc",
+          "required": false,
+          "type": "boolean",
+          "description": ""
+        }
+      ],
+      "read_handlers": [
+        {
+          "name": "count",
+          "type": "int",
+          "description": ""
+        },
+        {
+          "name": "byte_count",
+          "type": "int",
+          "description": ""
+        },
+        {
+          "name": "rate",
+          "type": "number",
+          "description": ""
+        },
+        {
+          "name": "byte_rate",
+          "type": "int",
+          "description": ""
+        },
+        {
+          "name": "drops",
+          "type": "String",
+          "description": ""
+        }
+      ],
+      "write_handlers": [
+        {
+          "name": "reset_counts",
+          "type": "null",
+          "description": ""
+        }
+      ]
+    },
+    {
+      "type": "ToDump",
+      "blockClass": "T",
+      "configuration": [
+        {
+          "name": "filename",
+          "required": true,
+          "type": "String",
+          "description": ""
+        }
+      ],
+      "read_handlers": [
+        
+      ],
+      "write_handlers": [
+        
+      ]
+    },
+    {
+      "type": "Discard",
+      "blockClass": "T",
+      "configuration": [
+        
+      ],
+      "read_handlers": [
+        {
+          "name": "count",
+          "type": "int",
+          "description": ""
+        },
+        {
+          "name": "byte_count",
+          "type": "int",
+          "description": ""
+        },
+        {
+          "name": "rate",
+          "type": "number",
+          "description": ""
+        },
+        {
+          "name": "byte_rate",
+          "type": "number",
+          "description": ""
+        },
+        {
+          "name": "drops",
+          "type": "String",
+          "description": ""
+        }
+      ],
+      "write_handlers": [
+        {
+          "name": "reset_counts",
+          "type": "null",
+          "description": ""
+        },
+        {
+          "name": "active",
+          "type": "boolean",
+          "description": ""
+        }
+      ]
+    },
+    {
+      "type": "NetworkHeaderFieldsRewriter",
+      "blockClass": "M",
+      "configuration": [
+        {
+          "name": "eth_src",
+          "required": false,
+          "type": "MacAddress",
+          "description": ""
+        },
+        {
+          "name": "eth_dst",
+          "required": false,
+          "type": "MacAddress",
+          "description": ""
+        },
+        {
+          "name": "eth_type",
+          "required": false,
+          "type": "int",
+          "description": ""
+        },
+        {
+          "name": "ipv4_proto",
+          "required": false,
+          "type": "int",
+          "description": ""
+        },
+        {
+          "name": "ipv4_dscp",
+          "required": false,
+          "type": "int",
+          "description": ""
+        },
+        {
+          "name": "ipv4_ecn",
+          "required": false,
+          "type": "int",
+          "description": ""
+        },
+        {
+          "name": "ipv4_ttl",
+          "required": false,
+          "type": "int",
+          "description": ""
+        },
+        {
+          "name": "ipv4_src",
+          "required": false,
+          "type": "IPv4Address",
+          "description": ""
+        },
+        {
+          "name": "ipv4_dst",
+          "required": false,
+          "type": "IPv4Address",
+          "description": ""
+        },
+        {
+          "name": "tcp_src",
+          "required": false,
+          "type": "int",
+          "description": ""
+        },
+        {
+          "name": "tcp_dst",
+          "required": false,
+          "type": "int",
+          "description": ""
+        },
+        {
+          "name": "udp_src",
+          "required": false,
+          "type": "int",
+          "description": ""
+        },
+        {
+          "name": "udp_dst",
+          "required": false,
+          "type": "int",
+          "description": ""
+        }
+      ],
+      "read_handlers": [
+        {
+          "name": "eth_src",
+          "type": "MacAddress",
+          "description": ""
+        },
+        {
+          "name": "eth_dst",
+          "type": "MacAddress",
+          "description": ""
+        },
+        {
+          "name": "eth_type",
+          "type": "int",
+          "description": ""
+        },
+        {
+          "name": "ipv4_proto",
+          "type": "int",
+          "description": ""
+        },
+        {
+          "name": "ipv4_dscp",
+          "type": "int",
+          "description": ""
+        },
+        {
+          "name": "ipv4_ecn",
+          "type": "int",
+          "description": ""
+        },
+        {
+          "name": "ipv4_ttl",
+          "type": "int",
+          "description": ""
+        },
+        {
+          "name": "ipv4_src",
+          "type": "IPv4Address",
+          "description": ""
+        },
+        {
+          "name": "ipv4_dst",
+          "type": "IPv4Address",
+          "description": ""
+        },
+        {
+          "name": "tcp_src",
+          "type": "int",
+          "description": ""
+        },
+        {
+          "name": "tcp_dst",
+          "type": "int",
+          "description": ""
+        },
+        {
+          "name": "udp_src",
+          "type": "int",
+          "description": ""
+        },
+        {
+          "name": "udp_dst",
+          "type": "int",
+          "description": ""
+        }
+      ],
+      "write_handlers": [
+        {
+          "name": "eth_src",
+          "type": "MacAddress",
+          "description": ""
+        },
+        {
+          "name": "eth_dst",
+          "type": "MacAddress",
+          "description": ""
+        },
+        {
+          "name": "eth_type",
+          "type": "int",
+          "description": ""
+        },
+        {
+          "name": "ipv4_proto",
+          "type": "int",
+          "description": ""
+        },
+        {
+          "name": "ipv4_dscp",
+          "type": "int",
+          "description": ""
+        },
+        {
+          "name": "ipv4_ecn",
+          "type": "int",
+          "description": ""
+        },
+        {
+          "name": "ipv4_ttl",
+          "type": "int",
+          "description": ""
+        },
+        {
+          "name": "ipv4_src",
+          "type": "IPv4Address",
+          "description": ""
+        },
+        {
+          "name": "ipv4_dst",
+          "type": "IPv4Address",
+          "description": ""
+        },
+        {
+          "name": "tcp_src",
+          "type": "int",
+          "description": ""
+        },
+        {
+          "name": "tcp_dst",
+          "type": "int",
+          "description": ""
+        },
+        {
+          "name": "udp_src",
+          "type": "int",
+          "description": ""
+        },
+        {
+          "name": "udp_dst",
+          "type": "int",
+          "description": ""
+        }
+      ]
+    },
+    {
+      "type": "VlanDecapsulate",
+      "blockClass": "M",
+      "configuration": [
+        
+      ],
+      "read_handlers": [
+        
+      ],
+      "write_handlers": [
+        
+      ]
+    },
+    {
+      "type": "HeaderClassifier",
+      "blockClass": "C",
+      "configuration": [
+        {
+          "name": "match",
+          "required": true,
+          "type": "match_patterns",
+          "description": ""
+        }
+      ],
+      "read_handlers": [
+        {
+          "name": "count",
+          "type": "int",
+          "description": ""
+        },
+        {
+          "name": "byte_count",
+          "type": "int",
+          "description": ""
+        },
+        {
+          "name": "rate",
+          "type": "number",
+          "description": ""
+        },
+        {
+          "name": "byte_rate",
+          "type": "number",
+          "description": ""
+        }
+      ],
+      "write_handlers": [
+        {
+          "name": "reset_counts",
+          "type": "null",
+          "description": ""
+        }
+      ]
+    },
+    {
+      "type": "ContentClassifier",
+      "blockClass": "C",
+      "configuration": [
+        {
+          "name": "pattern",
+          "required": true,
+          "type": "array",
+          "description": ""
+        }
+      ],
+      "read_handlers": [
+        {
+          "name": "count",
+          "type": "int",
+          "description": ""
+        },
+        {
+          "name": "byte_count",
+          "type": "int",
+          "description": ""
+        },
+        {
+          "name": "rate",
+          "type": "number",
+          "description": ""
+        },
+        {
+          "name": "byte_rate",
+          "type": "number",
+          "description": ""
+        }
+      ],
+      "write_handlers": [
+        {
+          "name": "reset_counts",
+          "type": "null",
+          "description": ""
+        }
+      ]
+    },
+    {
+      "type": "VlanEncapsulate",
+      "blockClass": "M",
+      "configuration": [
+        {
+          "name": "vlan_vid",
+          "required": true,
+          "type": "int",
+          "description": ""
+        },
+        {
+          "name": "vlan_dei",
+          "required": false,
+          "type": "int",
+          "description": ""
+        },
+        {
+          "name": "vlan_pcp",
+          "required": false,
+          "type": "int",
+          "description": ""
+        },
+        {
+          "name": "ethertype",
+          "required": false,
+          "type": "int",
+          "description": ""
+        }
+      ],
+      "read_handlers": [
+        {
+          "name": "vlan_vid",
+          "type": "int",
+          "description": ""
+        },
+        {
+          "name": "vlan_dei",
+          "type": "int",
+          "description": ""
+        },
+        {
+          "name": "vlan_pcp",
+          "type": "int",
+          "description": ""
+        },
+        {
+          "name": "vlan_tci",
+          "type": "int",
+          "description": ""
+        },
+        {
+          "name": "ethertype",
+          "type": "int",
+          "description": ""
+        }
+      ],
+      "write_handlers": [
+        {
+          "name": "vlan_vid",
+          "type": "int",
+          "description": ""
+        },
+        {
+          "name": "vlan_dei",
+          "type": "int",
+          "description": ""
+        },
+        {
+          "name": "vlan_pcp",
+          "type": "int",
+          "description": ""
+        },
+        {
+          "name": "vlan_tci",
+          "type": "int",
+          "description": ""
+        },
+        {
+          "name": "ethertype",
+          "type": "int",
+          "description": ""
+        }
+      ]
+    },
+    {
+      "type": "ToDevice",
+      "blockClass": "T",
+      "configuration": [
+        {
+          "name": "devname",
+          "required": true,
+          "type": "String",
+          "description": "The name of the network interface"
+        }
+      ],
+      "read_handlers": [
+        
+      ],
+      "write_handlers": [
+        
+      ]
+    },
+    {
+      "type": "ProtocolAnalyzer",
+      "blockClass": "C",
+      "configuration": [
+        {
+          "name": "protocol",
+          "required": true,
+          "type": "StringArray",
+          "description": "Each protocol (array element) is a protocol name (see list below)."
+        }
+      ],
+      "read_handlers": [
+        {
+          "name": "count_i",
+          "type": "double",
+          "description": "Returns the number of packets matched protocol_i"
+        },
+        {
+          "name": "byte_count_i",
+          "type": "double",
+          "description": "Returns the number of bytes matched protocol_i"
+        },
+        {
+          "name": "rate_i",
+          "type": "double",
+          "description": "Returns the matching rate for protocol_i, measured by exponential weighted moving average, in packets per second."
+        },
+        {
+          "name": "byte_rate_i",
+          "type": "double",
+          "description": "Returns the matching rate for protocol_i, measured by exponential weighted moving average, in bytes per second."
+        }
+      ],
+      "write_handlers": [
+        {
+          "name": "reset_i",
+          "type": "null",
+          "description": "Reset counts and rates of pattern i to zero."
+        },
+        {
+          "name": "reset_all_counts",
+          "type": "null",
+          "description": "Reset all counts and rates to zero."
+        }
+      ]
+    },
+    {
+      "type": "SessionClassifier",
+      "blockClass": "C",
+      "configuration": [
+        {
+          "name": "match",
+          "required": false,
+          "type": "Map<String, boolean>",
+          "description": ""
+        }
+      ],
+      "read_handlers": [
+        {
+          "name": "count_i",
+          "type": "double",
+          "description": "Returns the number of packets matched pattern_i"
+        },
+        {
+          "name": "byte_count_i",
+          "type": "double",
+          "description": "Returns the number of bytes matched pattern_i"
+        },
+        {
+          "name": "rate_i",
+          "type": "double",
+          "description": "Returns the matching rate for pattern_i, measured by exponential weighted moving average, in packets per second."
+        },
+        {
+          "name": "byte_rate_i",
+          "type": "double",
+          "description": "Returns the matching rate for pattern_i, measured by exponential weighted moving average, in bytes per second."
+        }
+      ],
+      "write_handlers": [
+        {
+          "name": "reset_i",
+          "type": "null",
+          "description": "Reset counts and rates of pattern i to zero."
+        },
+        {
+          "name": "reset_all_counts",
+          "type": "null",
+          "description": "Reset all counts and rates to zero."
+        }
+      ]
+    },
+    {
+      "type": "SessionStore",
+      "blockClass": "C",
+      "configuration": [
+        {
+          "name": "fields",
+          "required": true,
+          "type": "Map<String, String>",
+          "description": "A mapping from a field F from packet to be stored in session storage"
+        }
+      ],
+      "read_handlers": [
+        
+      ],
+      "write_handlers": [
+        
+      ]
+    },
+    {
+      "type": "FlowTracker",
+      "blockClass": "M",
+      "configuration": [
+        
+      ],
+      "read_handlers": [
+        
+      ],
+      "write_handlers": [
+        
+      ]
+    },
+    {
+      "type": "GzipDecompressor",
+      "blockClass": "M",
+      "configuration": [
+        
+      ],
+      "read_handlers": [
+        
+      ],
+      "write_handlers": [
+        
+      ]
+    },
+    {
+      "type": "EncapsulateMetadata",
+      "blockClass": "C",
+      "configuration": [
+        
+      ],
+      "read_handlers": [
+        
+      ],
+      "write_handlers": [
+        
+      ]
+    },
+    {
+      "type": "WriteMetadata",
+      "blockClass": "M",
+      "configuration": [
+        
+      ],
+      "read_handlers": [
+        
+      ],
+      "write_handlers": [
+        
+      ]
+    },
+    {
+      "type": "ReadMetada",
+      "blockClass": "C",
+      "configuration": [
+        
+      ],
+      "read_handlers": [
+        
+      ],
+      "write_handlers": [
+        
+      ]
+    },
+    {
+      "type": "DecapsulateMetadata",
+      "blockClass": "C",
+      "configuration": [
+        
+      ],
+      "read_handlers": [
+        
+      ],
+      "write_handlers": [
+        
+      ]
+    },
+    {
+      "type": "ContentClassifier",
+      "blockClass": "C",
+      "configuration": [
+        {
+          "name": "pattern",
+          "required": true,
+          "type": "StringArray",
+          "description": ""
+        }
+      ],
+      "read_handlers": [
+        {
+          "name": "count",
+          "type": "intArray",
+          "description": "Returns the number of packets matched each pattern"
+        },
+        {
+          "name": "byte_count",
+          "type": "intArray",
+          "description": "Returns the number of bytes matched each pattern"
+        },
+        {
+          "name": "rate",
+          "type": "doubleArray",
+          "description": "Returns the recent matching rate for each pattern, measured by exponential weighted moving average, in packets per second"
+        },
+        {
+          "name": "byte_rate",
+          "type": "doubleArray",
+          "description": "Returns the recent matching rate for each patterni, measured by exponential weighted moving average, in bytes per second."
+        }
+      ],
+      "write_handlers": [
+        {
+          "name": "reset_counts",
+          "type": "null",
+          "description": "Reset all counts and rates to zero."
+        }
+      ]
+    },
+    {
+      "type": "FrontDropQueue",
+      "blockClass": "M",
+      "configuration": [
+        {
+          "name": "capacity",
+          "required": true,
+          "type": "double",
+          "description": "The number of packets the queue can hold."
+        }
+      ],
+      "read_handlers": [
+        {
+          "name": "length",
+          "type": "double",
+          "description": "Returns the current number of packets in the queue."
+        },
+        {
+          "name": "highwater_length",
+          "type": "double",
+          "description": "Returns the maximum number of packets that have ever been in the queue at once."
+        },
+        {
+          "name": "capacity",
+          "type": "double",
+          "description": "Returns the queue\u2019s capacity "
+        }
+      ],
+      "write_handlers": [
+        {
+          "name": "reset_counts",
+          "type": "null",
+          "description": "Reset all counts to zero."
+        },
+        {
+          "name": "reset",
+          "type": "null",
+          "description": "Drops all packets in queue."
+        }
+      ]
+    },
+    {
+      "type": "RandomEarlyDetectionQueue",
+      "blockClass": "M",
+      "configuration": [
+        {
+          "name": "capacity",
+          "required": true,
+          "type": "double",
+          "description": "The number of packets the queue can hold."
+        },
+        {
+          "name": "min_threash",
+          "required": true,
+          "type": "double",
+          "description": "When the average queue length less than or equal to MIN_THRESH, input packets are never dropped."
+        },
+        {
+          "name": "max_threash",
+          "required": true,
+          "type": "double",
+          "description": ""
+        },
+        {
+          "name": "max_p",
+          "required": true,
+          "type": "double",
+          "description": ""
+        },
+        {
+          "name": "stability",
+          "required": false,
+          "type": "double",
+          "description": "The number of packets the queue can hold."
+        },
+        {
+          "name": "gentle",
+          "required": false,
+          "type": "boolean",
+          "description": ""
+        }
+      ],
+      "read_handlers": [
+        {
+          "name": "length",
+          "type": "double",
+          "description": "Returns the current number of packets in the queue."
+        },
+        {
+          "name": "highwater_length",
+          "required": true,
+          "type": "double",
+          "description": "Returns the maximum number of packets that have ever been in the queue at once."
+        },
+        {
+          "name": "capacity",
+          "required": true,
+          "type": "double",
+          "description": "Returns the queue\u2019s capacity"
+        },
+        {
+          "name": "min_thresh",
+          "required": true,
+          "type": "double",
+          "description": "Returns the MIN_THRESH configuration parameter."
+        },
+        {
+          "name": "max_thresh",
+          "required": true,
+          "type": "double",
+          "description": "Returns the MAX_THRESH configuration parameter."
+        },
+        {
+          "name": "drops",
+          "required": true,
+          "type": "double",
+          "description": "Returns the number of packets dropped so far."
+        },
+        {
+          "name": "avg_queue_size",
+          "required": false,
+          "type": "double",
+          "description": "Returns the current average queue size."
+        }
+      ],
+      "write_handlers": [
+        {
+          "name": "reset_counts",
+          "type": "null",
+          "description": ""
+        },
+        {
+          "name": "reset",
+          "type": "null",
+          "description": ""
+        }
+      ]
+    },
+    {
+      "type": "BpsShaper",
+      "blockClass": "M",
+      "configuration": [
+        {
+          "name": "rate",
+          "required": true,
+          "type": "double",
+          "description": ""
+        }
+      ],
+      "read_handlers": [
+        {
+          "name": "rate",
+          "type": "double",
+          "description": ""
+        }
+      ],
+      "write_handlers": [
+        {
+          "name": "rate",
+          "type": "double",
+          "description": ""
+        }
+      ]
+    },
+    {
+      "type": "PpsShaper",
+      "blockClass": "M",
+      "configuration": [
+        {
+          "name": "rate",
+          "required": true,
+          "type": "double",
+          "description": ""
+        }
+      ],
+      "read_handlers": [
+        {
+          "name": "rate",
+          "type": "double",
+          "description": ""
+        }
+      ],
+      "write_handlers": [
+        {
+          "name": "rate",
+          "type": "double",
+          "description": ""
+        }
+      ]
+    },
+    {
+      "type": "BpsRateClassifier",
+      "blockClass": "C",
+      "configuration": [
+        {
+          "name": "rate",
+          "required": true,
+          "type": "StringArray",
+          "description": ""
+        }
+      ],
+      "read_handlers": [
+        {
+          "name": "count_i",
+          "type": "double",
+          "description": "Returns the number of packets emitted to output i"
+        },
+        {
+          "name": "byte_count_i",
+          "type": "double",
+          "description": "Returns the number of bytes emitted to output i"
+        },
+        {
+          "name": "rate_i",
+          "type": "double",
+          "description": "Returns the rate for output_i, measured by exponential weighted moving average, in packets per second."
+        },
+        {
+          "name": "byte_rate_i",
+          "type": "double",
+          "description": "Returns the rate for output_i, measured by exponential weighted moving average, in bytes per second."
+        }
+      ],
+      "write_handlers": [
+        {
+          "name": "reset_i",
+          "type": "null",
+          "description": "Reset counts and rates of protocol i to zero."
+        },
+        {
+          "name": "reset_all_counts",
+          "type": "null",
+          "description": "Reset all counts and rates to zero."
+        }
+      ]
+    },
+    {
+      "type": "PpsRateClassifier",
+      "blockClass": "C",
+      "configuration": [
+        {
+          "name": "rate",
+          "required": true,
+          "type": "StringArray",
+          "description": ""
+        }
+      ],
+      "read_handlers": [
+        {
+          "name": "count_i",
+          "type": "double",
+          "description": "Returns the number of packets emitted to output i"
+        },
+        {
+          "name": "byte_count_i",
+          "type": "double",
+          "description": "Returns the number of bytes emitted to output i"
+        },
+        {
+          "name": "rate_i",
+          "type": "double",
+          "description": "Returns the rate for output_i, measured by exponential weighted moving average, in packets per second."
+        },
+        {
+          "name": "byte_rate_i",
+          "type": "double",
+          "description": "Returns the rate for output_i, measured by exponential weighted moving average, in bytes per second."
+        }
+      ],
+      "write_handlers": [
+        {
+          "name": "reset_i",
+          "type": "null",
+          "description": "Reset counts and rates of protocol i to zero."
+        },
+        {
+          "name": "reset_all_counts",
+          "type": "null",
+          "description": "Reset all counts and rates to zero."
+        }
+      ]
+    },
+    {
+      "type": "Store",
+      "blockClass": "S",
+      "configuration": [
+        {
+          "name": "key",
+          "required": true,
+          "type": "String",
+          "description": "Key for key-value store where the packet will be stored"
+        },
+        {
+          "name": "soft_timeout",
+          "required": true,
+          "type": "double",
+          "description": ""
+        },
+        {
+          "name": "hard_timeout",
+          "required": true,
+          "type": "double",
+          "description": ""
+        },
+        {
+          "name": "packet_size",
+          "required": false,
+          "type": "double",
+          "description": ""
+        },
+        {
+          "name": "buffer_size",
+          "required": false,
+          "type": "double",
+          "description": ""
+        },
+        {
+          "name": "buffer_timeout",
+          "required": false,
+          "type": "double",
+          "description": ""
+        }
+      ],
+      "read_handlers": [
+        {
+          "name": "count",
+          "type": "double",
+          "description": "Returns the number of packets stored"
+        },
+        {
+          "name": "bytes",
+          "type": "double",
+          "description": "Returns the number of bytes stored"
+        }
+      ],
+      "write_handlers": [
+        {
+          "name": "reset",
+          "type": "null",
+          "description": "Reset all counts to zero."
+        }
+      ]
+    },
+    {
+      "type": "Restore",
+      "blockClass": "M",
+      "configuration": [
+        {
+          "name": "key",
+          "required": true,
+          "type": "String",
+          "description": "Key for key-value store"
+        },
+        {
+          "name": "offset",
+          "required": false,
+          "type": "double",
+          "description": "Offset in packet where content restore begins"
+        },
+        {
+          "name": "protocol",
+          "required": false,
+          "type": "String",
+          "description": "A protocol name that in fact sets the offset in packet where content of that protocol begins"
+        }
+      ],
+      "read_handlers": [
+        {
+          "name": "count",
+          "type": "double",
+          "description": "Returns the number of packets successfully restored"
+        },
+        {
+          "name": "bytes",
+          "type": "double",
+          "description": "Returns the number of bytes successfully restored"
+        }
+      ],
+      "write_handlers": [
+        {
+          "name": "reset",
+          "type": "null",
+          "description": "Reset all counts to zero."
+        }
+      ]
+    },
+    {
+      "type": "BeginTransaction",
+      "blockClass": "M",
+      "configuration": [
+        {
+          "name": "name",
+          "required": true,
+          "type": "String",
+          "description": "Transaction name"
+        }
+      ],
+      "read_handlers": [
+        {
+          "name": "count",
+          "type": "double",
+          "description": "Number of packets that started a transaction"
+        }
+      ],
+      "write_handlers": [
+        {
+          "name": "reset",
+          "type": "null",
+          "description": "Reset the counter"
+        }
+      ]
+    },
+    {
+      "type": "CommitTransaction",
+      "blockClass": "M",
+      "configuration": [
+        {
+          "name": "name",
+          "required": true,
+          "type": "String",
+          "description": "Transaction name"
+        }
+      ],
+      "read_handlers": [
+        {
+          "name": "count_success",
+          "type": "double",
+          "description": "Number of packets that successfully committed a transaction"
+        },
+        {
+          "name": "count_failure",
+          "type": "double",
+          "description": "Number of packets that failed committing a transaction"
+        }
+      ],
+      "write_handlers": [
+        {
+          "name": "reset",
+          "type": "null",
+          "description": "Reset the counter"
+        }
+      ]
+    },
+    {
+      "type": "RollbackTransaction",
+      "blockClass": "M",
+      "configuration": [
+        {
+          "name": "name",
+          "required": true,
+          "type": "String",
+          "description": "Transaction name"
+        }
+      ],
+      "read_handlers": [
+        {
+          "name": "count",
+          "type": "double",
+          "description": "Number of packets that were rolled back"
+        }
+      ],
+      "write_handlers": [
+        {
+          "name": "reset",
+          "type": "null",
+          "description": "Reset the counter"
+        }
+      ]
+    },
+    {
+      "type": "HtmlNormalizer",
+      "blockClass": "M",
+      "configuration": [
+        
+      ],
+      "read_handlers": [
+        
+      ],
+      "write_handlers": [
+        
+      ]
+    },
+    {
+      "type": "JsNormalizer",
+      "blockClass": "M",
+      "configuration": [
+        
+      ],
+      "read_handlers": [
+        
+      ],
+      "write_handlers": [
+        
+      ]
+    },
+    {
+      "type": "GzipCompressor",
+      "blockClass": "M",
+      "configuration": [
+        
+      ],
+      "read_handlers": [
+        
+      ],
+      "write_handlers": [
+        
+      ]
+    }
+  ]
+}

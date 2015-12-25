@@ -53,7 +53,7 @@ public class HeaderClassifier extends ProcessingBlock implements IClassifierProc
 			return new HeaderClassifier(super.id, this.rules, this.priority);
 		}
 	}
-
+	
 	@Override
 	public Priority getPriority() {
 		return this.priority;

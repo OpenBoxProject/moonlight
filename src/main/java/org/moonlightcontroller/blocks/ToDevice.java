@@ -18,19 +18,6 @@ public class ToDevice extends ProcessingBlock {
 		return this.devname;
 	}
 
-	public static class Builder extends ProcessingBlock.Builder {
-		private String devname;
-		
-		public Builder setDevice(String device){
-			this.devname = device;
-			return this;
-		}
-		
-		public ToDevice build(){
-			return new ToDevice(super.id, this.devname);
-		}
-	}
-
 	@Override
 	public BlockClass getBlockClass() {
 		return BlockClass.BLOCK_CLASS_TERMINAL;

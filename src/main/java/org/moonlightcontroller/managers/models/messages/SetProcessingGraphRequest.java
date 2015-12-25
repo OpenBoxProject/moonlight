@@ -43,23 +43,17 @@ public class SetProcessingGraphRequest implements IMessage {
 		return modules;
 	}
 
-	public void setModules(List<String> modules) {
-		this.modules = modules;
-	}
-
 	public List<JsonBlock> getBlocks() {
 		return blocks;
-	}
-
-	public void setBlocks(List<JsonBlock> blocks) {
-		this.blocks = blocks;
 	}
 
 	public List<JsonConnector> getConnectors() {
 		return connectors;
 	}
 
-	public void setConnectors(List<JsonConnector> connectors) {
-		this.connectors = connectors;
+	@Override
+	public void setXid(int xid) {
+		
 	}
 }
+

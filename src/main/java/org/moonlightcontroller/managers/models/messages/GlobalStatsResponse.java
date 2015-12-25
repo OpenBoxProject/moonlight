@@ -1,25 +1,27 @@
 package org.moonlightcontroller.managers.models.messages;
 
-public class KeepAlive implements IMessage {
+import java.util.List;
+import java.util.Map;
+
+public class GlobalStatsResponse implements IMessage {
 	private String type;
 	private int xid;
-	private int dpid;
-
+	private Map<String, List<Double>> stats;
+	
 	// Default constructor to support Jersy
-	public KeepAlive() {}
-		
-	public KeepAlive(int xid, int dpid) {
+	public GlobalStatsResponse() {}
+	
+	
+	public GlobalStatsResponse(int xid, Map<String, List<Double>> stats) {
 		this.type = this.getClass().getName();
 		this.xid = xid;
-		this.dpid = dpid;
+		this.stats = stats;
 	}
 	
-	@Override
 	public String getType() {
 		return type;
 	}
-	
-	@Override
+
 	public int getXid() {
 		return xid;
 	}
@@ -29,7 +31,7 @@ public class KeepAlive implements IMessage {
 		this.xid = xid;
 	}
 
-	public int getDpid() {
-		return dpid;
+	public Map<String, List<Double>> getStats() {
+		return stats;
 	}
-}	
+}

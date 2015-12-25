@@ -2,7 +2,6 @@ package org.moonlightcontroller.blocks;
 
 import java.util.Map;
 
-import org.moonlightcontroller.blocks.Alert.Builder;
 import org.moonlightcontroller.processing.BlockClass;
 import org.moonlightcontroller.processing.ProcessingBlock;
 

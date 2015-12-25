@@ -11,11 +11,8 @@ import javax.ws.rs.core.Response.Status;
 import org.moonlightcontroller.aggregator.ApplicationAggregator;
 import org.moonlightcontroller.managers.models.ConnectionInstance;
 import org.moonlightcontroller.managers.models.IRequestSender;
-import org.moonlightcontroller.managers.models.messages.Hello;
-import org.moonlightcontroller.managers.models.messages.IMessage;
-import org.moonlightcontroller.managers.models.messages.KeepAlive;
-import org.moonlightcontroller.managers.models.messages.SetProcessingGraphRequest;
-import org.moonlightcontroller.managers.models.messages.SetProcessingGraphResponse;
+import org.moonlightcontroller.managers.models.messages.*;
+import org.moonlightcontroller.managers.models.messages.Error;
 import org.moonlightcontroller.processing.IConnector;
 import org.moonlightcontroller.processing.IProcessingBlock;
 import org.moonlightcontroller.processing.IProcessingGraph;
@@ -52,7 +49,21 @@ public class ConnectionManager implements IConnectionManager, ISouthboundClient{
 	@Override
 	public Response handleKeepaliveRequest(KeepAlive message) {
 		messagesMapping.put(message.getXid(), message);
-		return handleKeepaliveRequest(new InstanceLocationSpecifier(message.getDpid()+"", message.getDpid()), message.getXid());
+		return handleKeepaliveRequest(getInstanceLocationSpecifier(message.getDpid()), message.getXid());
+	}
+
+	private InstanceLocationSpecifier getInstanceLocationSpecifier(int ip) {
+		List<InstanceLocationSpecifier> locs = TopologyManager.getInstance().getAllEndpoints().stream().filter(loc -> loc.getIp()== ip).collect(Collectors.toList());
+		if (locs.isEmpty()) {
+			LOG.warning("InstanceLocationSpecifier wasn't found for ip=" + ip);
+			return new InstanceLocationSpecifier(ip+"", ip);
+		}
+		
+		if (locs.size() > 1) {
+			LOG.warning("Found more than a single InstanceLocationSpecifier for ip=" + ip);
+		}
+		
+		return locs.get(0);
 	}
 
 	private Response handleKeepaliveRequest(InstanceLocationSpecifier instanceLocationSpecifier, int xid) {
@@ -86,7 +97,7 @@ public class ConnectionManager implements IConnectionManager, ISouthboundClient{
 		messagesMapping.put(xid, message);
 		try {
 			int dpid = message.getDpid();
-			InstanceLocationSpecifier key = new InstanceLocationSpecifier(dpid +"", dpid);
+			InstanceLocationSpecifier key = getInstanceLocationSpecifier(dpid);
 
 			ConnectionInstance value = (new ConnectionInstance.Builder())
 					.setDpid(dpid)
@@ -139,7 +150,7 @@ public class ConnectionManager implements IConnectionManager, ISouthboundClient{
 		return Response.status(Status.INTERNAL_SERVER_ERROR).build();
 	}
 
-	public Response handleProcessingGraphResponse(SetProcessingGraphResponse message) {
+	public Response handleSetProcessingGraphResponse(SetProcessingGraphResponse message) {
 		IMessage originMessage = messagesMapping.get(message.getXid());
 
 		if (originMessage == null) {
@@ -148,7 +159,7 @@ public class ConnectionManager implements IConnectionManager, ISouthboundClient{
 
 		if (originMessage instanceof SetProcessingGraphRequest) {
 			int dpid = ((SetProcessingGraphRequest)originMessage).getDpid();
-			InstanceLocationSpecifier loc = new InstanceLocationSpecifier(dpid +"", dpid);
+			InstanceLocationSpecifier loc = getInstanceLocationSpecifier(dpid);
 			ConnectionInstance instance = instancesMapping.get(loc);
 			instance.setProcessingGraphConfiged(true);
 			return okResponse();
@@ -165,8 +176,51 @@ public class ConnectionManager implements IConnectionManager, ISouthboundClient{
 	public void sendMessage(ILocationSpecifier loc, IMessage message, IRequestSender requestSender) {
 		ConnectionInstance connectionInstance = instancesMapping.get(loc);
 		int xid = connectionInstance.sendRequest(message, requestSender);
+		message.setXid(xid);
 		messagesMapping.put(xid, message);
 		requestSendersMapping.put(xid, requestSender);
 
+	}
+
+	public Response handleReadResponse(ReadResponse message) {
+		IRequestSender iRequestSender = requestSendersMapping.get(message.getXid());
+		iRequestSender.onSuccess(message);
+		return okResponse();
+	}
+	
+	public Response handleErrorMessage(Error message) {
+		IRequestSender iRequestSender = requestSendersMapping.get(message.getXid());
+		iRequestSender.onFailure(message);
+		return okResponse();
+	}
+
+	public Response handleListCapabilitiesResponse(ListCapabilitiesResponse message) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public Response handleGetParametersResponse(GetParametersResponse message) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public Response handleWriteResponse(WriteResponse message) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public Response handleAlert(Alert message) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public Response handleSetParametersResponse(SetParametersResponse message) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public Response handleGlobalStatsResponse(GlobalStatsResponse message) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 }

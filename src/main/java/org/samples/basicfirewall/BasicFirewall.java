@@ -33,32 +33,35 @@ import com.google.common.collect.ImmutableList;
 public class BasicFirewall extends BoxApplication{
 
 	private final static Logger LOG = Logger.getLogger(BasicFirewall.class.getName()); 
-	
+
 	public BasicFirewall() {
 		super("Firewall");
 		this.setStatements(createStatements());
 		this.setInstanceUpListener(new InstanceUpHandler());
 	}
-	
+
 	@Override
 	public void handleAppStart(IApplicationTopology top, IHandleClient handles) {
 		LOG.info("Got App Start");
 	}
-	
+
 	private List<IStatement> createStatements() {
-		
+
 		HeaderMatch h1 = new OpenBoxHeaderMatch.Builder().setExact(HeaderField.TCP_DST, new TransportPort(22)).build();
 		HeaderMatch h2 = new OpenBoxHeaderMatch.Builder().setExact(HeaderField.TCP_DST, TransportPort.ANY).build();
-		
-		FromDevice from = new FromDevice.Builder().setDevice("eth0").setPromisc(true).setSniffer(true).build();
-		ToDevice to = new ToDevice.Builder().setDevice("eth1").build();
+
+		ArrayList<IStatement> statements = new ArrayList<>();
+
+		FromDevice from = new FromDevice("BasicFirewall", 0, "eth0", true, true);
+		ToDevice to = new ToDevice("BasicFirewall", "eth1");
 		HeaderClassifier classify = new HeaderClassifier.Builder()
 				.setRules(new ArrayList<HeaderClassifierRule>(Arrays.asList(
 						new HeaderClassifierRule.Builder().setHeaderMatch(h1).setPriority(Priority.HIGH).setOrder(0).build(),
 						new HeaderClassifierRule.Builder().setHeaderMatch(h2).setPriority(Priority.HIGH).setOrder(1).build())))
 				.setPriority(Priority.HIGH)
 				.build();
-		Discard discard = new Discard.Builder().build();
+
+		Discard discard = new Discard("BasicFirewall");
 		
 		IProcessingGraph graph = new ProcessingGraph.Builder()
 			.setBlocks(ImmutableList.of(from, to, classify, discard))
@@ -87,7 +90,7 @@ public class BasicFirewall extends BoxApplication{
 		
 		return Collections.singletonList(st);
 	}
-	
+
 	private class InstanceUpHandler implements IInstanceUpListener {
 
 		@Override

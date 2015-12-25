@@ -1,6 +1,6 @@
 package org.moonlightcontroller.managers.models;
 
-import org.moonlightcontroller.managers.models.messages.ErrorMessage;
+import org.moonlightcontroller.managers.models.messages.Error;
 import org.moonlightcontroller.managers.models.messages.IMessage;
 
 public class HelloRequestSender implements IRequestSender {
@@ -18,7 +18,7 @@ public class HelloRequestSender implements IRequestSender {
 	}
 
 	@Override
-	public void onFailure(ErrorMessage err) {
+	public void onFailure(Error err) {
 		
 	}
 

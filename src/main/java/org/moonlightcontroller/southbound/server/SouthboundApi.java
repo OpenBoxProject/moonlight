@@ -9,9 +9,8 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 import org.moonlightcontroller.managers.ConnectionManager;
-import org.moonlightcontroller.managers.models.messages.SetProcessingGraphResponse;
-import org.moonlightcontroller.managers.models.messages.Hello;
-import org.moonlightcontroller.managers.models.messages.KeepAlive;
+import org.moonlightcontroller.managers.models.messages.*;
+import org.moonlightcontroller.managers.models.messages.Error;
 
 @Path("/message/")
 public class SouthboundApi {
@@ -35,67 +34,67 @@ public class SouthboundApi {
 	public Response keepalive(KeepAlive message) {
 		return ConnectionManager.getInstance().handleKeepaliveRequest(message);
 	}
+	
+	@POST
+	@Path("ReadResponse")
+	@Consumes(MediaType.APPLICATION_JSON)
+	public Response ReadResponse(ReadResponse message) {
+		return ConnectionManager.getInstance().handleReadResponse(message);
+	}
+	
+	@POST
+	@Path("Error")
+	@Consumes(MediaType.APPLICATION_JSON)
+	public Response Error(Error message) {
+		return ConnectionManager.getInstance().handleErrorMessage(message);
+	}
 
 	@POST
 	@Path("ListCapabilitiesResponse")
-	@Consumes(MediaType.TEXT_PLAIN)
-	public String ListCapabilitiesResponse() {
-		return "Test";
+	@Consumes(MediaType.APPLICATION_JSON)
+	public Response ListCapabilitiesResponse(ListCapabilitiesResponse message) {
+		return ConnectionManager.getInstance().handleListCapabilitiesResponse(message);
 	}
 
 	@POST
 	@Path("SetParametersResponse")
-	@Consumes(MediaType.TEXT_PLAIN)
-	public String SetParametersResponse() {
-		return "Test";
+	@Consumes(MediaType.APPLICATION_JSON)
+	public Response SetParametersResponse(SetParametersResponse message) {
+		return ConnectionManager.getInstance().handleSetParametersResponse(message);
 	}
 
 	@POST
 	@Path("GetParametersResponse")
-	@Consumes(MediaType.TEXT_PLAIN)
-	public String GetParametersResponse() {
-		return "Test";
+	@Consumes(MediaType.APPLICATION_JSON)
+	public Response GetParametersResponse(GetParametersResponse message) {
+		return ConnectionManager.getInstance().handleGetParametersResponse(message);
 	}
 
 	@POST
 	@Path("GlobalStatsResponse")
-	@Consumes(MediaType.TEXT_PLAIN)
-	public String GlobalStatsResponse() {
-		return "Test";
-	}
-
-	@POST
-	@Path("ReadResponse")
-	@Consumes(MediaType.TEXT_PLAIN)
-	public String ReadResponse() {
-		return "Test";
+	@Consumes(MediaType.APPLICATION_JSON)
+	public Response GlobalStatsResponse(GlobalStatsResponse message) {
+		return ConnectionManager.getInstance().handleGlobalStatsResponse(message);
 	}
 
 	@POST
 	@Path("WriteResponse")
-	@Consumes(MediaType.TEXT_PLAIN)
-	public String WriteResponse() {
-		return "Test";
+	@Consumes(MediaType.APPLICATION_JSON)
+	public Response WriteResponse(WriteResponse message) {
+		return ConnectionManager.getInstance().handleWriteResponse(message);
 	}
 
 	@POST
 	@Path("SetProcessingGraphResponse")
 	@Consumes(MediaType.APPLICATION_JSON)
 	public Response SetProcessingGraphResponse(SetProcessingGraphResponse message) {
-		return  ConnectionManager.getInstance().handleProcessingGraphResponse(message);
+		return ConnectionManager.getInstance().handleSetProcessingGraphResponse(message);
 	}
 
 	@POST
 	@Path("Alert")
-	@Consumes(MediaType.TEXT_PLAIN)
-	public String Alert() {
-		return "Test";
-	}
-
-	@POST
-	@Path("Error")
-	@Consumes(MediaType.TEXT_PLAIN)
-	public String Error() {
-		return "Test";
+	@Consumes(MediaType.APPLICATION_JSON)
+	public Response Alert(Alert message) {
+		return ConnectionManager.getInstance().handleAlert(message);
 	}
 }

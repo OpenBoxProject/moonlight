@@ -32,15 +32,15 @@ public class BasicApp extends BoxApplication {
 		System.out.println("KOKO" + statements.get(0).getLocation().getId());
 		this.setStatements(statements);
 	}
-	
+
 	private List<IStatement> createStatements() {
-		
+
 		HeaderMatch h1 = new OpenBoxHeaderMatch.Builder().setExact(HeaderField.TCP_DST, new TransportPort(22)).build();
 		HeaderMatch h2 = new OpenBoxHeaderMatch.Builder().setExact(HeaderField.TCP_DST, TransportPort.ANY).build();
-
-		FromDevice from = new FromDevice.Builder().setDevice("eth0").setPromisc(true).setSniffer(true).build();
-		ToDevice to1 = new ToDevice.Builder().setDevice("eth1").build();
-		ToDevice to2 = new ToDevice.Builder().setDevice("eth2").build();
+		ArrayList<IStatement> statements = new ArrayList<>();
+		FromDevice from = new FromDevice("BasicApp", 0, "eth0", true, true);
+		ToDevice to1 = new ToDevice("BasicApp", "eth1");
+		ToDevice to2 = new ToDevice("BasicApp", "eth2");
 		HeaderClassifier classify = new HeaderClassifier.Builder()
 				.setRules(new ArrayList<HeaderClassifierRule>(Arrays.asList(
 						new HeaderClassifierRule.Builder().setHeaderMatch(h1).setPriority(Priority.HIGH).setOrder(0).build(),
