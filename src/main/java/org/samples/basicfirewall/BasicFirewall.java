@@ -2,6 +2,7 @@ package org.samples.basicfirewall;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.logging.Logger;
 
@@ -9,12 +10,14 @@ import org.moonlightcontroller.bal.BoxApplication;
 import org.moonlightcontroller.blocks.Discard;
 import org.moonlightcontroller.blocks.FromDevice;
 import org.moonlightcontroller.blocks.HeaderClassifier;
-import org.moonlightcontroller.blocks.ToDevice;
 import org.moonlightcontroller.blocks.HeaderClassifier.HeaderClassifierRule;
+import org.moonlightcontroller.blocks.ToDevice;
 import org.moonlightcontroller.events.IHandleClient;
 import org.moonlightcontroller.events.IInstanceUpListener;
 import org.moonlightcontroller.events.InstanceUpArgs;
 import org.moonlightcontroller.processing.Connector;
+import org.moonlightcontroller.processing.IProcessingGraph;
+import org.moonlightcontroller.processing.ProcessingGraph;
 import org.openboxprotocol.protocol.HeaderField;
 import org.openboxprotocol.protocol.HeaderMatch;
 import org.openboxprotocol.protocol.IStatement;
@@ -24,6 +27,8 @@ import org.openboxprotocol.protocol.Statement;
 import org.openboxprotocol.protocol.topology.IApplicationTopology;
 import org.openboxprotocol.protocol.topology.InstanceLocationSpecifier;
 import org.openboxprotocol.types.TransportPort;
+
+import com.google.common.collect.ImmutableList;
 
 public class BasicFirewall extends BoxApplication{
 
@@ -55,30 +60,35 @@ public class BasicFirewall extends BoxApplication{
 						new HeaderClassifierRule.Builder().setHeaderMatch(h2).setPriority(Priority.HIGH).setOrder(1).build())))
 				.setPriority(Priority.HIGH)
 				.build();
+
 		Discard discard = new Discard("BasicFirewall");
+		
+		IProcessingGraph graph = new ProcessingGraph.Builder()
+			.setBlocks(ImmutableList.of(from, to, classify, discard))
+			.setConnectors(ImmutableList.of(
+				new Connector.Builder()
+					.setSourceBlock(from)
+					.setSourceOutputPort(from.getOutputPort())
+					.setDestBlock(classify)
+					.build(),
+				new Connector.Builder()
+					.setSourceBlock(classify)
+					.setSourceOutputPort(0)
+					.setDestBlock(to)
+					.build(),
+				new Connector.Builder()
+					.setSourceBlock(classify)
+					.setSourceOutputPort(1)
+					.setDestBlock(discard)
+					.build()))
+			.build();
+		
 		IStatement st = new Statement.Builder()
-		.setLocation(new InstanceLocationSpecifier("ep1", 1000))
-		.addBlock(from)
-		.addBlock(to)
-		.addBlock(classify)
-		.addConnector(new Connector.Builder()
-				.setSourceBlock(from)
-				.setSourceOutputPort(from.getOutputPort())
-				.setDestBlock(classify)
-				.build())
-		.addConnector(new Connector.Builder()
-				.setSourceBlock(classify)
-				.setSourceOutputPort(0)
-				.setDestBlock(to)
-				.build())
-		.addConnector(new Connector.Builder()
-				.setSourceBlock(classify)
-				.setSourceOutputPort(1)
-				.setDestBlock(discard)
-				.build())
-		.build();
-		statements.add(st);
-		return statements;
+			.setLocation(new InstanceLocationSpecifier("ep1", 1000))
+			.setProcessingGraph(graph)
+			.build();
+		
+		return Collections.singletonList(st);
 	}
 
 	private class InstanceUpHandler implements IInstanceUpListener {

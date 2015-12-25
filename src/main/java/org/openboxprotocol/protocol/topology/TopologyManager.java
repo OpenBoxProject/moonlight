@@ -4,7 +4,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.StringWriter;
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.Queue;
 import java.util.logging.Logger;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -74,5 +76,22 @@ public class TopologyManager implements ITopologyManager {
 	public ILocationSpecifier resolve(String id) {
 		// TODO: Should we through exception if the result is null
 		return this.segment.findChild(id);
+	}
+
+	@Override
+	public List<ILocationSpecifier> bfs() {
+		List<ILocationSpecifier> bfs = new ArrayList<>();
+		Queue<ILocationSpecifier> q = new LinkedList<>();
+		q.add(this.segment);
+		while (q.peek() != null){
+			ILocationSpecifier loc = q.remove();
+			bfs.add(loc);
+			if (!loc.isSingleLocation()){
+				Segment seg = (Segment)loc;
+				q.addAll(seg.getDirectSegments());
+				q.addAll(seg.getDirectEndpoints());
+			}
+		}
+		return bfs;
 	}
 }

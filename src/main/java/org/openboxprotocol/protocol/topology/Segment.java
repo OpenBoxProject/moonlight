@@ -1,6 +1,7 @@
 package org.openboxprotocol.protocol.topology;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class Segment implements ILocationSpecifier {
@@ -59,5 +60,13 @@ public class Segment implements ILocationSpecifier {
 			}
 		}
 		return null;
+	}
+
+	public List<? extends ILocationSpecifier> getDirectSegments() {
+		return Arrays.asList(this.segments);
+	}
+
+	public List<? extends ILocationSpecifier> getDirectEndpoints() {
+		return Arrays.asList(this.endpoints);
 	}
 }
