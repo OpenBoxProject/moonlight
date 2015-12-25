@@ -42,7 +42,7 @@ public abstract class BoxApplication {
 		return priority;
 	}
 			
-	public Collection<IStatement> getStatemens() {
+	public Collection<IStatement> getStatements() {
 		return this.statements.values();
 	}
 	

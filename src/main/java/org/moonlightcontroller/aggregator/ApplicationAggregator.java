@@ -30,9 +30,11 @@ import org.moonlightcontroller.processing.IProcessingGraph;
 import org.moonlightcontroller.processing.MutableProcessingGraph;
 import org.moonlightcontroller.processing.ProcessingGraph;
 import org.openboxprotocol.protocol.HeaderField;
+import org.openboxprotocol.protocol.IStatement;
 import org.openboxprotocol.protocol.OpenBoxHeaderMatch;
 import org.openboxprotocol.protocol.Priority;
 import org.openboxprotocol.protocol.topology.ILocationSpecifier;
+import org.openboxprotocol.protocol.topology.ITopologyManager;
 import org.openboxprotocol.protocol.topology.InstanceLocationSpecifier;
 import org.openboxprotocol.protocol.topology.TopologyManager;
 import org.openboxprotocol.types.EthType;
@@ -41,6 +43,8 @@ import org.openboxprotocol.types.IpProto;
 import org.openboxprotocol.types.TransportPort;
 
 import com.google.common.collect.ImmutableList;
+
+import jersey.repackaged.com.google.common.collect.Maps;
 
 
 public class ApplicationAggregator implements IApplicationAggregator {
@@ -693,20 +697,28 @@ public class ApplicationAggregator implements IApplicationAggregator {
 	public void addApplication(BoxApplication app) {
 		this.apps.add(app);
 	}
-
+	
 	@Override
 	public void performAggregation() {
 		synchronized (this) {
 			// TODO: The following should be done for each OBI location specifier
-			List<InstanceLocationSpecifier> obiLocationSpecifiers = TopologyManager.getInstance().getAllEndpoints(); 
-			for (InstanceLocationSpecifier loc : obiLocationSpecifiers) {
-				IProcessingGraph last = null;
-				for (BoxApplication app : this.apps) {
-					// TODO: Complete here
-					IProcessingGraph current = app.getProcessingGraph(loc); // This method does not exist now
-					last = merge(last, current);
+			ITopologyManager topology = TopologyManager.getInstance(); 
+			for (BoxApplication app : this.apps) {
+				
+				Map<InstanceLocationSpecifier, IProcessingGraph> flattened = flattenStatements(app);
+				
+				for (InstanceLocationSpecifier loc : topology.getAllEndpoints()) {
+					IProcessingGraph merged = flattened.get(loc);
+					IProcessingGraph prev = this.aggregated.get(loc);
+					if (merged == null){
+						continue;
+					}
+					if (prev != null){
+						merged = merge(prev, merged);
+					}
+					
+					this.aggregated.put(loc, merged);
 				}
-				this.aggregated.put(loc, last);
 			}
 		}
 	}
@@ -714,5 +726,27 @@ public class ApplicationAggregator implements IApplicationAggregator {
 	@Override
 	public IProcessingGraph getProcessingGraph(ILocationSpecifier loc) {
 		return this.aggregated.get(loc);
+	}
+	
+	private Map<InstanceLocationSpecifier, IProcessingGraph> flattenStatements(BoxApplication app){
+		ITopologyManager topology = TopologyManager.getInstance(); 
+
+		// This part is to flatten the app statements to have all statements only on leaf nodes 
+		HashMap<InstanceLocationSpecifier, IProcessingGraph> flattened = new HashMap<>();
+		Map<ILocationSpecifier, IStatement> statements 
+			= Maps.uniqueIndex(app.getStatements(), stmt -> stmt.getLocation());
+		
+		// TODO: need to implement BFS on topology
+		for (ILocationSpecifier loc : topology.bfs()){
+			IStatement relevant = statements.get(loc);
+			if (relevant != null) {
+				for (InstanceLocationSpecifier i : topology.getSubInstances(loc)){
+					IProcessingGraph g = relevant.getProcessingGraph(); 
+					flattened.put(i, g);
+				}
+			}
+		}
+		
+		return flattened;
 	}
 }
