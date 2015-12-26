@@ -6,13 +6,15 @@ import org.eclipse.jetty.servlet.ServletHolder;
 
 public class SouthboundServer implements ISouthboundServer {
 
+	public static final int SERVER_PORT = 3637;
+	
 	private Server jetty;
 
 	public SouthboundServer() {
 	       ServletContextHandler context = new ServletContextHandler(ServletContextHandler.SESSIONS);
 	        context.setContextPath("/");
 	 
-	        Server jettyServer = new Server(3636);
+	        Server jettyServer = new Server(SERVER_PORT);
 	        jettyServer.setHandler(context);
 	 
 	        ServletHolder jerseyServlet = 
