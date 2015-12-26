@@ -4,6 +4,7 @@ import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
 import javax.ws.rs.core.Response;
@@ -34,7 +35,7 @@ public class ConnectionManager implements IConnectionManager, ISouthboundClient{
 
 	private ConnectionManager () {
 		instancesMapping = new HashMap<>();
-		messagesMapping = new HashMap<>();
+		messagesMapping = new ConcurrentHashMap<>();
 		requestSendersMapping = new HashMap<>();
 	}
 
@@ -113,10 +114,10 @@ public class ConnectionManager implements IConnectionManager, ISouthboundClient{
 				blocks = translateBlocks(processingGraph.getBlocks());
 				connectors = translateConnectors(processingGraph.getConnectors());
 			}
-
-			SetProcessingGraphRequest processMessage = new SetProcessingGraphRequest(xid, dpid, null, blocks, connectors);
-			IRequestSender requestSender = requestSendersMapping.get(xid);
-			value.sendRequest(processMessage, requestSender);
+			
+			SetProcessingGraphRequest processMessage = new SetProcessingGraphRequest(0, dpid, null, blocks, connectors);
+			sendMessage(key, processMessage, null);
+			
 			return okResponse();
 
 		} catch (Exception e) {
@@ -179,9 +180,10 @@ public class ConnectionManager implements IConnectionManager, ISouthboundClient{
 	@Override
 	public void sendMessage(ILocationSpecifier loc, IMessage message, IRequestSender requestSender) {
 		ConnectionInstance connectionInstance = instancesMapping.get(loc);
-		int xid = connectionInstance.sendRequest(message, requestSender);
+		int xid = XidGenerator.generateXid();
 		message.setXid(xid);
 		messagesMapping.put(xid, message);
+		connectionInstance.sendRequest(message, requestSender);
 		requestSendersMapping.put(xid, requestSender);
 
 	}

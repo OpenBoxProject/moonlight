@@ -18,6 +18,7 @@ import org.moonlightcontroller.managers.models.messages.Hello;
 import org.moonlightcontroller.managers.models.messages.IMessage;
 import org.moonlightcontroller.managers.models.messages.ReadRequest;
 import org.moonlightcontroller.managers.models.messages.SetProcessingGraphRequest;
+import org.moonlightcontroller.managers.models.messages.SetProcessingGraphResponse;
 import org.moonlightcontroller.managers.models.messages.WriteRequest;
 
 @Path("/message/")
@@ -53,6 +54,9 @@ public class ObiMockApi {
 		} else {
 			LOG.info("Got a processing graph " + message.getXid());
 		}
+		
+		SetProcessingGraphResponse msg = new SetProcessingGraphResponse(message.getXid());
+		new Thread(()-> this.sendMessage(msg)).start();
 		
 		return Response.status(Status.OK).build();
 	}
