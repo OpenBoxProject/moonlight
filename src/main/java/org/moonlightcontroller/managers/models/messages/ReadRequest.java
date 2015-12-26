@@ -1,9 +1,7 @@
 package org.moonlightcontroller.managers.models.messages;
 
-public class ReadRequest implements IMessage {
+public class ReadRequest extends Message {
 
-	private String type;
-	private int xid;
 	private String blockId;
 	private String readHandle;
 	
@@ -11,24 +9,9 @@ public class ReadRequest implements IMessage {
 	public ReadRequest() {}
 	
 	public ReadRequest(String block, String handle) {
-		this.type = this.getClass().getName();
+		super(0);
 		this.blockId = block;
 		this.readHandle = handle;
-	}
-
-	@Override
-	public String getType() {
-		return type;
-	}
-	
-	@Override
-	public int getXid() {
-		return xid;
-	}
-
-	@Override
-	public void setXid(int xid) {
-		this.xid = xid;
 	}
 
 	public String getBlockId() {

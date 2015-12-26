@@ -10,6 +10,11 @@ public class VlanEncapsulate extends ProcessingBlock {
 	private int vlan_pcp;
 	private int ethertype;
 
+	public VlanEncapsulate(String id, int vlan_vid) {
+		super(id);
+		this.vlan_vid = vlan_vid;
+	}
+
 	public VlanEncapsulate(String id, int vlan_vid, int vlan_dei, int vlan_pcp, int ethertype) {
 		super(id);
 		this.vlan_vid = vlan_vid;
@@ -32,21 +37,6 @@ public class VlanEncapsulate extends ProcessingBlock {
 
 	public int getEthertype() {
 		return ethertype;
-	}
-
-	@Override
-	public String getBlockType() {
-		return null;
-	}
-
-	@Override
-	public String toShortString() {
-		return null;
-	}
-
-	@Override
-	public ProcessingBlock clone() {
-		return null;
 	}
 
 	@Override

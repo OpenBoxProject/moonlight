@@ -2,14 +2,21 @@ package org.moonlightcontroller.blocks;
 
 import org.moonlightcontroller.processing.ProcessingBlock;
 import java.util.Map;
+
+import org.moonlightcontroller.exceptions.MergeException;
 import org.moonlightcontroller.processing.BlockClass;
 
-public class Log extends ProcessingBlock {
+public class Log extends ProcessingBlock implements IStaticProcessingBlock{
 	private String message;
 	private int severity;
 	private boolean attach_packet;
 	private int packet_size;
 
+	public Log(String id, String message) {
+		super(id);
+		this.message = message;
+	}
+	
 	public Log(String id, String message, int severity, boolean attach_packet, int packet_size) {
 		super(id);
 		this.message = message;
@@ -35,21 +42,6 @@ public class Log extends ProcessingBlock {
 	}
 
 	@Override
-	public String getBlockType() {
-		return null;
-	}
-
-	@Override
-	public String toShortString() {
-		return null;
-	}
-
-	@Override
-	public ProcessingBlock clone() {
-		return null;
-	}
-
-	@Override
 	public BlockClass getBlockClass() {
 		return BlockClass.BLOCK_CLASS_STATIC;
 	}
@@ -65,5 +57,17 @@ public class Log extends ProcessingBlock {
 	@Override
 	protected ProcessingBlock spawn(String id) {
 		return new Log(id, message, severity, attach_packet, packet_size);
+	}
+
+	@Override
+	public boolean canMergeWith(IStaticProcessingBlock other) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public IStaticProcessingBlock mergeWith(IStaticProcessingBlock other) throws MergeException {
+		// TODO Auto-generated method stub
+		return null;
 	}
 }

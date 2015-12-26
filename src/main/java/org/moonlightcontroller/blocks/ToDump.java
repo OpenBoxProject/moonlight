@@ -17,21 +17,6 @@ public class ToDump extends ProcessingBlock {
 	}
 
 	@Override
-	public String getBlockType() {
-		return null;
-	}
-
-	@Override
-	public String toShortString() {
-		return null;
-	}
-
-	@Override
-	public ProcessingBlock clone() {
-		return null;
-	}
-
-	@Override
 	public BlockClass getBlockClass() {
 		return BlockClass.BLOCK_CLASS_TERMINAL;
 	}

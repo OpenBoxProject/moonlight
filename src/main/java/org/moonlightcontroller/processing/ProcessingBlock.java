@@ -47,6 +47,11 @@ public abstract class ProcessingBlock implements IProcessingBlock{
 		return config;
 	}
 	
+	@Override
+	public String getBlockType() {
+		return this.getClass().getSimpleName();
+	}
+
 	protected abstract void putConfiguration(Map<String, String> config);
 		
 	@Override

@@ -24,34 +24,10 @@ public class HeaderClassifier extends ProcessingBlock implements IClassifierProc
 	private List<? extends HeaderClassifierRule> rules;
 	private Priority priority;
 	
-	private HeaderClassifier(String id, List<? extends HeaderClassifierRule> rules, Priority p) {
+	public HeaderClassifier(String id, List<? extends HeaderClassifierRule> rules, Priority priority) {
 		super(id);
-		this.priority = p;
+		this.priority = priority;
 		this.rules = rules;
-	}
-		
-	public static class Builder extends ProcessingBlock.Builder {
-		private ArrayList<? extends HeaderClassifierRule> rules;
-		private Priority priority;
-			
-		public Builder() {
-			super();
-			this.rules = new ArrayList<>();
-		}
-				
-		public Builder setPriority(Priority p){
-			this.priority = p;
-			return this;
-		}
-
-		public Builder setRules(List<? extends HeaderClassifierRule> rules){
-			this.rules = new ArrayList<>(rules);
-			return this;
-		}
-
-		public HeaderClassifier build(){
-			return new HeaderClassifier(super.id, this.rules, this.priority);
-		}
 	}
 	
 	@Override
@@ -73,11 +49,6 @@ public class HeaderClassifier extends ProcessingBlock implements IClassifierProc
 	}
 
 	@Override
-	public String getBlockType() {
-		return "HeaderClassifier";
-	}
-	
-	@Override
 	protected ProcessingBlock spawn(String id) {
 		return new HeaderClassifier(id, this.getRules(), this.priority);
 	}
@@ -90,9 +61,8 @@ public class HeaderClassifier extends ProcessingBlock implements IClassifierProc
 
 	@Override
 	protected void putConfiguration(Map<String, String> config) {
-		// TODO Auto-generated method stub
-		// TODO: [Yotam] this should be completed to make the demo work
-		// It should serialize the configuration of matches as JSON
+		config.put("priority", this.priority.toString());
+		config.put("rules", rules.toString());
 	}
 	
 	private static HeaderClassifierRuleWithSources aggregateRules(HeaderClassifierRule r1, HeaderClassifierRule r2, Priority p1, Priority p2, int src1, int src2, int order) throws MergeException {
@@ -234,8 +204,8 @@ public class HeaderClassifier extends ProcessingBlock implements IClassifierProc
 	private static class HeaderClassifierRuleWithSources extends HeaderClassifierRule {
 		private Pair<Integer> sources;
 		
-		public HeaderClassifierRuleWithSources(HeaderMatch match, Priority p, int order, Pair<Integer> sources) {
-			super(match, p, order);
+		public HeaderClassifierRuleWithSources(HeaderMatch match, Priority priority, int order, Pair<Integer> sources) {
+			super(match, priority, order);
 			this.sources = sources;
 		}
 	}

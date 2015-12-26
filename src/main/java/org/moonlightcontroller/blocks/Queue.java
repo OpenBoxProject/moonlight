@@ -7,6 +7,10 @@ import org.moonlightcontroller.processing.BlockClass;
 public class Queue extends ProcessingBlock {
 	private int capacity;
 
+	public Queue(String id) {
+		super(id);
+	}
+	
 	public Queue(String id, int capacity) {
 		super(id);
 		this.capacity = capacity;
@@ -14,21 +18,6 @@ public class Queue extends ProcessingBlock {
 
 	public int getCapacity() {
 		return capacity;
-	}
-
-	@Override
-	public String getBlockType() {
-		return null;
-	}
-
-	@Override
-	public String toShortString() {
-		return null;
-	}
-
-	@Override
-	public ProcessingBlock clone() {
-		return null;
 	}
 
 	@Override

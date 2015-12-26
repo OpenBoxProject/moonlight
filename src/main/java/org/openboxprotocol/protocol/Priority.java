@@ -1,13 +1,13 @@
 package org.openboxprotocol.protocol;
 
 public enum Priority implements Comparable<Priority> {
-	DEFAULT,
-	VERY_LOW,
-	LOW,
-	MEDIUM,
-	HIGH,
-	VERY_HIGH,
-	CRITICAL;
+	DEFAULT ("DEAFAULT"),
+	VERY_LOW ("VERY_LOW"),
+	LOW ("LOW"),
+	MEDIUM ("MEDIUM"),
+	HIGH ("HIGH"),
+	VERY_HIGH ("VERY_HIGH"),
+	CRITICAL ("CRITICAL");
 	
 	public static final int MAX_ORDINAL = 6;
 	
@@ -31,4 +31,18 @@ public enum Priority implements Comparable<Priority> {
 			throw new IndexOutOfBoundsException("Invalid priority ordinal value: " + ordinal);
 		}
 	}
+	
+	private final String name;       
+
+    private Priority(String s) {
+        name = s;
+    }
+
+    public boolean equalsName(String otherName) {
+        return (otherName == null) ? false : name.equals(otherName);
+    }
+
+    public String toString() {
+       return this.name;
+    }
 }

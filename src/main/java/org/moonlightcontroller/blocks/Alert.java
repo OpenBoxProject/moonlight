@@ -11,12 +11,23 @@ import org.moonlightcontroller.processing.ProcessingBlock;
 public class Alert extends ProcessingBlock implements IStaticProcessingBlock {
 
 	private String message;
-	
-	private Alert(String id, String message) {
+	private int severity;
+	private boolean attach_packet;
+	private int packet_size;
+
+	public Alert(String id, String message) {
 		super(id);
 		this.message = message;
 	}
-		
+
+	public Alert(String id, String message, int severity, boolean attach_packet, int packet_size) {
+		super(id);
+		this.message = message;
+		this.severity = severity;
+		this.attach_packet = attach_packet;
+		this.packet_size = packet_size;
+	}
+
 	public String getMessage() {
 		return message;
 	}
@@ -24,11 +35,6 @@ public class Alert extends ProcessingBlock implements IStaticProcessingBlock {
 	@Override
 	public BlockClass getBlockClass() {
 		return BlockClass.BLOCK_CLASS_STATIC;
-	}
-
-	@Override
-	public String getBlockType() {
-		return "Alert";
 	}
 
 	@Override
@@ -52,24 +58,13 @@ public class Alert extends ProcessingBlock implements IStaticProcessingBlock {
 			throw new MergeException("Cannot merge statics of different type");
 		}
 	}
-	
+
 	@Override
 	protected void putConfiguration(Map<String, String> config) {
-		// TODO: Does alert have config?
-	}
-	
-	public static class Builder extends ProcessingBlock.Builder {
-		private String msg;
-		
-		@Override
-		public Alert build(){
-			this.addPort();
-			return new Alert(super.id, msg);
-		}
-		
-		public Builder setMessage(String msg){
-			this.msg = msg;
-			return this;
-		}
+		config.put("message", this.message);
+		config.put("severity", this.severity+"");
+		config.put("attach_packet", this.attach_packet? "true" : "false");
+		config.put("packet_size", this.packet_size+"");
+
 	}
 }

@@ -7,6 +7,10 @@ import org.moonlightcontroller.processing.BlockClass;
 public class DecIpTtl extends ProcessingBlock {
 	private boolean active;
 
+	public DecIpTtl(String id) {
+		super(id);
+	}
+	
 	public DecIpTtl(String id, boolean active) {
 		super(id);
 		this.active = active;
@@ -14,21 +18,6 @@ public class DecIpTtl extends ProcessingBlock {
 
 	public boolean getActive() {
 		return active;
-	}
-
-	@Override
-	public String getBlockType() {
-		return null;
-	}
-
-	@Override
-	public String toShortString() {
-		return null;
-	}
-
-	@Override
-	public ProcessingBlock clone() {
-		return null;
 	}
 
 	@Override

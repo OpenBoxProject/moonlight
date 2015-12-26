@@ -15,6 +15,11 @@ public class Ipv4AddressTranslator extends ProcessingBlock {
 	private int reap_interval;
 	private int mapping_capacity;
 
+	public Ipv4AddressTranslator(String id, ipv4_translator_rules input_spec) {
+		super(id);
+		this.input_spec = input_spec;
+	}
+	
 	public Ipv4AddressTranslator(String id, ipv4_translator_rules input_spec, int tcp_done_timeout, int tcp_nodata_timeout, int tcp_guarantee, int udp_timeout, int udp_streaming_timeout, int udp_guarantee, int reap_interval, int mapping_capacity) {
 		super(id);
 		this.input_spec = input_spec;
@@ -62,21 +67,6 @@ public class Ipv4AddressTranslator extends ProcessingBlock {
 
 	public int getMapping_capacity() {
 		return mapping_capacity;
-	}
-
-	@Override
-	public String getBlockType() {
-		return null;
-	}
-
-	@Override
-	public String toShortString() {
-		return null;
-	}
-
-	@Override
-	public ProcessingBlock clone() {
-		return null;
 	}
 
 	@Override

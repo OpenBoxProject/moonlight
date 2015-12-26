@@ -2,10 +2,8 @@ package org.moonlightcontroller.managers.models.messages;
 
 import java.util.List;
 
-public class Alert implements IMessage {
+public class Alert extends Message {
 
-	private String type;
-	private int xid;
 	private int origin_dpid;
 	private List<AlertMessage> messages;
 	
@@ -13,27 +11,11 @@ public class Alert implements IMessage {
 	public Alert() {}
 	
 	public Alert(int xid, int origin_dpid, List<AlertMessage> messages) {
-		this.type = this.getClass().getName();
-		this.xid = xid;
+		super(xid);
 		this.origin_dpid = origin_dpid;
 		this.messages = messages;
 	}
  	
-	@Override
-	public int getXid() {
-		return xid;
-	}
-
-	@Override
-	public void setXid(int xid) {
-		this.xid = xid;
-	}
-
-	@Override
-	public String getType() {
-		return type;
-	}
-
 	public int getOrigin_dpid() {
 		return origin_dpid;
 	}
