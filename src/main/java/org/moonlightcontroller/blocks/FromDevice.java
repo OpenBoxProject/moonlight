@@ -43,11 +43,6 @@ public class FromDevice extends ProcessingBlock {
 	}
 
 	@Override
-	public String getBlockType() {
-		return this.getClass().getName();
-	}
-
-	@Override
 	protected void putConfiguration(Map<String, String> config) {
 		config.put("devname", this.devname);
 		config.put("sniffer", this.sniffer ? "true" : "false");

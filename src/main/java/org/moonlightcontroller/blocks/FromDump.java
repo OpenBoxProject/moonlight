@@ -34,11 +34,6 @@ public class FromDump extends ProcessingBlock {
 	}
 
 	@Override
-	public String getBlockType() {
-		return this.getClass().getName();
-	}
-
-	@Override
 	public BlockClass getBlockClass() {
 		return BlockClass.BLOCK_CLASS_TERMINAL;
 	}

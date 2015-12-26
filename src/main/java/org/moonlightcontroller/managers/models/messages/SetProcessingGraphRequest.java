@@ -4,10 +4,8 @@ import java.util.List;
 import org.moonlightcontroller.processing.JsonBlock;
 import org.moonlightcontroller.processing.JsonConnector;
 
-public class SetProcessingGraphRequest implements IMessage {
+public class SetProcessingGraphRequest extends Message {
 
-	private String type;
-	private int xid;
 	private int dpid;
 	private List<String> modules;
 	private List<JsonBlock> blocks;
@@ -17,24 +15,13 @@ public class SetProcessingGraphRequest implements IMessage {
 	}
 	
 	public SetProcessingGraphRequest(int xid, int dpid, List<String> modules, List<JsonBlock> blocks, List<JsonConnector> connectors) {
-		this.type = "SetProcessingGraphRequest";
-		this.xid = xid;
+		super(xid);
 		this.dpid = dpid;
 		this.modules = modules;
 		this.blocks = blocks;
 		this.connectors = connectors;
 	}
 	
-	@Override
-	public int getXid() {
-		return xid;
-	}
-
-	@Override
-	public String getType() {
-		return type;
-	}
-
 	public int getDpid() {
 		return dpid;
 	}
@@ -49,11 +36,6 @@ public class SetProcessingGraphRequest implements IMessage {
 
 	public List<JsonConnector> getConnectors() {
 		return connectors;
-	}
-
-	@Override
-	public void setXid(int xid) {
-		
 	}
 }
 

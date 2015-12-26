@@ -49,11 +49,6 @@ public class HeaderClassifier extends ProcessingBlock implements IClassifierProc
 	}
 
 	@Override
-	public String getBlockType() {
-		return "HeaderClassifier";
-	}
-	
-	@Override
 	protected ProcessingBlock spawn(String id) {
 		return new HeaderClassifier(id, this.getRules(), this.priority);
 	}
@@ -209,8 +204,8 @@ public class HeaderClassifier extends ProcessingBlock implements IClassifierProc
 	private static class HeaderClassifierRuleWithSources extends HeaderClassifierRule {
 		private Pair<Integer> sources;
 		
-		public HeaderClassifierRuleWithSources(HeaderMatch match, Priority p, int order, Pair<Integer> sources) {
-			super(match, p, order);
+		public HeaderClassifierRuleWithSources(HeaderMatch match, Priority priority, int order, Pair<Integer> sources) {
+			super(match, priority, order);
 			this.sources = sources;
 		}
 	}

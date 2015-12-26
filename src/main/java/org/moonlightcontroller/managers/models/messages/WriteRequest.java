@@ -1,39 +1,22 @@
 package org.moonlightcontroller.managers.models.messages;
 
 
-public class WriteRequest implements IMessage {
+public class WriteRequest extends Message {
 
-	private String type;
-	private int xid;
 	private String blockId;
 	private String writeHandle;
 	private String value;
-	
+
 	// Default constructor to support Jersy
 	public WriteRequest() {}
-	
+
 	public WriteRequest(String block, String handle, String value) {
-		this.type = this.getClass().getName();
+		super(0);
 		this.blockId = block;
 		this.writeHandle = handle;
 		this.value = value;
 	}
-	
-	@Override
-	public String getType() {
-		return type;
-	}
-	
-	@Override
-	public int getXid() {
-		return xid;
-	}
 
-	@Override
-	public void setXid(int xid) {
-		this.xid = xid;
-	}
-	
 	public String getBlockId() {
 		return blockId;
 	}

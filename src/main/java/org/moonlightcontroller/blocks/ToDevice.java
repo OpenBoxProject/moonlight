@@ -24,11 +24,6 @@ public class ToDevice extends ProcessingBlock {
 	}
 
 	@Override
-	public String getBlockType() {
-		return "ToDevice";
-	}
-
-	@Override
 	protected void putConfiguration(Map<String, String> config) {
 		config.put("devname", devname);
 	}

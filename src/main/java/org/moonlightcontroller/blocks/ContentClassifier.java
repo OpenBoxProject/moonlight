@@ -13,19 +13,16 @@ import org.moonlightcontroller.processing.IProcessingGraph;
 
 public class ContentClassifier extends ProcessingBlock implements IClassifierProcessingBlock{
 	private String[] pattern;
-
-	public ContentClassifier(String id, String[] pattern) {
+	private Priority priority;
+	
+	public ContentClassifier(String id, String[] pattern, Priority priority) {
 		super(id);
 		this.pattern = pattern;
+		this.priority = priority;
 	}
 
 	public String[] getPattern() {
 		return pattern;
-	}
-
-	@Override
-	public String getBlockType() {
-		return this.getClass().getName();
 	}
 
 	@Override
@@ -40,13 +37,12 @@ public class ContentClassifier extends ProcessingBlock implements IClassifierPro
 
 	@Override
 	protected ProcessingBlock spawn(String id) {
-		return new ContentClassifier(id, this.pattern);
+		return new ContentClassifier(id, this.pattern, priority);
 	}
 
 	@Override
 	public Priority getPriority() {
-		// TODO Auto-generated method stub
-		return null;
+		return priority;
 	}
 
 	@Override

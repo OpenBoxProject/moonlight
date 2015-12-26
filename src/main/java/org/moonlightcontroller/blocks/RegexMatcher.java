@@ -15,17 +15,19 @@ public class RegexMatcher extends ProcessingBlock implements IClassifierProcessi
 	private String[] pattern;
 	private boolean payload_only;
 	private boolean match_all;
+	private Priority priority;
 
 	public RegexMatcher(String id, String[] pattern) {
 		super(id);
 		this.pattern = pattern;
 	}
 	
-	public RegexMatcher(String id, String[] pattern, boolean payload_only, boolean match_all) {
+	public RegexMatcher(String id, String[] pattern, boolean payload_only, boolean match_all, Priority priority) {
 		super(id);
 		this.pattern = pattern;
 		this.payload_only = payload_only;
 		this.match_all = match_all;
+		this.priority = priority;
 	}
 
 	public String[] getPattern() {
@@ -38,11 +40,6 @@ public class RegexMatcher extends ProcessingBlock implements IClassifierProcessi
 
 	public boolean getMatch_all() {
 		return match_all;
-	}
-
-	@Override
-	public String getBlockType() {
-		return this.getClass().getName();
 	}
 
 	@Override
@@ -59,13 +56,12 @@ public class RegexMatcher extends ProcessingBlock implements IClassifierProcessi
 
 	@Override
 	protected ProcessingBlock spawn(String id) {
-		return new RegexMatcher(id, pattern, payload_only, match_all);
+		return new RegexMatcher(id, pattern, payload_only, match_all, priority);
 	}
 
 	@Override
 	public Priority getPriority() {
-		// TODO Auto-generated method stub
-		return null;
+		return priority;
 	}
 
 	@Override

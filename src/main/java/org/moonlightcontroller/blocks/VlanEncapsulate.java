@@ -40,11 +40,6 @@ public class VlanEncapsulate extends ProcessingBlock {
 	}
 
 	@Override
-	public String getBlockType() {
-		return this.getClass().getName();
-	}
-
-	@Override
 	public BlockClass getBlockClass() {
 		return BlockClass.BLOCK_CLASS_MODIFIER;
 	}

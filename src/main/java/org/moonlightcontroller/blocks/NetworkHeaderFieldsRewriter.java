@@ -54,11 +54,6 @@ public class NetworkHeaderFieldsRewriter extends ProcessingBlock {
 	}
 
 	@Override
-	public String getBlockType() {
-		return this.getClass().getName();
-	}
-
-	@Override
 	protected ProcessingBlock spawn(String id) {
 		return new NetworkHeaderFieldsRewriter(id);
 	}

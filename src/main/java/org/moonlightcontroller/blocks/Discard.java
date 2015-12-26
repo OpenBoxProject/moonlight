@@ -17,11 +17,6 @@ public class Discard extends ProcessingBlock {
 	}
 
 	@Override
-	public String getBlockType() {
-		return this.getClass().getName();
-	}
-
-	@Override
 	protected void putConfiguration(Map<String, String> config) {
 		// No config for 'Discard'
 	}

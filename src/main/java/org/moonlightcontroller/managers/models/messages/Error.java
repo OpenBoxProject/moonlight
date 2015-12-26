@@ -1,9 +1,7 @@
 package org.moonlightcontroller.managers.models.messages;
 
-public class Error implements IResponseMessage {
+public class Error extends Message {
 
-	private int xid;
-	private String type; 
 	private String error_type;
 	private String error_subtype;
 	private String message;
@@ -13,29 +11,13 @@ public class Error implements IResponseMessage {
 	public Error() {}
 		
 	public Error (int xid, String error_type, String error_subtype, String message, String extended_message) {
-		this.xid = xid;
-		this.type = this.getClass().getName();
+		super(xid);
 		this.error_type = error_type;
 		this.error_subtype = error_subtype;
 		this.message = message;
 		this.extended_message = extended_message;
 	}
 	
-	@Override
-	public int getXid() {
-		return xid;
-	}
-
-	@Override
-	public String getType() {
-		return type;
-	}
-
-	@Override
-	public void setXid(int xid) {
-		
-	}
-
 	public String getError_type() {
 		return error_type;
 	}

@@ -1,27 +1,8 @@
 package org.moonlightcontroller.managers.models.messages;
 
-public class SetParametersResponse implements IMessage {
-	private String type;
-	private int xid;
+public class SetParametersResponse extends Message {
 	
 	public SetParametersResponse(int xid) {
-		this.xid = xid;
-		this.type = this.getClass().getName();
+		super(xid);
 	}
-	
-	@Override
-	public int getXid() {
-		return xid;
-	}
-	
-	@Override
-	public void setXid(int xid) {
-		this.xid = xid;
-	}
-
-	@Override
-	public String getType() {
-		return type;
-	}
-
 }

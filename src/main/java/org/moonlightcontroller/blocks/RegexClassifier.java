@@ -14,13 +14,15 @@ import org.moonlightcontroller.processing.IProcessingGraph;
 public class RegexClassifier extends ProcessingBlock implements IClassifierProcessingBlock{
 	private String[] pattern;
 	private boolean payload_only;
+	private Priority priority;
 
-	public RegexClassifier(String id, String[] pattern) {
+	public RegexClassifier(String id, String[] pattern, Priority priority) {
 		super(id);
 		this.pattern = pattern;
+		this.priority = priority;
 	}
 	
-	public RegexClassifier(String id, String[] pattern, boolean payload_only) {
+	public RegexClassifier(String id, String[] pattern, boolean payload_only, Priority priority) {
 		super(id);
 		this.pattern = pattern;
 		this.payload_only = payload_only;
@@ -32,11 +34,6 @@ public class RegexClassifier extends ProcessingBlock implements IClassifierProce
 
 	public boolean getPayload_only() {
 		return payload_only;
-	}
-
-	@Override
-	public String getBlockType() {
-		return this.getClass().getName();
 	}
 
 	@Override
@@ -52,13 +49,12 @@ public class RegexClassifier extends ProcessingBlock implements IClassifierProce
 
 	@Override
 	protected ProcessingBlock spawn(String id) {
-		return new RegexClassifier(id, pattern, payload_only);
+		return new RegexClassifier(id, pattern, payload_only, priority);
 	}
 
 	@Override
 	public Priority getPriority() {
-		// TODO Auto-generated method stub
-		return null;
+		return priority;
 	}
 
 	@Override

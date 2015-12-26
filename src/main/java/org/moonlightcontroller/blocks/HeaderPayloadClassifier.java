@@ -13,19 +13,15 @@ import org.moonlightcontroller.processing.IProcessingGraph;
 
 public class HeaderPayloadClassifier extends ProcessingBlock implements IClassifierProcessingBlock{
 	private compound_matches match;
+	private Priority priority;
 
-	public HeaderPayloadClassifier(String id, compound_matches match) {
+	public HeaderPayloadClassifier(String id, compound_matches match, Priority priority) {
 		super(id);
 		this.match = match;
 	}
 
 	public compound_matches getMatch() {
 		return match;
-	}
-
-	@Override
-	public String getBlockType() {
-		return this.getClass().getName();
 	}
 
 	@Override
@@ -40,13 +36,12 @@ public class HeaderPayloadClassifier extends ProcessingBlock implements IClassif
 
 	@Override
 	protected ProcessingBlock spawn(String id) {
-		return new HeaderPayloadClassifier(id, match);
+		return new HeaderPayloadClassifier(id, match, priority);
 	}
 
 	@Override
 	public Priority getPriority() {
-		// TODO Auto-generated method stub
-		return null;
+		return priority;
 	}
 
 	@Override
