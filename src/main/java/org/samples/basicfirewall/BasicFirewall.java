@@ -15,9 +15,14 @@ import org.moonlightcontroller.blocks.ToDevice;
 import org.moonlightcontroller.events.IHandleClient;
 import org.moonlightcontroller.events.IInstanceUpListener;
 import org.moonlightcontroller.events.InstanceUpArgs;
+import org.moonlightcontroller.managers.models.IRequestSender;
+import org.moonlightcontroller.managers.models.messages.Error;
+import org.moonlightcontroller.managers.models.messages.IMessage;
+import org.moonlightcontroller.managers.models.messages.ReadResponse;
 import org.moonlightcontroller.processing.Connector;
 import org.moonlightcontroller.processing.IProcessingGraph;
 import org.moonlightcontroller.processing.ProcessingGraph;
+import org.openboxprotocol.exceptions.InstanceNotAvailableException;
 import org.openboxprotocol.protocol.HeaderField;
 import org.openboxprotocol.protocol.HeaderMatch;
 import org.openboxprotocol.protocol.IStatement;
@@ -26,6 +31,7 @@ import org.openboxprotocol.protocol.Priority;
 import org.openboxprotocol.protocol.Statement;
 import org.openboxprotocol.protocol.topology.IApplicationTopology;
 import org.openboxprotocol.protocol.topology.InstanceLocationSpecifier;
+import org.openboxprotocol.protocol.topology.Segment;
 import org.openboxprotocol.types.TransportPort;
 
 import com.google.common.collect.ImmutableList;
@@ -43,6 +49,40 @@ public class BasicFirewall extends BoxApplication{
 	@Override
 	public void handleAppStart(IApplicationTopology top, IHandleClient handles) {
 		LOG.info("Got App Start");
+		new Thread(()-> {
+			for (int i = 0 ; i < 10; i++){
+				try {
+					handles.readHandle(
+							new InstanceLocationSpecifier("ep1", 2130706433), 
+							"monkey",
+							"buisness", new FirewallRequestSender());
+				} catch (InstanceNotAvailableException e1) {
+					LOG.warning("Unable to reach OBI");
+				}
+				try {
+					Thread.sleep(10000);
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+		}).start();
+	}
+	
+	private class FirewallRequestSender implements IRequestSender {
+
+		@Override
+		public void onSuccess(IMessage message) {
+			if (message instanceof ReadResponse){
+				ReadResponse rr = (ReadResponse)message;
+				LOG.info("got a read response:" + rr.getBlockId() + "::" + rr.getReadHandle() + "::" + rr.getResult());
+			}			
+		}
+
+		@Override
+		public void onFailure(Error err) {
+			LOG.info("got an error:" + err.getError_type() + "::" + err.getExtended_message());
+		}
+		
 	}
 
 	private List<IStatement> createStatements() {
@@ -80,13 +120,13 @@ public class BasicFirewall extends BoxApplication{
 			.build();
 		
 		IStatement st = new Statement.Builder()
-			.setLocation(new InstanceLocationSpecifier("ep1", 2130706433))
+			.setLocation(new Segment("seg1"))
 			.setProcessingGraph(graph)
 			.build();
 		
 		return Collections.singletonList(st);
 	}
-
+	
 	private class InstanceUpHandler implements IInstanceUpListener {
 
 		@Override
