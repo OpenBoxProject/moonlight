@@ -1,2 +1,3 @@
-# ml-temp
-Temporary repository for the ML project
+# The Moonlight Controller
+
+This code is under development and is not ready for public usage.
