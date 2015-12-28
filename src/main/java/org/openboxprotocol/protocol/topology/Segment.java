@@ -3,11 +3,22 @@ package org.openboxprotocol.protocol.topology;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.commons.lang.builder.HashCodeBuilder;
+
 public class Segment implements ILocationSpecifier {
 
 	String id;
 	List<Segment> segments;
 	List<InstanceLocationSpecifier> endpoints;
+	
+	public Segment(){	
+	}
+	
+	public Segment(String id){
+		this.id = id;
+		this.segments = new ArrayList<>();
+		this.endpoints = new ArrayList<>();
+	}
 	
 	public List<InstanceLocationSpecifier> getEndpoints(){
 		List<InstanceLocationSpecifier> allObis = new ArrayList<>();
@@ -67,5 +78,25 @@ public class Segment implements ILocationSpecifier {
 
 	public List<? extends ILocationSpecifier> getDirectEndpoints() {
 		return this.endpoints;
+	}
+	
+	@Override
+	public boolean equals(Object obj) {
+		if (obj == null || !(obj instanceof Segment)){
+			return false;
+		}
+		if (obj == this){
+			return true;
+		}
+		Segment other = (Segment)obj;
+		if (other.id.equals(this.id)){
+			return true;
+		}
+		return false;
+	}
+	
+	@Override
+	public int hashCode(){
+		return new HashCodeBuilder(27, 31).append(this.id).toHashCode();
 	}
 }

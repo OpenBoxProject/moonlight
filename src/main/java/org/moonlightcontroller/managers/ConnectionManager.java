@@ -19,6 +19,7 @@ import org.moonlightcontroller.processing.IProcessingBlock;
 import org.moonlightcontroller.processing.IProcessingGraph;
 import org.moonlightcontroller.processing.JsonBlock;
 import org.moonlightcontroller.processing.JsonConnector;
+import org.openboxprotocol.exceptions.InstanceNotAvailableException;
 import org.openboxprotocol.protocol.topology.ILocationSpecifier;
 import org.openboxprotocol.protocol.topology.InstanceLocationSpecifier;
 import org.openboxprotocol.protocol.topology.TopologyManager;
@@ -34,9 +35,9 @@ public class ConnectionManager implements IConnectionManager, ISouthboundClient{
 	private static ConnectionManager instance;
 
 	private ConnectionManager () {
-		instancesMapping = new HashMap<>();
+		instancesMapping = new ConcurrentHashMap<>();
 		messagesMapping = new ConcurrentHashMap<>();
-		requestSendersMapping = new HashMap<>();
+		requestSendersMapping = new ConcurrentHashMap<>();
 	}
 
 	public synchronized static ConnectionManager getInstance() {
@@ -178,8 +179,11 @@ public class ConnectionManager implements IConnectionManager, ISouthboundClient{
 	}
 
 	@Override
-	public void sendMessage(ILocationSpecifier loc, IMessage message, IRequestSender requestSender) {
+	public void sendMessage(ILocationSpecifier loc, IMessage message, IRequestSender requestSender) throws InstanceNotAvailableException {
 		ConnectionInstance connectionInstance = instancesMapping.get(loc);
+		if (connectionInstance == null) {
+			throw new InstanceNotAvailableException();
+		}
 		int xid = XidGenerator.generateXid();
 		message.setXid(xid);
 		messagesMapping.put(xid, message);

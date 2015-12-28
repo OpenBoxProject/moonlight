@@ -17,6 +17,7 @@ import javax.ws.rs.core.Response.Status;
 import org.moonlightcontroller.managers.models.messages.Hello;
 import org.moonlightcontroller.managers.models.messages.IMessage;
 import org.moonlightcontroller.managers.models.messages.ReadRequest;
+import org.moonlightcontroller.managers.models.messages.ReadResponse;
 import org.moonlightcontroller.managers.models.messages.SetProcessingGraphRequest;
 import org.moonlightcontroller.managers.models.messages.SetProcessingGraphResponse;
 import org.moonlightcontroller.managers.models.messages.WriteRequest;
@@ -66,9 +67,8 @@ public class ObiMockApi {
 	@Consumes(MediaType.APPLICATION_JSON)
 	public Response readRequest(ReadRequest message) {
 		LOG.info("Got a a read request" + message.toString());
-		WriteRequest wr = new WriteRequest(message.getBlockId(), message.getReadHandle(), "100");
-		wr.setXid(message.getXid());
-		sendMessage(wr);
+		ReadResponse rr = new ReadResponse(message.getXid(), message.getBlockId(), message.getReadHandle(), "100");
+		new Thread(()-> this.sendMessage(rr)).start();
 		return Response.status(Status.OK).build();
 	}
 
