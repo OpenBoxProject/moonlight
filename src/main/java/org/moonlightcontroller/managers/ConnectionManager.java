@@ -1,19 +1,26 @@
 package org.moonlightcontroller.managers;
 
 import java.time.LocalDateTime;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
+
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
+
 import org.moonlightcontroller.aggregator.ApplicationAggregator;
 import org.moonlightcontroller.managers.models.ConnectionInstance;
 import org.moonlightcontroller.managers.models.IRequestSender;
-import org.moonlightcontroller.managers.models.messages.*;
+import org.moonlightcontroller.managers.models.messages.Alert;
 import org.moonlightcontroller.managers.models.messages.Error;
+import org.moonlightcontroller.managers.models.messages.Hello;
+import org.moonlightcontroller.managers.models.messages.IMessage;
+import org.moonlightcontroller.managers.models.messages.KeepAlive;
+import org.moonlightcontroller.managers.models.messages.ListCapabilitiesResponse;
+import org.moonlightcontroller.managers.models.messages.SetProcessingGraphRequest;
+import org.moonlightcontroller.managers.models.messages.SetProcessingGraphResponse;
 import org.moonlightcontroller.processing.IConnector;
 import org.moonlightcontroller.processing.IProcessingBlock;
 import org.moonlightcontroller.processing.IProcessingGraph;
