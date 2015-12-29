@@ -6,6 +6,7 @@ import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Queue;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -22,6 +23,7 @@ import org.moonlightcontroller.blocks.IStaticProcessingBlock;
 import org.moonlightcontroller.blocks.NetworkHeaderFieldsRewriter;
 import org.moonlightcontroller.blocks.ToDevice;
 import org.moonlightcontroller.exceptions.MergeException;
+import org.moonlightcontroller.managers.models.messages.AlertMessage;
 import org.moonlightcontroller.processing.BlockClass;
 import org.moonlightcontroller.processing.Connector;
 import org.moonlightcontroller.processing.IConnector;
@@ -662,10 +664,12 @@ public class ApplicationAggregator implements IApplicationAggregator {
 	
 	private List<BoxApplication> apps;
 	private Map<ILocationSpecifier, IProcessingGraph> aggregated;
+	private Map<ILocationSpecifier, Map<String, Origin>> origins;
 	
 	private ApplicationAggregator() {
 		this.apps = new ArrayList<>();
 		this.aggregated = new HashMap<>();
+		this.origins = new HashMap<>();
 	}
 	
 	public static IApplicationAggregator getInstance() {
@@ -697,6 +701,17 @@ public class ApplicationAggregator implements IApplicationAggregator {
 			for (BoxApplication app : this.apps) {
 				
 				Map<InstanceLocationSpecifier, IProcessingGraph> flattened = flattenStatements(app);
+				
+				// Remembers the source app of each alert block
+				// (TODO: When we support merged alerts, we should change here)
+				for (Entry<InstanceLocationSpecifier, IProcessingGraph> entry : flattened.entrySet()) {
+					Map<String, Origin> origins = new HashMap<>();
+					entry.getValue().getBlocks()
+							.stream()
+							.filter(b -> b.getBlockType().equals("Alert"))
+							.forEach(b -> origins.put(b.getId(), new Origin(app, b, b.getId())));
+					this.origins.put(entry.getKey(), origins);
+				}
 				
 				for (InstanceLocationSpecifier loc : topology.getAllEndpoints()) {
 					IProcessingGraph merged = flattened.get(loc);
@@ -743,6 +758,26 @@ public class ApplicationAggregator implements IApplicationAggregator {
 	
 	@Override
 	public void handleAlert(org.moonlightcontroller.managers.models.messages.Alert message) {
-		// TODO: Complete here
+		ILocationSpecifier loc = TopologyManager.getInstance().resolve(message.getOrigin_dpid() + "");
+		Map<String, Origin> origins = this.origins.get(loc);
+		
+		for (AlertMessage alert : message.getMessages()) {
+			Origin origin = origins.get(alert.getOrigin_block());
+			// TODO: Handle alert message (@Dan)
+			// The application is in origin.app
+			// The corresponding block is in origin.block
+		}
+	}
+	
+	private static class Origin {
+		private BoxApplication app;
+		private IProcessingBlock block;
+		private String id;
+		
+		public Origin(BoxApplication app, IProcessingBlock block, String id) {
+			this.app = app;
+			this.block = block;
+			this.id = id;
+		}
 	}
 }
