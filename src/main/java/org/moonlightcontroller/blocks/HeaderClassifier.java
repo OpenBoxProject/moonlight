@@ -62,7 +62,25 @@ public class HeaderClassifier extends ProcessingBlock implements IClassifierProc
 	@Override
 	protected void putConfiguration(Map<String, String> config) {
 		config.put("priority", this.priority.toString());
-		config.put("rules", rules.toString());
+		config.put("rules", getRulesJson());
+	}
+	
+	private String rulesJson = null;
+	
+	private String getRulesJson() {
+		if (rulesJson == null) {
+			synchronized (this) {
+				if (rulesJson == null) {
+					StringBuilder sb = new StringBuilder();
+					sb.append('[');
+					this.rules.forEach(r -> sb.append(r.toJson()).append(','));
+					sb.deleteCharAt(sb.length() - 1);
+					sb.append('[');
+					rulesJson = sb.toString();
+				}
+			}
+		}
+		return rulesJson;
 	}
 	
 	private static HeaderClassifierRuleWithSources aggregateRules(HeaderClassifierRule r1, HeaderClassifierRule r2, Priority p1, Priority p2, int src1, int src2, int order) throws MergeException {
@@ -171,6 +189,10 @@ public class HeaderClassifier extends ProcessingBlock implements IClassifierProc
 		@Override
 		public String toString() {
 			return String.format("[HeaderClassifierRule: priority: %s, order: %d, match: %s]", this.priority.name(), this.order, this.match.toString());
+		}
+		
+		public String toJson() {
+			return this.match.toJson();
 		}
 		
 		public static class Builder {

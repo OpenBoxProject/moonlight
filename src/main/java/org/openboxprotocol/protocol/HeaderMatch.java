@@ -15,6 +15,8 @@ public interface HeaderMatch {
     public Builder createBuilder();
     
 	public HeaderMatch mergeWith(HeaderMatch other) throws MergeException;
+	
+	public String toJson();
 
     interface Builder {
         public <F extends ValueType<F>> Builder setExact(HeaderField<F> field, F value) throws UnsupportedOperationException;
