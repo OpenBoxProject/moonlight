@@ -10,11 +10,15 @@ public class SouthboundServer implements ISouthboundServer {
 	
 	private Server jetty;
 
-	public SouthboundServer() {
-	       ServletContextHandler context = new ServletContextHandler(ServletContextHandler.SESSIONS);
+	public SouthboundServer(int port) {
+	    if (port == 0){
+	    	port = SERVER_PORT;
+	    }
+	    
+		ServletContextHandler context = new ServletContextHandler(ServletContextHandler.SESSIONS);
 	        context.setContextPath("/");
 	 
-	        Server jettyServer = new Server(SERVER_PORT);
+	        Server jettyServer = new Server(port);
 	        jettyServer.setHandler(context);
 	 
 	        ServletHolder jerseyServlet = 
