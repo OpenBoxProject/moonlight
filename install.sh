@@ -1,5 +1,25 @@
 #!/bin/bash
 
+function makedir {
+	if [ ! -d $1 ] ; then
+		mkdir -p $1
+	fi
+}
+
+function copyfile {
+	# Copies a file, if already exists asks for user confirmation 
+	# $1 - src
+	# $2 - dst
+	if [ -e $2 ] ; then
+		read -p "[+] File $2 already exists. Overwrite? [yN]" -n 1 -r
+		if [[ $REPLY =~ ^[Yy]$ ]] ; then
+	    	cp -f $1 $2
+	    fi
+	else
+		cp -f $1 $2
+	fi
+}
+
 echo '[+] *** This script installs the Moonlight Controller ***'
 
 
@@ -49,16 +69,19 @@ else
 fi
 
 echo [+] Installing Moonlight...
-mvn clean install
+mvn install
 
 echo [+] Configuring...
-mkdir app
+makedir ./apps
+makedir ./topology
+makedir ./config
+
+copyfile ./src/main/resources/topology.json ./topology/topology.json
+copyfile ./src/main/resources/config.properties ./config/config.properties
 
 echo 'java -cp target/MoonlightController-1.0-jar-with-dependencies.jar org.moonlightcontroller.main.Main' > start_moonlight
 chmod +x start_moonlight
 
-echo '[+] *** Moonlight Controller installation script has completed ***'
+echo '[+] *** SUCCESS: Moonlight Controller installation script has completed ***'
 echo '[+] To run, use: ./start_moonlight'
-echo '[+] In case of an error, look for any possible error in installation script output.'
 echo ''
- 
