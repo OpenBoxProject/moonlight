@@ -22,7 +22,7 @@ public class Main {
 		}
 		
 		IApplicationRegistry reg = new ApplicationRegistry();
-		reg.loadFromPath("./app");
+		reg.loadFromPath("./apps");
 		
 		ITopologyManager topology = TopologyManager.getInstance();
 		MoonlightController mc = new MoonlightController(reg, topology, server_port);
