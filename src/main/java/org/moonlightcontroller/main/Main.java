@@ -12,7 +12,7 @@ import org.openboxprotocol.protocol.topology.TopologyManager;
 public class Main {
 	public static void main(String[] args) throws IOException {
 		IApplicationRegistry reg = new ApplicationRegistry();
-		reg.loadFromPath("C:\\dev\\finalproject\\moonlightclone\\app");
+		reg.loadFromPath("./app");
 		
 		ITopologyManager topology = TopologyManager.getInstance();
 		SouthboundClientMock sclient = new SouthboundClientMock();
