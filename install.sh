@@ -72,14 +72,8 @@ echo [+] Installing Moonlight...
 mvn install
 
 echo [+] Configuring...
-makedir ./apps
-makedir ./topology
-makedir ./config
 
-copyfile ./src/main/resources/topology.json ./topology/topology.json
-copyfile ./src/main/resources/config.properties ./config/config.properties
-
-echo 'java -cp target/MoonlightController-1.0-jar-with-dependencies.jar org.moonlightcontroller.main.Main' > start_moonlight
+echo 'pushd target && java -cp MoonlightController-1.0-jar-with-dependencies.jar org.moonlightcontroller.main.Main' > start_moonlight
 chmod +x start_moonlight
 
 echo '[+] *** SUCCESS: Moonlight Controller installation script has completed ***'

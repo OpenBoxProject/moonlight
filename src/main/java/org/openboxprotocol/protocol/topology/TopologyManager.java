@@ -15,7 +15,7 @@ import org.apache.commons.io.IOUtils;
 public class TopologyManager implements ITopologyManager {
 	private final static Logger LOG = Logger.getLogger(TopologyManager.class.getName()); 
 
-	private final String path = "./topology/topology.json";
+	private final String path = "topology/topology.json";
 	private Segment segment;
 	private static TopologyManager instance;
 

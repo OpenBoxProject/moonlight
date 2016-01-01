@@ -118,6 +118,57 @@
 					</descriptorRefs>
 				</configuration>
 			</plugin>
+			   <plugin>
+				<artifactId>maven-resources-plugin</artifactId>
+				<version>2.7</version>
+				<executions>
+				  <execution>
+				    <id>copy-resources-topology</id>
+				    <phase>package</phase>
+				    <goals>
+				      <goal>copy-resources</goal>
+				    </goals>
+				    <configuration>
+				      <outputDirectory>${basedir}/target/topology/</outputDirectory>
+				      <resources>          
+					<resource>
+					  <directory>src/main/resources/topology/</directory>					
+					</resource>
+				      </resources>              
+				    </configuration>            
+				  </execution>
+				  <execution>
+				    <id>copy-resources-config</id>
+				    <phase>package</phase>
+				    <goals>
+				      <goal>copy-resources</goal>
+				    </goals>
+				    <configuration>
+				      <outputDirectory>${basedir}/target/config/</outputDirectory>
+				      <resources>          
+					<resource>
+					  <directory>src/main/resources/config/</directory>					
+					</resource>
+				      </resources>              
+				    </configuration>            
+				  </execution>
+				  <execution>
+				    <id>copy-resources-apps</id>
+				    <phase>package</phase>
+				    <goals>
+				      <goal>copy-resources</goal>
+				    </goals>
+				    <configuration>
+				      <outputDirectory>${basedir}/target/apps/</outputDirectory>
+				      <resources>          
+					<resource>
+					  <directory>src/main/resources/apps/</directory>					
+					</resource>
+				      </resources>              
+				    </configuration>            
+				  </execution>				
+				</executions>
+			      </plugin>
 		</plugins>
 	</build>
 	<organization>
