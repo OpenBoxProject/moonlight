@@ -8,12 +8,10 @@ import com.google.common.net.InetAddresses;
 
 public class InstanceLocationSpecifier implements ILocationSpecifier {
 
-	String id;
-	long ip;
-	
-	public InstanceLocationSpecifier(String id, long ip) {
+	long id;
+
+	public InstanceLocationSpecifier(long id) {
 		this.id = id;
-		this.ip = ip;
 	}
 
 	@Override
@@ -22,12 +20,8 @@ public class InstanceLocationSpecifier implements ILocationSpecifier {
 	}
 
 	@Override
-	public String getId() {
+	public long getId() {
 		return this.id;
-	}
-
-	public long getIp() {
-		return this.ip;
 	}
 
 	@Override
@@ -39,7 +33,7 @@ public class InstanceLocationSpecifier implements ILocationSpecifier {
 			return true;
 		}
 		InstanceLocationSpecifier other = (InstanceLocationSpecifier)obj;
-		if (other.id.equals(this.id) && other.ip == this.ip){
+		if (other.id == this.id){
 			return true;
 		}
 		return false;
@@ -47,31 +41,24 @@ public class InstanceLocationSpecifier implements ILocationSpecifier {
 	
 	@Override
 	public int hashCode(){
-		return new HashCodeBuilder(17, 31).append(this.id).append(this.ip).toHashCode();
+		return new HashCodeBuilder(17, 31).append(this.id).toHashCode();
 	}
 	
 	@Override
 	public String toString(){
-		return this.id + ":" + this.ip;
+		return this.id + "";
 	}
 
 	@Override
-	public boolean isMatch(String m) {		
-		if (InetAddresses.isInetAddress(m)){
-			InetAddress addr = InetAddresses.forString(m);
-			int address = InetAddresses.coerceToInteger(addr);
-			if (address == this.ip){
-				return true;
-			}
-		}
-		if (this.id.equals(m)){
+	public boolean isMatch(long m) {		
+		if (this.id == m){
 			return true;
 		}
 		return false;
 	}
 
 	@Override
-	public ILocationSpecifier findChild(String m) {
+	public ILocationSpecifier findChild(long m) {
 		if (this.isMatch(m)) {
 			return this;
 		}

@@ -758,7 +758,7 @@ public class ApplicationAggregator implements IApplicationAggregator {
 	
 	@Override
 	public void handleAlert(org.moonlightcontroller.managers.models.messages.Alert message) {
-		ILocationSpecifier loc = TopologyManager.getInstance().resolve(message.getOrigin_dpid() + "");
+		ILocationSpecifier loc = TopologyManager.getInstance().resolve(message.getOrigin_dpid());
 		Map<String, Origin> origins = this.origins.get(loc);
 		
 		for (AlertMessage alert : message.getMessages()) {

@@ -61,18 +61,8 @@ public class ConnectionManager implements ISouthboundClient {
 		return handleKeepaliveRequest(getInstanceLocationSpecifier(message.getDpid()), message.getXid());
 	}
 
-	private InstanceLocationSpecifier getInstanceLocationSpecifier(int ip) {
-		List<InstanceLocationSpecifier> locs = TopologyManager.getInstance().getAllEndpoints().stream().filter(loc -> loc.getIp()== ip).collect(Collectors.toList());
-		if (locs.isEmpty()) {
-			LOG.warning("InstanceLocationSpecifier wasn't found for ip=" + ip);
-			return new InstanceLocationSpecifier(ip+"", ip);
-		}
-
-		if (locs.size() > 1) {
-			LOG.warning("Found more than a single InstanceLocationSpecifier for ip=" + ip);
-		}
-
-		return locs.get(0);
+	private InstanceLocationSpecifier getInstanceLocationSpecifier(int dpid) {
+			return new InstanceLocationSpecifier(dpid);
 	}
 
 	private Response handleKeepaliveRequest(InstanceLocationSpecifier instanceLocationSpecifier, int xid) {

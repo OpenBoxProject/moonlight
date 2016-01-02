@@ -73,7 +73,7 @@ public class TopologyManager implements ITopologyManager {
 	}
 	
 	@Override
-	public ILocationSpecifier resolve(String id) {
+	public ILocationSpecifier resolve(long id) {
 		// TODO: Should we through exception if the result is null
 		return this.segment.findChild(id);
 	}

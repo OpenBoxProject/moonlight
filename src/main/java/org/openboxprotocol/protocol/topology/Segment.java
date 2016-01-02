@@ -7,14 +7,14 @@ import org.apache.commons.lang.builder.HashCodeBuilder;
 
 public class Segment implements ILocationSpecifier {
 
-	String id;
+	long id;
 	List<Segment> segments;
 	List<InstanceLocationSpecifier> endpoints;
 	
 	public Segment(){	
 	}
 	
-	public Segment(String id){
+	public Segment(long id){
 		this.id = id;
 		this.segments = new ArrayList<>();
 		this.endpoints = new ArrayList<>();
@@ -43,17 +43,17 @@ public class Segment implements ILocationSpecifier {
 	}
 
 	@Override
-	public String getId() {
+	public long getId() {
 		return id;
 	}
 
 	@Override
-	public boolean isMatch(String m) {
-		return this.id.equals(m);
+	public boolean isMatch(long m) {
+		return this.id == m;
 	}
 
 	@Override
-	public ILocationSpecifier findChild(String m) {
+	public ILocationSpecifier findChild(long m) {
 		if (this.isMatch(m)){
 			return this;
 		}
@@ -89,7 +89,7 @@ public class Segment implements ILocationSpecifier {
 			return true;
 		}
 		Segment other = (Segment)obj;
-		if (other.id.equals(this.id)){
+		if (other.id == this.id){
 			return true;
 		}
 		return false;

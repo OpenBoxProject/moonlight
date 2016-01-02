@@ -65,7 +65,7 @@ public class BasicApp extends BoxApplication {
 			.build();
 
 		IStatement st = new Statement.Builder()
-			.setLocation(new InstanceLocationSpecifier("ep1", 1000))
+			.setLocation(new InstanceLocationSpecifier(22))
 			.setProcessingGraph(graph)
 			.build();
 
