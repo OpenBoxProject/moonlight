@@ -1,6 +1,7 @@
 package org.moonlightcontroller.managers;
 
 import java.time.LocalDateTime;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -112,7 +113,7 @@ public class ConnectionManager implements IConnectionManager, ISouthboundClient{
 			ConnectionInstance value = (new ConnectionInstance.Builder())
 					.setDpid(dpid)
 					.setVersion(message.getVersion())
-					.setCapabilities(message.getCapabilities())
+					.setCapabilities(new HashMap<>())
 					.build();
 			instancesMapping.put(key, value);
 
@@ -213,19 +214,9 @@ public class ConnectionManager implements IConnectionManager, ISouthboundClient{
 	}
 
 	public Response handleListCapabilitiesResponse(ListCapabilitiesResponse message) {
-		// see read response + update ListCapabilities in connectionInstansce
-		try {
-			int xid = message.getXid();
-			ConnectionInstance connectionInstance = instancesMapping.get(xid);
-			connectionInstance.setCapabilities(message.getCapabilities());
-		} catch (NullPointerException e) {
-			return badRequestResponse();
-		}
-		
+		// see read response + update ListCapabilities in connectionInstansce		
 		return handleResponse(message);
 	}
-
-
 
 	public Response handleAlert(Alert message) {
 		// call ApplicationAggregator and send this alert
