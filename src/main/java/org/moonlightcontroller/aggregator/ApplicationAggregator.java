@@ -760,12 +760,13 @@ public class ApplicationAggregator implements IApplicationAggregator {
 	public void handleAlert(org.moonlightcontroller.managers.models.messages.Alert message) {
 		ILocationSpecifier loc = TopologyManager.getInstance().resolve(message.getOrigin_dpid());
 		Map<String, Origin> origins = this.origins.get(loc);
-		
-		for (AlertMessage alert : message.getMessages()) {
-			Origin origin = origins.get(alert.getOrigin_block());
-			// TODO: Handle alert message (@Dan)
-			// The application is in origin.app
-			// The corresponding block is in origin.block
+		if (origins != null){
+			for (AlertMessage alert : message.getMessages()) {
+				Origin origin = origins.get(alert.getOrigin_block());
+				// TODO: Handle alert message (@Dan)
+				// The application is in origin.app
+				// The corresponding block is in origin.block
+			}
 		}
 	}
 	

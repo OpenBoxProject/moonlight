@@ -42,5 +42,10 @@ public class SetProcessingGraphRequest extends Message {
 	public List<JsonConnector> getConnectors() {
 		return connectors;
 	}
+	
+	@JsonProperty("required_modules")
+	public List<String> getRequired_modules() {
+		return required_modules;
+	}
 }
 

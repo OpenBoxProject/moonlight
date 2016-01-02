@@ -1,6 +1,8 @@
 package org.moonlightcontroller.managers;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -106,8 +108,8 @@ public class ConnectionManager implements ISouthboundClient {
 			instancesMapping.put(key, value);
 
 			IProcessingGraph processingGraph = ApplicationAggregator.getInstance().getProcessingGraph(key);
-			List<JsonBlock> blocks = null;
-			List<JsonConnector> connectors = null;
+			List<JsonBlock> blocks = new ArrayList<>();
+			List<JsonConnector> connectors = new ArrayList<>();
 			if (processingGraph != null){
 				blocks = translateBlocks(processingGraph.getBlocks());
 				connectors = translateConnectors(processingGraph.getConnectors());
@@ -197,12 +199,16 @@ public class ConnectionManager implements ISouthboundClient {
 
 	public Response handleErrorMessage(Error message) {
 		IRequestSender iRequestSender = requestSendersMapping.get(message.getXid());
-		iRequestSender.onFailure(message);
+		if (iRequestSender != null){
+			iRequestSender.onFailure(message);			
+		}
 		return okResponse();
 	}
 
 	public Response handleListCapabilitiesResponse(ListCapabilitiesResponse message) {
 		// see read response + update ListCapabilities in connectionInstansce
+		// TODO: Dana this code is not thread safe - commenting out
+		/*
 		try {
 			int xid = message.getXid();
 			ConnectionInstance connectionInstance = instancesMapping.get(xid);
@@ -210,6 +216,7 @@ public class ConnectionManager implements ISouthboundClient {
 		} catch (NullPointerException e) {
 			return badRequestResponse();
 		}
+		*/
 		
 		return handleResponse(message);
 	}
