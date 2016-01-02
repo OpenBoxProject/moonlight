@@ -61,7 +61,7 @@ public class ConnectionManager implements ISouthboundClient {
 		return handleKeepaliveRequest(getInstanceLocationSpecifier(message.getDpid()), message.getXid());
 	}
 
-	private InstanceLocationSpecifier getInstanceLocationSpecifier(int dpid) {
+	private InstanceLocationSpecifier getInstanceLocationSpecifier(long dpid) {
 			return new InstanceLocationSpecifier(dpid);
 	}
 
@@ -94,7 +94,7 @@ public class ConnectionManager implements ISouthboundClient {
 		int xid = message.getXid();
 		messagesMapping.put(xid, message);
 		try {
-			int dpid = message.getDpid();
+			long dpid = message.getDpid();
 			InstanceLocationSpecifier key = getInstanceLocationSpecifier(dpid);
 
 			ConnectionInstance value = (new ConnectionInstance.Builder())
@@ -153,7 +153,7 @@ public class ConnectionManager implements ISouthboundClient {
 		}
 
 		if (originMessage instanceof SetProcessingGraphRequest) {
-			int dpid = ((SetProcessingGraphRequest)originMessage).getDpid();
+			long dpid = ((SetProcessingGraphRequest)originMessage).getDpid();
 			InstanceLocationSpecifier loc = getInstanceLocationSpecifier(dpid);
 			ConnectionInstance instance = instancesMapping.get(loc);
 			instance.setProcessingGraphConfiged(true);

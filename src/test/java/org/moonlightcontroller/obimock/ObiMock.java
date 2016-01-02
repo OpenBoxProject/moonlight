@@ -9,7 +9,7 @@ public class ObiMock {
 
 	private static ObiMock instance;
 
-	private int dpid;
+	private long dpid;
 	private int xid;
 	private Server jetty;
 	private SingleInstanceConnection client;
@@ -22,7 +22,7 @@ public class ObiMock {
 		return this.client;
 	}
 	
-	public int getdpid() {
+	public long getdpid() {
 		return this.dpid;
 	}
 	

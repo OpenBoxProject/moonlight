@@ -12,7 +12,7 @@ import org.moonlightcontroller.southbound.client.SingleInstanceConnection;
 
 public class ConnectionInstance implements IConnectionInstance {
 
-	private int dpid;
+	private long dpid;
 	private LocalDateTime lastKeepAlive;
 	private String version;
 	private int keepaliveInterval;
@@ -21,7 +21,7 @@ public class ConnectionInstance implements IConnectionInstance {
 	private SingleInstanceConnection client;
 	private String ip;
 	
-	public ConnectionInstance (int dpid,
+	public ConnectionInstance (long dpid,
 			String version,
 			int keepaliveInterval,
 			Map<String, List<String>> capabilities,
@@ -47,11 +47,11 @@ public class ConnectionInstance implements IConnectionInstance {
 		return this.keepaliveInterval;
 	}
 
-	public int getDpid() {
+	public long getDpid() {
 		return dpid;
 	}
 
-	public void setDpid(int dpid) {
+	public void setDpid(long dpid) {
 		this.dpid = dpid;
 	}
 
@@ -74,7 +74,7 @@ public class ConnectionInstance implements IConnectionInstance {
 	public static class Builder {
 		private final int DEFAULT_KEEPALIVE_DURATION = ControllerProperties.getInstance().getKeepAliveInterval();
 
-		int dpid;
+		long dpid;
 		int keepaliveInterval = DEFAULT_KEEPALIVE_DURATION;
 		LocalDateTime lastKeepAlive;
 		String version = "";
@@ -90,7 +90,7 @@ public class ConnectionInstance implements IConnectionInstance {
 			return this;
 		}
 
-		public Builder setDpid(int dpid) {
+		public Builder setDpid(long dpid) {
 			this.dpid = dpid;
 			return this;
 		}

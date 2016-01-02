@@ -40,7 +40,7 @@ public class ObiMockApi {
 		HashMap<String, List<String>> caps = new HashMap<>();
 		caps.put("Caps1", Arrays.asList("cap1_1", "cap1_2"));
 		int xid = ObiMock.getInstance().fetchAndIncxid();
-		Hello hello = new Hello(xid, ObiMock.getInstance().getObiIp(), "1.0", caps);
+		Hello hello = new Hello(xid, ObiMock.getInstance().getdpid(), "1.0", caps);
 		this.sendMessage(hello);
 		
 	}

@@ -1,17 +1,17 @@
 package org.moonlightcontroller.managers.models.messages;
 
 public class KeepAlive extends Message {
-	private int dpid;
+	private long dpid;
 
-	// Default constructor to support Jersy
+	// Default constructor to support Jersey
 	public KeepAlive() {}
 		
-	public KeepAlive(int xid, int dpid) {
+	public KeepAlive(int xid, long dpid) {
 		super(xid);
 		this.dpid = dpid;
 	}
 	
-	public int getDpid() {
+	public long getDpid() {
 		return dpid;
 	}
 }	
