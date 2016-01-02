@@ -24,7 +24,7 @@ public class ToDevice extends ProcessingBlock {
 	}
 
 	@Override
-	protected void putConfiguration(Map<String, String> config) {
+	protected void putConfiguration(Map<String, Object> config) {
 		config.put("devname", devname);
 	}
     

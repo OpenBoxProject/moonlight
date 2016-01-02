@@ -26,8 +26,8 @@ public class Queue extends ProcessingBlock {
 	}
 
 	@Override
-	protected void putConfiguration(Map<String, String> config) {
-		config.put("capacity", this.capacity+ "");
+	protected void putConfiguration(Map<String, Object> config) {
+		config.put("capacity", this.capacity);
 	}
 
 	@Override

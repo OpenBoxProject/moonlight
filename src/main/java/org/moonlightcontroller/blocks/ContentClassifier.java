@@ -31,7 +31,7 @@ public class ContentClassifier extends ProcessingBlock implements IClassifierPro
 	}
 
 	@Override
-	protected void putConfiguration(Map<String, String> config) {
+	protected void putConfiguration(Map<String, Object> config) {
 		config.put("pattern", this.pattern.toString());
 	}
 

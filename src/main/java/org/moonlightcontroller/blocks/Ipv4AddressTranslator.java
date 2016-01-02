@@ -75,16 +75,16 @@ public class Ipv4AddressTranslator extends ProcessingBlock {
 	}
 
 	@Override
-	protected void putConfiguration(Map<String, String> config) {
+	protected void putConfiguration(Map<String, Object> config) {
 		config.put("input_spec", this.input_spec.toString());
-		config.put("tcp_done_timeout", this.tcp_done_timeout+ "");
-		config.put("tcp_nodata_timeout", this.tcp_nodata_timeout+ "");
-		config.put("tcp_guarantee", this.tcp_guarantee+ "");
-		config.put("udp_timeout", this.udp_timeout+ "");
-		config.put("udp_streaming_timeout", this.udp_streaming_timeout+ "");
-		config.put("udp_guarantee", this.udp_guarantee+ "");
-		config.put("reap_interval", this.reap_interval+ "");
-		config.put("mapping_capacity", this.mapping_capacity+ "");
+		config.put("tcp_done_timeout", this.tcp_done_timeout);
+		config.put("tcp_nodata_timeout", this.tcp_nodata_timeout);
+		config.put("tcp_guarantee", this.tcp_guarantee);
+		config.put("udp_timeout", this.udp_timeout);
+		config.put("udp_streaming_timeout", this.udp_streaming_timeout);
+		config.put("udp_guarantee", this.udp_guarantee);
+		config.put("reap_interval", this.reap_interval);
+		config.put("mapping_capacity", this.mapping_capacity);
 	}
 
 	@Override

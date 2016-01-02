@@ -14,7 +14,7 @@ public interface IProcessingBlock {
 	
 	public String toShortString();
 	
-	public Map<String, String> getConfiguration();
+	public Map<String, Object> getConfiguration();
 	
 	// Clone the block but give it a unique ID
 	public IProcessingBlock clone();

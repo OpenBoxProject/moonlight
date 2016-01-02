@@ -60,8 +60,10 @@ public class HeaderClassifier extends ProcessingBlock implements IClassifierProc
 
 
 	@Override
-	protected void putConfiguration(Map<String, String> config) {
+	protected void putConfiguration(Map<String, Object> config) {
 		config.put("priority", this.priority.toString());
+		
+		// TODO: how to seralize rules
 		config.put("match", getRulesJson());
 	}
 	

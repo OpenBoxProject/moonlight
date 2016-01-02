@@ -45,11 +45,11 @@ public class VlanEncapsulate extends ProcessingBlock {
 	}
 
 	@Override
-	protected void putConfiguration(Map<String, String> config) {
-		config.put("vlan_vid", this.vlan_vid+ "");
-		config.put("vlan_dei", this.vlan_dei+ "");
-		config.put("vlan_pcp", this.vlan_pcp+ "");
-		config.put("ethertype", this.ethertype+ "");
+	protected void putConfiguration(Map<String, Object> config) {
+		config.put("vlan_vid", this.vlan_vid);
+		config.put("vlan_dei", this.vlan_dei);
+		config.put("vlan_pcp", this.vlan_pcp);
+		config.put("ethertype", this.ethertype);
 	}
 
 	@Override

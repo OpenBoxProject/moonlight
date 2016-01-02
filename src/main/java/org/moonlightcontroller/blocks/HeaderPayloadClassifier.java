@@ -30,7 +30,7 @@ public class HeaderPayloadClassifier extends ProcessingBlock implements IClassif
 	}
 
 	@Override
-	protected void putConfiguration(Map<String, String> config) {
+	protected void putConfiguration(Map<String, Object> config) {
 		config.put("match", this.match.toString());
 	}
 

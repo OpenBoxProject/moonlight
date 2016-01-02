@@ -48,10 +48,10 @@ public class RegexMatcher extends ProcessingBlock implements IClassifierProcessi
 	}
 
 	@Override
-	protected void putConfiguration(Map<String, String> config) {
+	protected void putConfiguration(Map<String, Object> config) {
 		config.put("pattern", this.pattern.toString());
-		config.put("payload_only", this.payload_only? "true" : "false");
-		config.put("match_all", this.match_all? "true" : "false");
+		config.put("payload_only", this.payload_only);
+		config.put("match_all", this.match_all);
 	}
 
 	@Override
