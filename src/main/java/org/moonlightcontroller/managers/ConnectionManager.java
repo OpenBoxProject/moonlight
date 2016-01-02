@@ -13,6 +13,7 @@ import javax.ws.rs.core.Response.Status;
 import org.moonlightcontroller.aggregator.ApplicationAggregator;
 import org.moonlightcontroller.managers.models.ConnectionInstance;
 import org.moonlightcontroller.managers.models.IRequestSender;
+import org.moonlightcontroller.managers.models.NullRequestSender;
 import org.moonlightcontroller.managers.models.messages.Alert;
 import org.moonlightcontroller.managers.models.messages.Error;
 import org.moonlightcontroller.managers.models.messages.Hello;
@@ -124,7 +125,7 @@ public class ConnectionManager implements IConnectionManager, ISouthboundClient{
 			}
 			
 			SetProcessingGraphRequest processMessage = new SetProcessingGraphRequest(0, dpid, null, blocks, connectors);
-			sendMessage(key, processMessage, null);
+			sendMessage(key, processMessage, new NullRequestSender());
 			
 			return okResponse();
 
