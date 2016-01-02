@@ -43,10 +43,10 @@ public class FromDevice extends ProcessingBlock {
 	}
 
 	@Override
-	protected void putConfiguration(Map<String, String> config) {
+	protected void putConfiguration(Map<String, Object> config) {
 		config.put("devname", this.devname);
-		config.put("sniffer", this.sniffer ? "true" : "false");
-		config.put("promisc", this.promisc ? "true" : "false");
+		config.put("sniffer", this.sniffer);
+		config.put("promisc", this.promisc);
 	}
 	
 	@Override

@@ -26,8 +26,8 @@ public class DecIpTtl extends ProcessingBlock {
 	}
 
 	@Override
-	protected void putConfiguration(Map<String, String> config) {
-		config.put("active", this.active? "true" : "false");
+	protected void putConfiguration(Map<String, Object> config) {
+		config.put("active", this.active);
 	}
 
 	@Override

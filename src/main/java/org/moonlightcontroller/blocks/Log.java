@@ -47,11 +47,11 @@ public class Log extends ProcessingBlock implements IStaticProcessingBlock{
 	}
 
 	@Override
-	protected void putConfiguration(Map<String, String> config) {
+	protected void putConfiguration(Map<String, Object> config) {
 		config.put("message", this.message);
-		config.put("severity", this.severity+ "");
-		config.put("attach_packet", this.attach_packet? "true" : "false");
-		config.put("packet_size", this.packet_size+ "");
+		config.put("severity", this.severity);
+		config.put("attach_packet", this.attach_packet);
+		config.put("packet_size", this.packet_size);
 	}
 
 	@Override

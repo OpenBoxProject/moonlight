@@ -39,10 +39,10 @@ public class FromDump extends ProcessingBlock {
 	}
 
 	@Override
-	protected void putConfiguration(Map<String, String> config) {
+	protected void putConfiguration(Map<String, Object> config) {
 		config.put("filename", this.filename);
-		config.put("timing", this.timing? "true" : "false");
-		config.put("active", this.active? "true" : "false");
+		config.put("timing", this.timing);
+		config.put("active", this.active);
 	}
 
 	@Override

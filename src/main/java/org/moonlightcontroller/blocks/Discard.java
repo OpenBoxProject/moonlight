@@ -17,7 +17,7 @@ public class Discard extends ProcessingBlock {
 	}
 
 	@Override
-	protected void putConfiguration(Map<String, String> config) {
+	protected void putConfiguration(Map<String, Object> config) {
 		// No config for 'Discard'
 	}
 

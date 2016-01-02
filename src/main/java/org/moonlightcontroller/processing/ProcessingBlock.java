@@ -41,8 +41,8 @@ public abstract class ProcessingBlock implements IProcessingBlock{
 	}
 	
 	@Override
-	public Map<String, String> getConfiguration() {
-		Map<String, String> config = new HashMap<String, String>();
+	public Map<String, Object> getConfiguration() {
+		Map<String, Object> config = new HashMap<String, Object>();
 		putConfiguration(config);
 		return config;
 	}
@@ -52,7 +52,7 @@ public abstract class ProcessingBlock implements IProcessingBlock{
 		return this.getClass().getSimpleName();
 	}
 
-	protected abstract void putConfiguration(Map<String, String> config);
+	protected abstract void putConfiguration(Map<String, Object> config);
 		
 	@Override
 	public IProcessingBlock clone() {

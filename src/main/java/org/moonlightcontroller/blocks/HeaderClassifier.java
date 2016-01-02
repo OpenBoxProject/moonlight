@@ -60,8 +60,10 @@ public class HeaderClassifier extends ProcessingBlock implements IClassifierProc
 
 
 	@Override
-	protected void putConfiguration(Map<String, String> config) {
+	protected void putConfiguration(Map<String, Object> config) {
 		config.put("priority", this.priority.toString());
+		
+		// TODO: how to seralize rules
 		config.put("match", getRulesJson());
 	}
 	
@@ -75,7 +77,7 @@ public class HeaderClassifier extends ProcessingBlock implements IClassifierProc
 					sb.append('[');
 					this.rules.forEach(r -> sb.append(r.toJson()).append(','));
 					sb.deleteCharAt(sb.length() - 1);
-					sb.append('[');
+					sb.append(']');
 					rulesJson = sb.toString();
 				}
 			}

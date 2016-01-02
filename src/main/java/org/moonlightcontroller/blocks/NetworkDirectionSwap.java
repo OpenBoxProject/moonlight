@@ -50,12 +50,12 @@ public class NetworkDirectionSwap extends ProcessingBlock {
 	}
 
 	@Override
-	protected void putConfiguration(Map<String, String> config) {
-		config.put("ethernet", this.ethernet? "true" : "false");
-		config.put("ipv4", this.ipv4? "true" : "false");
-		config.put("ipv6", this.ipv6? "true" : "false");
-		config.put("tcp", this.tcp? "true" : "false");
-		config.put("udp", this.udp? "true" : "false");
+	protected void putConfiguration(Map<String, Object> config) {
+		config.put("ethernet", this.ethernet);
+		config.put("ipv4", this.ipv4);
+		config.put("ipv6", this.ipv6);
+		config.put("tcp", this.tcp);
+		config.put("udp", this.udp);
 	}
 
 	@Override
