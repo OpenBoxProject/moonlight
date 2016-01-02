@@ -19,17 +19,20 @@ public class ConnectionInstance implements IConnectionInstance {
 	private Map<String, List<String>> capabilities;
 	private boolean isProcessingGraphConfiged;
 	private SingleInstanceConnection client;
+	private String ip;
 	
 	public ConnectionInstance (int dpid,
 			String version,
 			int keepaliveInterval,
-			Map<String, List<String>> capabilities) {
+			Map<String, List<String>> capabilities,
+			String ip) {
 		this.setDpid(dpid);
-		this.setVersion(version);
+		this.version = version;
 		this.keepaliveInterval = keepaliveInterval;
-		this.setCapabilities(capabilities);
+		this.capabilities = capabilities;
 		this.setProcessingGraphConfiged(false);
-		this.client = new SingleInstanceConnection(dpid, 3636);
+		this.ip = ip;
+		this.client = new SingleInstanceConnection(this.ip, 3636);
 	}
 
 	public void updateKeepAlive() {
@@ -56,16 +59,8 @@ public class ConnectionInstance implements IConnectionInstance {
 		return version;
 	}
 
-	public void setVersion(String version) {
-		this.version = version;
-	}
-
 	public Map<String, List<String>> getCapabilities() {
 		return capabilities;
-	}
-
-	public void setCapabilities(Map<String, List<String>> capabilities) {
-		this.capabilities = capabilities;
 	}
 
 	public boolean isProcessingGraphConfiged() {
@@ -83,10 +78,16 @@ public class ConnectionInstance implements IConnectionInstance {
 		int keepaliveInterval = DEFAULT_KEEPALIVE_DURATION;
 		LocalDateTime lastKeepAlive;
 		String version = "";
+		String ip;
 		Map<String, List<String>> capabilities = new HashMap<>();
 
 		public Builder() {
 
+		}
+
+		public Builder setIp(String ip) {
+			this.ip = ip;
+			return this;
 		}
 
 		public Builder setDpid(int dpid) {
@@ -113,7 +114,8 @@ public class ConnectionInstance implements IConnectionInstance {
 			return new ConnectionInstance(dpid, 
 					version,
 					keepaliveInterval, 
-					capabilities);
+					capabilities,
+					ip);
 		}
 	}
 

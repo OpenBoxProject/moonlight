@@ -9,7 +9,7 @@ public class ObiMock {
 
 	private static ObiMock instance;
 
-	private int obiIp;
+	private int dpid;
 	private int xid;
 	private Server jetty;
 	private SingleInstanceConnection client;
@@ -22,12 +22,12 @@ public class ObiMock {
 		return this.client;
 	}
 	
-	public int getObiIp() {
-		return this.obiIp;
+	public int getdpid() {
+		return this.dpid;
 	}
 	
-	public ObiMock(int obiIp, int serverIp, int serverPort) {
-		this.obiIp = obiIp;
+	public ObiMock(int dpid, String serverIp, int serverPort) {
+		this.dpid = dpid;
 		this.client = new SingleInstanceConnection(serverIp, serverPort);
 		instance = this;
 	}
@@ -60,7 +60,7 @@ public class ObiMock {
 	}
 
 	public static void main(String[] args) {
-		ObiMock obi = new ObiMock(2130706433, 2130706433, 3637);
+		ObiMock obi = new ObiMock(22, "127.0.0.1", 3637);
 		try {
 			obi.start();
 		} catch (Exception e) {

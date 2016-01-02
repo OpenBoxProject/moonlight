@@ -32,7 +32,7 @@ import org.openboxprotocol.protocol.topology.ILocationSpecifier;
 import org.openboxprotocol.protocol.topology.InstanceLocationSpecifier;
 import org.openboxprotocol.protocol.topology.TopologyManager;
 
-public class ConnectionManager implements IConnectionManager, ISouthboundClient{
+public class ConnectionManager implements ISouthboundClient {
 
 	private final static Logger LOG = Logger.getLogger(ConnectionManager.class.getName());
 
@@ -56,7 +56,6 @@ public class ConnectionManager implements IConnectionManager, ISouthboundClient{
 		return instance;
 	}
 
-	@Override
 	public Response handleKeepaliveRequest(KeepAlive message) {
 		messagesMapping.put(message.getXid(), message);
 		return handleKeepaliveRequest(getInstanceLocationSpecifier(message.getDpid()), message.getXid());
@@ -101,8 +100,7 @@ public class ConnectionManager implements IConnectionManager, ISouthboundClient{
 				.isAfter(LocalDateTime.now().minusSeconds(data.getKeepAliveInterval()));
 	}
 
-	@Override
-	public Response handleHelloRequest(Hello message) {
+	public Response handleHelloRequest(String ip, Hello message) {
 		int xid = message.getXid();
 		messagesMapping.put(xid, message);
 		try {
@@ -110,6 +108,7 @@ public class ConnectionManager implements IConnectionManager, ISouthboundClient{
 			InstanceLocationSpecifier key = getInstanceLocationSpecifier(dpid);
 
 			ConnectionInstance value = (new ConnectionInstance.Builder())
+					.setIp(ip)
 					.setDpid(dpid)
 					.setVersion(message.getVersion())
 					.setCapabilities(message.getCapabilities())
@@ -234,6 +233,4 @@ public class ConnectionManager implements IConnectionManager, ISouthboundClient{
 		ApplicationAggregator.getInstance().handleAlert(message);
 		return okResponse();
 	}
-
-
 }

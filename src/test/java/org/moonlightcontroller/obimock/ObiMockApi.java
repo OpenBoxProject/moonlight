@@ -20,7 +20,6 @@ import org.moonlightcontroller.managers.models.messages.ReadRequest;
 import org.moonlightcontroller.managers.models.messages.ReadResponse;
 import org.moonlightcontroller.managers.models.messages.SetProcessingGraphRequest;
 import org.moonlightcontroller.managers.models.messages.SetProcessingGraphResponse;
-import org.moonlightcontroller.managers.models.messages.WriteRequest;
 
 @Path("/message/")
 public class ObiMockApi {
@@ -76,4 +75,3 @@ public class ObiMockApi {
 		ObiMock.getInstance().getClient().sendMessage(msg);
 	}
 }
-
