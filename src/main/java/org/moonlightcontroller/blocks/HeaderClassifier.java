@@ -75,7 +75,7 @@ public class HeaderClassifier extends ProcessingBlock implements IClassifierProc
 					sb.append('[');
 					this.rules.forEach(r -> sb.append(r.toJson()).append(','));
 					sb.deleteCharAt(sb.length() - 1);
-					sb.append('[');
+					sb.append(']');
 					rulesJson = sb.toString();
 				}
 			}
