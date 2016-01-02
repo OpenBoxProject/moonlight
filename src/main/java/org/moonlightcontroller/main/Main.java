@@ -5,18 +5,27 @@ import java.io.IOException;
 import org.moonlightcontroller.controller.MoonlightController;
 import org.moonlightcontroller.registry.ApplicationRegistry;
 import org.moonlightcontroller.registry.IApplicationRegistry;
-import org.moonlightcontroller.southbound.client.SouthboundClientMock;
 import org.openboxprotocol.protocol.topology.ITopologyManager;
 import org.openboxprotocol.protocol.topology.TopologyManager;
 
 public class Main {
 	public static void main(String[] args) throws IOException {
+		
+		int server_port = 0;
+		if (args.length > 0){
+		    try {
+		    	server_port = Integer.parseInt(args[0]);
+		    } catch (NumberFormatException e) {
+		        System.err.println("Argument" + args[0] + " must be a vaild port number.");
+		        System.exit(1);
+		    }
+		}
+		
 		IApplicationRegistry reg = new ApplicationRegistry();
-		reg.loadFromPath("./app");
+		reg.loadFromPath("./apps");
 		
 		ITopologyManager topology = TopologyManager.getInstance();
-		SouthboundClientMock sclient = new SouthboundClientMock();
-		MoonlightController mc = new MoonlightController(reg, topology, sclient);
+		MoonlightController mc = new MoonlightController(reg, topology, server_port);
 		mc.start();
 		return;
 	}

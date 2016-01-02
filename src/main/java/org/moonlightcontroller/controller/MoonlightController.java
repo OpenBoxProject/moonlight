@@ -7,7 +7,6 @@ import org.moonlightcontroller.aggregator.IApplicationAggregator;
 import org.moonlightcontroller.bal.BoxApplication;
 import org.moonlightcontroller.events.EventManager;
 import org.moonlightcontroller.events.IEventManager;
-import org.moonlightcontroller.managers.ISouthboundClient;
 import org.moonlightcontroller.registry.IApplicationRegistry;
 import org.moonlightcontroller.southbound.server.ISouthboundServer;
 import org.moonlightcontroller.southbound.server.SouthboundServer;
@@ -16,17 +15,14 @@ import org.openboxprotocol.protocol.topology.ITopologyManager;
 public class MoonlightController {
 
 	private IApplicationRegistry registry;
-	private ITopologyManager topology;
 	private ISouthboundServer sserver;
-	private IEventManager eManager;
 	
 	public MoonlightController(
 			IApplicationRegistry registry, 
 			ITopologyManager topology,
-			ISouthboundClient sclient) {
+			int port) {
 		this.registry = registry;
-		this.topology = topology;
-		this.sserver = new SouthboundServer();
+		this.sserver = new SouthboundServer(port);
 	}
 	
 	public void start(){

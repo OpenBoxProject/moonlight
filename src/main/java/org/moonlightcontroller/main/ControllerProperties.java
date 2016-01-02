@@ -26,8 +26,8 @@ public class ControllerProperties {
 		InputStream input = null;
 
 		try {
-
-			input = new FileInputStream("config.properties");
+			ClassLoader classloader = Thread.currentThread().getContextClassLoader();
+			input = classloader.getResourceAsStream("config/config.properties");
 
 			// load a properties file
 			prop.load(input);
