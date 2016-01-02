@@ -1,5 +1,6 @@
 package org.openboxprotocol.protocol.topology;
 
+
 public class ApplicationTopology implements IApplicationTopology {
 
 	private ITopologyManager topology;
@@ -9,8 +10,7 @@ public class ApplicationTopology implements IApplicationTopology {
 	}
 
 	@Override
-	public ILocationSpecifier reoslve(String id) {
+	public ILocationSpecifier reoslve(long id) {
 		return this.topology.resolve(id);
 	}
-
 }

@@ -53,7 +53,7 @@ public class BasicFirewall extends BoxApplication{
 			for (int i = 0 ; i < 10; i++){
 				try {
 					handles.readHandle(
-							new InstanceLocationSpecifier("ep1", 2130706433), 
+							new InstanceLocationSpecifier(22), 
 							"monkey",
 							"buisness", new FirewallRequestSender());
 				} catch (InstanceNotAvailableException e1) {
@@ -120,7 +120,7 @@ public class BasicFirewall extends BoxApplication{
 			.build();
 		
 		IStatement st = new Statement.Builder()
-			.setLocation(new Segment("seg1"))
+			.setLocation(new Segment(200))
 			.setProcessingGraph(graph)
 			.build();
 		

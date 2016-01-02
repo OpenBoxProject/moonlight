@@ -1,6 +1,8 @@
 package org.moonlightcontroller.managers;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -32,7 +34,7 @@ import org.openboxprotocol.protocol.topology.ILocationSpecifier;
 import org.openboxprotocol.protocol.topology.InstanceLocationSpecifier;
 import org.openboxprotocol.protocol.topology.TopologyManager;
 
-public class ConnectionManager implements IConnectionManager, ISouthboundClient{
+public class ConnectionManager implements ISouthboundClient {
 
 	private final static Logger LOG = Logger.getLogger(ConnectionManager.class.getName());
 
@@ -56,24 +58,13 @@ public class ConnectionManager implements IConnectionManager, ISouthboundClient{
 		return instance;
 	}
 
-	@Override
 	public Response handleKeepaliveRequest(KeepAlive message) {
 		messagesMapping.put(message.getXid(), message);
 		return handleKeepaliveRequest(getInstanceLocationSpecifier(message.getDpid()), message.getXid());
 	}
 
-	private InstanceLocationSpecifier getInstanceLocationSpecifier(int ip) {
-		List<InstanceLocationSpecifier> locs = TopologyManager.getInstance().getAllEndpoints().stream().filter(loc -> loc.getIp()== ip).collect(Collectors.toList());
-		if (locs.isEmpty()) {
-			LOG.warning("InstanceLocationSpecifier wasn't found for ip=" + ip);
-			return new InstanceLocationSpecifier(ip+"", ip);
-		}
-
-		if (locs.size() > 1) {
-			LOG.warning("Found more than a single InstanceLocationSpecifier for ip=" + ip);
-		}
-
-		return locs.get(0);
+	private InstanceLocationSpecifier getInstanceLocationSpecifier(long dpid) {
+			return new InstanceLocationSpecifier(dpid);
 	}
 
 	private Response handleKeepaliveRequest(InstanceLocationSpecifier instanceLocationSpecifier, int xid) {
@@ -101,15 +92,15 @@ public class ConnectionManager implements IConnectionManager, ISouthboundClient{
 				.isAfter(LocalDateTime.now().minusSeconds(data.getKeepAliveInterval()));
 	}
 
-	@Override
-	public Response handleHelloRequest(Hello message) {
+	public Response handleHelloRequest(String ip, Hello message) {
 		int xid = message.getXid();
 		messagesMapping.put(xid, message);
 		try {
-			int dpid = message.getDpid();
+			long dpid = message.getDpid();
 			InstanceLocationSpecifier key = getInstanceLocationSpecifier(dpid);
 
 			ConnectionInstance value = (new ConnectionInstance.Builder())
+					.setIp(ip)
 					.setDpid(dpid)
 					.setVersion(message.getVersion())
 					.setCapabilities(message.getCapabilities())
@@ -117,8 +108,8 @@ public class ConnectionManager implements IConnectionManager, ISouthboundClient{
 			instancesMapping.put(key, value);
 
 			IProcessingGraph processingGraph = ApplicationAggregator.getInstance().getProcessingGraph(key);
-			List<JsonBlock> blocks = null;
-			List<JsonConnector> connectors = null;
+			List<JsonBlock> blocks = new ArrayList<>();
+			List<JsonConnector> connectors = new ArrayList<>();
 			if (processingGraph != null){
 				blocks = translateBlocks(processingGraph.getBlocks());
 				connectors = translateConnectors(processingGraph.getConnectors());
@@ -164,7 +155,7 @@ public class ConnectionManager implements IConnectionManager, ISouthboundClient{
 		}
 
 		if (originMessage instanceof SetProcessingGraphRequest) {
-			int dpid = ((SetProcessingGraphRequest)originMessage).getDpid();
+			long dpid = ((SetProcessingGraphRequest)originMessage).getDpid();
 			InstanceLocationSpecifier loc = getInstanceLocationSpecifier(dpid);
 			ConnectionInstance instance = instancesMapping.get(loc);
 			instance.setProcessingGraphConfiged(true);
@@ -208,12 +199,16 @@ public class ConnectionManager implements IConnectionManager, ISouthboundClient{
 
 	public Response handleErrorMessage(Error message) {
 		IRequestSender iRequestSender = requestSendersMapping.get(message.getXid());
-		iRequestSender.onFailure(message);
+		if (iRequestSender != null){
+			iRequestSender.onFailure(message);			
+		}
 		return okResponse();
 	}
 
 	public Response handleListCapabilitiesResponse(ListCapabilitiesResponse message) {
 		// see read response + update ListCapabilities in connectionInstansce
+		// TODO: Dana this code is not thread safe - commenting out
+		/*
 		try {
 			int xid = message.getXid();
 			ConnectionInstance connectionInstance = instancesMapping.get(xid);
@@ -221,6 +216,7 @@ public class ConnectionManager implements IConnectionManager, ISouthboundClient{
 		} catch (NullPointerException e) {
 			return badRequestResponse();
 		}
+		*/
 		
 		return handleResponse(message);
 	}
@@ -234,6 +230,4 @@ public class ConnectionManager implements IConnectionManager, ISouthboundClient{
 		ApplicationAggregator.getInstance().handleAlert(message);
 		return okResponse();
 	}
-
-
 }

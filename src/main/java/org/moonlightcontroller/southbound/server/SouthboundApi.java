@@ -1,10 +1,12 @@
 package org.moonlightcontroller.southbound.server;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
+import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
@@ -24,8 +26,9 @@ public class SouthboundApi {
 	@POST
 	@Path("Hello")
 	@Consumes(MediaType.APPLICATION_JSON)
-	public Response hello(Hello message) {
-		return ConnectionManager.getInstance().handleHelloRequest(message);
+	public Response hello(@Context HttpServletRequest request, Hello message) {
+		System.out.println("POOPY: " + request.getRemoteAddr());
+		return ConnectionManager.getInstance().handleHelloRequest(request.getRemoteAddr(), message);
 	}
 
 	@POST
