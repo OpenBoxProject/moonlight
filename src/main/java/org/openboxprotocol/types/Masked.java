@@ -1,6 +1,11 @@
 package org.openboxprotocol.types;
 
-public class Masked<F extends ValueType<F>> implements ValueType<Masked<F>> {
+import java.io.IOException;
+
+import com.fasterxml.jackson.core.JsonGenerator;
+import com.fasterxml.jackson.databind.SerializerProvider;
+
+public class Masked<F extends ValueType<F>> extends AbstractValueType<Masked<F>> {
 
 	private F value;
 	private F mask;
@@ -42,4 +47,10 @@ public class Masked<F extends ValueType<F>> implements ValueType<Masked<F>> {
 		return String.format("[ Masked: %s/%s ]", this.value, this.mask);
 	}
 	
+
+	@Override
+	public void serialize(JsonGenerator arg0, SerializerProvider arg1)
+			throws IOException {
+		arg0.writeString(String.format("%s%%%s", this.value.toString(), this.mask.toString()));
+	}
 }

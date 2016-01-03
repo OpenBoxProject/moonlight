@@ -1,8 +1,13 @@
 package org.openboxprotocol.types;
 
+import java.io.IOException;
+
 import org.openboxprotocol.exceptions.JSONParseException;
 
-public class IpProto implements ValueType<IpProto> {
+import com.fasterxml.jackson.core.JsonGenerator;
+import com.fasterxml.jackson.databind.SerializerProvider;
+
+public class IpProto extends AbstractValueType<IpProto> {
 
 	private int ipProto;
 	
@@ -89,4 +94,10 @@ public class IpProto implements ValueType<IpProto> {
 		}
 	}
 
+
+	@Override
+	public void serialize(JsonGenerator arg0, SerializerProvider arg1)
+			throws IOException {
+		arg0.writeNumber(this.ipProto);
+	}
 }

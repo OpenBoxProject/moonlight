@@ -1,8 +1,13 @@
 package org.openboxprotocol.types;
 
+import java.io.IOException;
+
 import org.openboxprotocol.exceptions.JSONParseException;
 
-public class EthType implements ValueType<EthType> {
+import com.fasterxml.jackson.core.JsonGenerator;
+import com.fasterxml.jackson.databind.SerializerProvider;
+
+public class EthType extends AbstractValueType<EthType> {
 
 	private int ethType;
 	
@@ -94,6 +99,12 @@ public class EthType implements ValueType<EthType> {
 		} else {
 			throw new JSONParseException("Invalid value for EthType: " + json);
 		}
+	}
+
+	@Override
+	public void serialize(JsonGenerator arg0, SerializerProvider arg1)
+			throws IOException {
+		arg0.writeNumber(this.ethType);
 	}
 
 }

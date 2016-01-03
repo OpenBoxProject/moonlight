@@ -6,12 +6,16 @@ import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
 import org.moonlightcontroller.blocks.Discard;
+import org.moonlightcontroller.blocks.FromDevice;
 import org.moonlightcontroller.processing.BlockClass;
 import org.moonlightcontroller.processing.Connector;
 import org.moonlightcontroller.processing.IConnector;
 import org.moonlightcontroller.processing.IProcessingBlock;
 import org.moonlightcontroller.processing.IProcessingGraph;
 import org.moonlightcontroller.processing.MutableProcessingGraph;
+import org.moonlightcontroller.processing.ProcessingGraph;
+
+import com.google.common.collect.ImmutableList;
 
 class GraphUtils {
 	

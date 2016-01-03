@@ -1,8 +1,13 @@
 package org.openboxprotocol.types;
 
+import java.io.IOException;
+
 import org.openboxprotocol.exceptions.JSONParseException;
 
-public class MacAddress implements ValueType<MacAddress> {
+import com.fasterxml.jackson.core.JsonGenerator;
+import com.fasterxml.jackson.databind.SerializerProvider;
+
+public class MacAddress extends AbstractValueType<MacAddress> {
 
 	private long mac;
 	
@@ -44,5 +49,13 @@ public class MacAddress implements ValueType<MacAddress> {
 		// TODO Auto-generated method stub
 		return null;
 	}
+	
+
+	@Override
+	public void serialize(JsonGenerator arg0, SerializerProvider arg1)
+			throws IOException {
+		arg0.writeNumber(this.mac);
+	}
+
 
 }

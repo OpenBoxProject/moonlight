@@ -1,5 +1,6 @@
 package org.openboxprotocol.protocol;
 
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -11,6 +12,10 @@ import java.util.TreeMap;
 import org.moonlightcontroller.exceptions.MergeException;
 import org.openboxprotocol.types.Masked;
 import org.openboxprotocol.types.ValueType;
+
+import com.fasterxml.jackson.core.JsonGenerator;
+import com.fasterxml.jackson.databind.SerializerProvider;
+import com.fasterxml.jackson.databind.jsontype.TypeSerializer;
 
 public class OpenBoxHeaderMatch implements HeaderMatch {
 
@@ -236,6 +241,29 @@ public class OpenBoxHeaderMatch implements HeaderMatch {
 			return match;
 		}
 		
+	}
+
+	@Override
+	public void serialize(JsonGenerator jgen, SerializerProvider provider)
+			throws IOException {
+		jgen.writeStartObject();
+		
+		TreeMap<HeaderField<?>, ValueType<?>> sortedMap = new TreeMap<>(this.fields);
+		Iterator<Entry<HeaderField<?>, ValueType<?>>> iter = sortedMap.entrySet().iterator();
+		while (iter.hasNext()) {
+			Entry<HeaderField<?>, ValueType<?>> e = iter.next();
+			jgen.writeObjectField(e.getKey().getName(), e.getValue());
+		}
+		
+		jgen.writeEndObject();
+	}
+
+	@Override
+	public void serializeWithType(JsonGenerator jgen, SerializerProvider provider,
+			TypeSerializer typeSer) throws IOException {
+		typeSer.writeTypePrefixForObject(this, jgen, OpenBoxHeaderMatch.class);
+		this.serialize(jgen, provider);
+		typeSer.writeTypeSuffixForObject(this, jgen);
 	}
 
 }

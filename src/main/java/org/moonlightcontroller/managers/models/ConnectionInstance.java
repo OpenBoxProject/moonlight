@@ -6,7 +6,6 @@ import java.util.List;
 import java.util.Map;
 
 import org.moonlightcontroller.main.ControllerProperties;
-import org.moonlightcontroller.managers.XidGenerator;
 import org.moonlightcontroller.managers.models.messages.IMessage;
 import org.moonlightcontroller.southbound.client.SingleInstanceConnection;
 

@@ -1,5 +1,6 @@
 package org.moonlightcontroller.blocks;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
@@ -17,6 +18,10 @@ import org.moonlightcontroller.processing.ProcessingBlock;
 import org.openboxprotocol.protocol.HeaderMatch;
 import org.openboxprotocol.protocol.Priority;
 
+import com.fasterxml.jackson.core.JsonGenerator;
+import com.fasterxml.jackson.databind.JsonSerializable;
+import com.fasterxml.jackson.databind.SerializerProvider;
+import com.fasterxml.jackson.databind.jsontype.TypeSerializer;
 import com.google.common.collect.ImmutableList;
 
 public class HeaderClassifier extends ProcessingBlock implements IClassifierProcessingBlock {
@@ -64,7 +69,7 @@ public class HeaderClassifier extends ProcessingBlock implements IClassifierProc
 		config.put("priority", this.priority.toString());
 		
 		// TODO: how to seralize rules
-		config.put("match", getRulesJson());
+		config.put("match", this.rules);
 	}
 	
 	private String rulesJson = null;
@@ -153,7 +158,7 @@ public class HeaderClassifier extends ProcessingBlock implements IClassifierProc
 		return merged;
 	}
 	
-	public static class HeaderClassifierRule implements Comparable<HeaderClassifierRule> {
+	public static class HeaderClassifierRule implements Comparable<HeaderClassifierRule>, JsonSerializable {
 		private HeaderMatch match;
 		private Priority priority;
 		private int order;
@@ -222,6 +227,19 @@ public class HeaderClassifier extends ProcessingBlock implements IClassifierProc
 			public HeaderClassifierRule build(){
 				return new HeaderClassifierRule(this.rule.match, this.rule.priority, this.rule.order);
 			}
+		}
+
+		@Override
+		public void serialize(JsonGenerator arg0, SerializerProvider arg1)
+				throws IOException {
+			this.match.serialize(arg0, arg1);
+		}
+
+		@Override
+		public void serializeWithType(JsonGenerator arg0,
+				SerializerProvider arg1, TypeSerializer arg2)
+				throws IOException {
+			this.match.serializeWithType(arg0, arg1, arg2);
 		}
 	}
 	

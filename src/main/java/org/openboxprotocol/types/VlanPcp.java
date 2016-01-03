@@ -1,8 +1,13 @@
 package org.openboxprotocol.types;
 
+import java.io.IOException;
+
 import org.openboxprotocol.exceptions.JSONParseException;
 
-public class VlanPcp implements ValueType<VlanPcp> {
+import com.fasterxml.jackson.core.JsonGenerator;
+import com.fasterxml.jackson.databind.SerializerProvider;
+
+public class VlanPcp extends AbstractValueType<VlanPcp> {
 
 	private int pcp;
 	
@@ -31,5 +36,12 @@ public class VlanPcp implements ValueType<VlanPcp> {
 	@Override
 	public boolean equals(Object other) {
 		return (other instanceof VlanPcp) && ((VlanPcp)other).pcp == this.pcp;
+	}
+
+
+	@Override
+	public void serialize(JsonGenerator arg0, SerializerProvider arg1)
+			throws IOException {
+		arg0.writeNumber(this.pcp);
 	}
 }

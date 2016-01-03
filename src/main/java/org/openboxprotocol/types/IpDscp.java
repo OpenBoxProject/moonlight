@@ -1,8 +1,13 @@
 package org.openboxprotocol.types;
 
+import java.io.IOException;
+
 import org.openboxprotocol.exceptions.JSONParseException;
 
-public class IpDscp implements ValueType<IpDscp> {
+import com.fasterxml.jackson.core.JsonGenerator;
+import com.fasterxml.jackson.databind.SerializerProvider;
+
+public class IpDscp extends AbstractValueType<IpDscp> {
 
 	private int ipDscp;
 	
@@ -39,5 +44,12 @@ public class IpDscp implements ValueType<IpDscp> {
 		if (!(json instanceof Integer))
 			throw new JSONParseException("IP DSCP must be an integer");
 		return new IpDscp((Integer)json);
+	}
+
+
+	@Override
+	public void serialize(JsonGenerator arg0, SerializerProvider arg1)
+			throws IOException {
+		arg0.writeNumber(this.ipDscp);
 	}
 }
