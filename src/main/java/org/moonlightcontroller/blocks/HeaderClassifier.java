@@ -67,27 +67,13 @@ public class HeaderClassifier extends ProcessingBlock implements IClassifierProc
 	@Override
 	protected void putConfiguration(Map<String, Object> config) {
 		config.put("priority", this.priority.toString());
-		
-		// TODO: how to seralize rules
-		config.put("match", this.rules);
+		config.put("match", getRuleMaps());
 	}
 	
-	private String rulesJson = null;
-	
-	private String getRulesJson() {
-		if (rulesJson == null) {
-			synchronized (this) {
-				if (rulesJson == null) {
-					StringBuilder sb = new StringBuilder();
-					sb.append('[');
-					this.rules.forEach(r -> sb.append(r.toJson()).append(','));
-					sb.deleteCharAt(sb.length() - 1);
-					sb.append(']');
-					rulesJson = sb.toString();
-				}
-			}
-		}
-		return rulesJson;
+	private List<Map<String, String>> getRuleMaps() {
+		List<Map<String, String>> l = new ArrayList<>();
+		this.rules.forEach(r -> l.add(r.getRuleMap()));
+		return l;
 	}
 	
 	private static HeaderClassifierRuleWithSources aggregateRules(HeaderClassifierRule r1, HeaderClassifierRule r2, Priority p1, Priority p2, int src1, int src2, int order) throws MergeException {
@@ -198,8 +184,8 @@ public class HeaderClassifier extends ProcessingBlock implements IClassifierProc
 			return String.format("[HeaderClassifierRule: priority: %s, order: %d, match: %s]", this.priority.name(), this.order, this.match.toString());
 		}
 		
-		public String toJson() {
-			return this.match.toJson();
+		public Map<String, String> getRuleMap() {
+			return this.match.getRuleMap();
 		}
 		
 		public static class Builder {
