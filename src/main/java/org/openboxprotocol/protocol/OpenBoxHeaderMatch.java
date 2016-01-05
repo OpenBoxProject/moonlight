@@ -127,30 +127,17 @@ public class OpenBoxHeaderMatch implements HeaderMatch {
 		}
 		return toStringValue;
 	}
-	
-	private String toJsonValue = null;
 
 	@Override
-	public String toJson() {
-		if (toJsonValue == null) {
-			synchronized (this) {
-				if (toJsonValue == null) {
-					StringBuilder sb = new StringBuilder();
-					sb.append("{");
-					TreeMap<HeaderField<?>, ValueType<?>> sortedMap = new TreeMap<>(this.fields);
-					Iterator<Entry<HeaderField<?>, ValueType<?>>> iter = sortedMap.entrySet().iterator();
-					while (iter.hasNext()) {
-						Entry<HeaderField<?>, ValueType<?>> e = iter.next();
-						sb.append(String.format("\"%s\": \"%s\"", e.getKey(), e.getValue()));
-						if (iter.hasNext())
-							sb.append(", ");
-					}
-					sb.append("}");
-					toJsonValue = sb.toString();
-				}
-			}
+	public Map<String, String> getRuleMap() {
+		TreeMap<HeaderField<?>, ValueType<?>> sortedMap = new TreeMap<>(this.fields);
+		Iterator<Entry<HeaderField<?>, ValueType<?>>> iter = sortedMap.entrySet().iterator();
+		Map<String, String> ans = new HashMap<>();
+		while (iter.hasNext()) {
+			Entry<HeaderField<?>, ValueType<?>> e = iter.next();
+			ans.put(e.getKey().toString(), e.getValue().toString());
 		}
-		return toJsonValue;
+		return ans;
 	}
 	
 	@Override

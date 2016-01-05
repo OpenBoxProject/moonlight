@@ -1,5 +1,7 @@
 package org.openboxprotocol.protocol;
 
+import java.util.Map;
+
 import org.moonlightcontroller.exceptions.MergeException;
 import org.openboxprotocol.types.Masked;
 import org.openboxprotocol.types.ValueType;
@@ -15,9 +17,9 @@ public interface HeaderMatch {
     public Builder createBuilder();
     
 	public HeaderMatch mergeWith(HeaderMatch other) throws MergeException;
-	
-	public String toJson();
 
+	public Map<String, String> getRuleMap();
+	
     interface Builder {
         public <F extends ValueType<F>> Builder setExact(HeaderField<F> field, F value) throws UnsupportedOperationException;
 
