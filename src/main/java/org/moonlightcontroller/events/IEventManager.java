@@ -7,6 +7,7 @@ import org.moonlightcontroller.bal.BoxApplication;
 public interface IEventManager {
 	void addApplications(List<BoxApplication> apps);
 	void HandleAlert(InstanceAlertArgs args);
+	void HandleAppSpecificAlert(String app, InstanceAlertArgs args);
 	void HandleInstanceDown(InstanceDownArgs args);
 	void HandleInstanceUp(InstanceUpArgs args);
 	void HandleAppStart(String appId);

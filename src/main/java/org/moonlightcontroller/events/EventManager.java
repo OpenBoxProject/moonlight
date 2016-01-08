@@ -49,7 +49,10 @@ public class EventManager implements IEventManager {
 		// TODO: Handle refresh requests from apps
 		for (BoxApplication app : this.registeredHandlers.get(EventType.Alert)) {
 			try {
-			app.getAlertListener().Handle(args);
+				IAlertListener l = app.getAlertListener();
+				if (l != null){
+					l.Handle(args);
+				}
 			} catch (Exception e) {
 				LOG.warning("Caught exception while handling alert for app " + app.getName() + ":" + e.toString());
 			}
@@ -57,11 +60,30 @@ public class EventManager implements IEventManager {
 	}
 
 	@Override
+	public void HandleAppSpecificAlert(String app, InstanceAlertArgs args) {
+		BoxApplication bapp = this.apps.get(app);
+		if (bapp != null) {
+			IAlertListener al = bapp.getAlertListener();
+			if (al != null) {
+				try {
+					al.Handle(args);
+					} catch (Exception e) {
+						LOG.warning("Caught exception while handling app specific alert for app " + app + ":" + e.toString());
+					}
+			}
+		}
+		
+	}
+	
+	@Override
 	public void HandleInstanceDown(InstanceDownArgs args){
 		// TODO: Handle refresh requests from apps
 		for (BoxApplication app : this.registeredHandlers.get(EventType.InstanceDown)) {
 			try {
-			app.getInstanceDownListener().Handle(args);
+				IInstanceDownListener l = app.getInstanceDownListener();
+				if (l != null){
+					l.Handle(args);	
+				}
 			} catch (Exception e){
 				LOG.warning("Caught exception while handling instance down for app " + app.getName() + ":" + e.toString());
 			}
@@ -72,7 +94,10 @@ public class EventManager implements IEventManager {
 	public void HandleInstanceUp(InstanceUpArgs args){
 		for (BoxApplication app : this.registeredHandlers.get(EventType.InstanceUp)) {
 			try {
-				app.getInstanceUpListener().Handle(args);	
+				IInstanceUpListener l = app.getInstanceUpListener();	
+				if (l != null){
+					l.Handle(args);	
+				}
 			} catch (Exception e){
 				LOG.warning("Caught exception while handling instance up for app " + app.getName() + ":" + e.toString());
 			}			

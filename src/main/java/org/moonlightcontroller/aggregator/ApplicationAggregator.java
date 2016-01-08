@@ -18,6 +18,8 @@ import org.moonlightcontroller.blocks.Discard;
 import org.moonlightcontroller.blocks.FromDevice;
 import org.moonlightcontroller.blocks.HeaderClassifier;
 import org.moonlightcontroller.blocks.HeaderClassifier.HeaderClassifierRule;
+import org.moonlightcontroller.events.EventManager;
+import org.moonlightcontroller.events.InstanceAlertArgs;
 import org.moonlightcontroller.blocks.IClassifierProcessingBlock;
 import org.moonlightcontroller.blocks.IStaticProcessingBlock;
 import org.moonlightcontroller.blocks.NetworkHeaderFieldsRewriter;
@@ -763,9 +765,11 @@ public class ApplicationAggregator implements IApplicationAggregator {
 		if (origins != null){
 			for (AlertMessage alert : message.getMessages()) {
 				Origin origin = origins.get(alert.getOrigin_block());
-				// TODO: Handle alert message (@Dan)
-				// The application is in origin.app
-				// The corresponding block is in origin.block
+				if (origin != null){
+					EventManager.getInstance().HandleAppSpecificAlert(
+							origin.app.getName(), 
+							new InstanceAlertArgs((InstanceLocationSpecifier)loc, message, origin.block));					
+				}
 			}
 		}
 	}
