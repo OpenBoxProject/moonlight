@@ -45,22 +45,7 @@ public class EventManager implements IEventManager {
 	}
 	
 	@Override
-	public void HandleAlert(InstanceAlertArgs args){
-		// TODO: Handle refresh requests from apps
-		for (BoxApplication app : this.registeredHandlers.get(EventType.Alert)) {
-			try {
-				IAlertListener l = app.getAlertListener();
-				if (l != null){
-					l.Handle(args);
-				}
-			} catch (Exception e) {
-				LOG.warning("Caught exception while handling alert for app " + app.getName() + ":" + e.toString());
-			}
-		}
-	}
-
-	@Override
-	public void HandleAppSpecificAlert(String app, InstanceAlertArgs args) {
+	public void HandleAlert(String app, InstanceAlertArgs args) {
 		BoxApplication bapp = this.apps.get(app);
 		if (bapp != null) {
 			IAlertListener al = bapp.getAlertListener();

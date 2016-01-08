@@ -766,7 +766,7 @@ public class ApplicationAggregator implements IApplicationAggregator {
 			for (AlertMessage alert : message.getMessages()) {
 				Origin origin = origins.get(alert.getOrigin_block());
 				if (origin != null){
-					EventManager.getInstance().HandleAppSpecificAlert(
+					EventManager.getInstance().HandleAlert(
 							origin.app.getName(), 
 							new InstanceAlertArgs((InstanceLocationSpecifier)loc, message, origin.block));					
 				}
