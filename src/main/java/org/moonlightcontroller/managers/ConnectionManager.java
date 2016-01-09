@@ -223,9 +223,6 @@ public class ConnectionManager implements ISouthboundClient {
 
 
 	public Response handleAlert(Alert message) {
-		// call ApplicationAggregator and send this alert
-		// dan need to handle in ApplicationAggregator 
-		
 		ApplicationAggregator.getInstance().handleAlert(message);
 		return okResponse();
 	}

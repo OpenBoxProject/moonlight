@@ -1,5 +1,6 @@
 package org.moonlightcontroller.obimock;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -14,6 +15,8 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
+import org.moonlightcontroller.managers.models.messages.Alert;
+import org.moonlightcontroller.managers.models.messages.AlertMessage;
 import org.moonlightcontroller.managers.models.messages.Hello;
 import org.moonlightcontroller.managers.models.messages.IMessage;
 import org.moonlightcontroller.managers.models.messages.ReadRequest;
@@ -45,6 +48,17 @@ public class ObiMockApi {
 		
 	}
 
+	@POST
+	@Path("SendAlert")
+	@Produces(MediaType.TEXT_PLAIN)
+	public void sendAlert() {
+		int xid = ObiMock.getInstance().fetchAndIncxid();
+		List<AlertMessage> alerts = new ArrayList<>();
+		alerts.add(new AlertMessage(1, System.currentTimeMillis(), "Alert from mock OBI", 1, "packet", "BasicFirewall.Alert"));
+		Alert alertMessage = new Alert(xid, ObiMock.getInstance().getdpid(), alerts);
+		this.sendMessage(alertMessage);		
+	}
+	
 	@POST
 	@Path("SetProcessingGraphRequest")
 	@Consumes(MediaType.APPLICATION_JSON)
