@@ -1,9 +1,14 @@
 package org.openboxprotocol.types;
 
+import java.io.IOException;
+
 import org.moonlightcontroller.exceptions.ParseException;
 import org.openboxprotocol.exceptions.JSONParseException;
 
-public class IPv4Address implements ValueType<IPv4Address> {
+import com.fasterxml.jackson.core.JsonGenerator;
+import com.fasterxml.jackson.databind.SerializerProvider;
+
+public class IPv4Address extends AbstractValueType<IPv4Address> {
 
 	private long ip;
 	
@@ -82,4 +87,10 @@ public class IPv4Address implements ValueType<IPv4Address> {
 		return fromString(addr);
 	}
 
+
+	@Override
+	public void serialize(JsonGenerator arg0, SerializerProvider arg1)
+			throws IOException {
+		arg0.writeString(this.toString());
+	}
 }

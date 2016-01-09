@@ -1,8 +1,13 @@
 package org.openboxprotocol.types;
 
+import java.io.IOException;
+
 import org.openboxprotocol.exceptions.JSONParseException;
 
-public class IPv6Address implements ValueType<IPv6Address> {
+import com.fasterxml.jackson.core.JsonGenerator;
+import com.fasterxml.jackson.databind.SerializerProvider;
+
+public class IPv6Address extends AbstractValueType<IPv6Address> {
 
 	private long ipLsb;
 	private long ipMsb;
@@ -35,4 +40,10 @@ public class IPv6Address implements ValueType<IPv6Address> {
 		return null;
 	}
 
+
+	@Override
+	public void serialize(JsonGenerator arg0, SerializerProvider arg1)
+			throws IOException {
+		arg0.writeString(this.toString());
+	}
 }

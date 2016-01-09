@@ -1,8 +1,13 @@
 package org.openboxprotocol.types;
 
+import java.io.IOException;
+
 import org.openboxprotocol.exceptions.JSONParseException;
 
-public class IpEcn implements ValueType<IpEcn> {
+import com.fasterxml.jackson.core.JsonGenerator;
+import com.fasterxml.jackson.databind.SerializerProvider;
+
+public class IpEcn extends AbstractValueType<IpEcn> {
 
 	private int ipEcn;
 	
@@ -41,4 +46,10 @@ public class IpEcn implements ValueType<IpEcn> {
 		return new IpEcn((Integer)json);
 	}
 
+
+	@Override
+	public void serialize(JsonGenerator arg0, SerializerProvider arg1)
+			throws IOException {
+		arg0.writeNumber(this.ipEcn);
+	}
 }

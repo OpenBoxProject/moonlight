@@ -1,8 +1,13 @@
 package org.openboxprotocol.types;
 
+import java.io.IOException;
+
 import org.openboxprotocol.exceptions.JSONParseException;
 
-public class VlanVid implements ValueType<VlanVid> {
+import com.fasterxml.jackson.core.JsonGenerator;
+import com.fasterxml.jackson.databind.SerializerProvider;
+
+public class VlanVid extends AbstractValueType<VlanVid> {
 
 	private int vid;
 	
@@ -34,5 +39,11 @@ public class VlanVid implements ValueType<VlanVid> {
 	@Override
 	public boolean equals(Object other) {
 		return (other instanceof VlanVid) && ((VlanVid)other).vid == this.vid;
+	}
+
+	@Override
+	public void serialize(JsonGenerator arg0, SerializerProvider arg1)
+			throws IOException {
+		arg0.writeNumber(this.vid);
 	}
 }

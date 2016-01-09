@@ -29,63 +29,63 @@ public class HeaderField<F extends ValueType<F>> implements Comparable<HeaderFie
 	}
 	
 	public final static HeaderField<MacAddress> ETH_DST =
-			new HeaderField<MacAddress>("eth_dst", HeaderFields.ETH_DST, MacAddress.EMPTY_MASK);
+			new HeaderField<MacAddress>("ETH_DST", HeaderFields.ETH_DST, MacAddress.EMPTY_MASK);
 	
 	public final static HeaderField<MacAddress> ETH_SRC =
-			new HeaderField<MacAddress>("eth_src", HeaderFields.ETH_SRC, MacAddress.EMPTY_MASK);
+			new HeaderField<MacAddress>("ETH_SRC", HeaderFields.ETH_SRC, MacAddress.EMPTY_MASK);
 	
 	public final static HeaderField<EthType> ETH_TYPE =
-			new HeaderField<EthType>("eth_type", HeaderFields.ETH_TYPE, EthType.EMPTY_MASK);
+			new HeaderField<EthType>("ETH_TYPE", HeaderFields.ETH_TYPE, EthType.EMPTY_MASK);
 	
 	public final static HeaderField<VlanVid> VLAN_VID =
-			new HeaderField<VlanVid>("vlan_vid", HeaderFields.VLAN_VID, VlanVid.EMPTY_MASK);
+			new HeaderField<VlanVid>("VLAN_VID", HeaderFields.VLAN_VID, VlanVid.EMPTY_MASK);
 	
 	public final static HeaderField<VlanPcp> VLAN_PCP =
-			new HeaderField<VlanPcp>("vlan_pcp", HeaderFields.VLAN_PCP, VlanPcp.EMPTY_MASK,
+			new HeaderField<VlanPcp>("VLAN_PCP", HeaderFields.VLAN_PCP, VlanPcp.EMPTY_MASK,
 					new Prerequisite<VlanVid>(HeaderField.VLAN_VID));
 	
 	public final static HeaderField<IpDscp> IP_DSCP =
-			new HeaderField<IpDscp>("ip_dscp", HeaderFields.IP_DSCP, IpDscp.EMPTY_MASK,
+			new HeaderField<IpDscp>("IP_DSCP", HeaderFields.IP_DSCP, IpDscp.EMPTY_MASK,
 					new Prerequisite<EthType>(HeaderField.ETH_TYPE, EthType.IPv4, EthType.IPv6));
 	
 	public final static HeaderField<IpEcn> IP_ECN =
-			new HeaderField<IpEcn>("ip_ecn", HeaderFields.IP_ECN, IpEcn.EMPTY_MASK,
+			new HeaderField<IpEcn>("IP_ECN", HeaderFields.IP_ECN, IpEcn.EMPTY_MASK,
 					new Prerequisite<EthType>(HeaderField.ETH_TYPE, EthType.IPv4, EthType.IPv6));
 	
 	public final static HeaderField<IpProto> IP_PROTO =
-			new HeaderField<IpProto>("ip_proto", HeaderFields.IP_PROTO, IpProto.EMPTY_MASK,
+			new HeaderField<IpProto>("IP_PROTO", HeaderFields.IP_PROTO, IpProto.EMPTY_MASK,
 					new Prerequisite<EthType>(HeaderField.ETH_TYPE, EthType.IPv4, EthType.IPv6));
 	
 	public final static HeaderField<IPv4Address> IPV4_SRC =
-			new HeaderField<IPv4Address>("ipv4_src", HeaderFields.IPV4_SRC, IPv4Address.EMPTY_MASK,
+			new HeaderField<IPv4Address>("IPV4_SRC", HeaderFields.IPV4_SRC, IPv4Address.EMPTY_MASK,
 					new Prerequisite<EthType>(HeaderField.ETH_TYPE, EthType.IPv4));
 	
 	public final static HeaderField<IPv4Address> IPV4_DST =
-			new HeaderField<IPv4Address>("ipv4_dst", HeaderFields.IPV4_DST, IPv4Address.EMPTY_MASK,
+			new HeaderField<IPv4Address>("IPV4_DST", HeaderFields.IPV4_DST, IPv4Address.EMPTY_MASK,
 					new Prerequisite<EthType>(HeaderField.ETH_TYPE, EthType.IPv4));
 	
 	public final static HeaderField<TransportPort> TCP_SRC = new HeaderField<TransportPort>(
-			"tcp_src", HeaderFields.TCP_SRC, TransportPort.EMPTY_MASK,
+			"TCP_SRC", HeaderFields.TCP_SRC, TransportPort.EMPTY_MASK,
 			new Prerequisite<IpProto>(HeaderField.IP_PROTO, IpProto.TCP));
 	
 	public final static HeaderField<TransportPort> TCP_DST = new HeaderField<TransportPort>(
-			"tcp_dst", HeaderFields.TCP_DST, TransportPort.EMPTY_MASK,
+			"TCP_DST", HeaderFields.TCP_DST, TransportPort.EMPTY_MASK,
 			new Prerequisite<IpProto>(HeaderField.IP_PROTO, IpProto.TCP));
 	
 	public final static HeaderField<TransportPort> UDP_SRC = new HeaderField<TransportPort>(
-			"udp_src", HeaderFields.UDP_SRC, TransportPort.EMPTY_MASK,
+			"UDP_SRC", HeaderFields.UDP_SRC, TransportPort.EMPTY_MASK,
 			new Prerequisite<IpProto>(HeaderField.IP_PROTO, IpProto.UDP));
 	
 	public final static HeaderField<TransportPort> UDP_DST = new HeaderField<TransportPort>(
-			"udp_dst", HeaderFields.UDP_DST, TransportPort.EMPTY_MASK,
+			"UDP_DST", HeaderFields.UDP_DST, TransportPort.EMPTY_MASK,
 			new Prerequisite<IpProto>(HeaderField.IP_PROTO, IpProto.UDP));
 	
 	public final static HeaderField<IPv6Address> IPV6_SRC =
-			new HeaderField<IPv6Address>("ipv6_src", HeaderFields.IPV6_SRC, IPv6Address.EMPTY_MASK,
+			new HeaderField<IPv6Address>("IPV6_SRC", HeaderFields.IPV6_SRC, IPv6Address.EMPTY_MASK,
 					new Prerequisite<EthType>(HeaderField.ETH_TYPE, EthType.IPv6));
 	
 	public final static HeaderField<IPv6Address> IPV6_DST =
-			new HeaderField<IPv6Address>("ipv6_dst", HeaderFields.IPV6_DST, IPv6Address.EMPTY_MASK,
+			new HeaderField<IPv6Address>("IPV6_DST", HeaderFields.IPV6_DST, IPv6Address.EMPTY_MASK,
 					new Prerequisite<EthType>(HeaderField.ETH_TYPE, EthType.IPv6));
 	
 	public String getName() {

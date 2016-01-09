@@ -6,7 +6,9 @@ import org.moonlightcontroller.exceptions.MergeException;
 import org.openboxprotocol.types.Masked;
 import org.openboxprotocol.types.ValueType;
 
-public interface HeaderMatch {
+import com.fasterxml.jackson.databind.JsonSerializable;
+
+public interface HeaderMatch extends JsonSerializable {
 	
     public <F extends ValueType<F>> F get(HeaderField<F> field) throws UnsupportedOperationException;
 
