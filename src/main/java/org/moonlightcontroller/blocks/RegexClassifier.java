@@ -43,20 +43,10 @@ public class RegexClassifier extends ProcessingBlock implements IClassifierProce
 
 	@Override
 	protected void putConfiguration(Map<String, Object> config) {
-		config.put("pattern", this.patternsToString());
+		config.put("pattern", this.pattern.toArray(new String[0]));
 		config.put("payload_only", this.payload_only);
 	}
 	
-	private String patternsToString() {
-		StringBuilder sb = new StringBuilder();
-		sb.append('[');
-		this.pattern.forEach(p -> sb.append('"').append(p).append('"').append(','));
-		if (sb.charAt(sb.length() - 1) == ',')
-			sb.deleteCharAt(sb.length() - 1);
-		sb.append(']');
-		return sb.toString();
-	}
-
 	@Override
 	protected ProcessingBlock spawn(String id) {
 		return new RegexClassifier(id, pattern, payload_only, priority);
