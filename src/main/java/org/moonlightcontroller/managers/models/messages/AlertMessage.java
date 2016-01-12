@@ -48,4 +48,9 @@ public class AlertMessage {
 	public String getOrigin_block() {
 		return origin_block;
 	}
+	
+	@Override
+	public String toString() {
+		return String.format("[ Alert Message: %s (ID: %d, Time: %d, Severity: %d, Orig. Block: %s) ]", this.message, this.id, this.timestamp, this.severity, this.origin_block);
+	}
 }
