@@ -99,4 +99,19 @@ public class Segment implements ILocationSpecifier {
 	public int hashCode(){
 		return new HashCodeBuilder(27, 31).append(this.id).toHashCode();
 	}
+	
+	@Override
+	public String toString() {
+		StringBuilder sb = new StringBuilder();
+		sb.append("[ Segment ID: ").append(this.id).append(", Endpoints: [");
+		this.endpoints.forEach(ep -> sb.append((ep == null ? "" : ep.toString() + ",")));
+		if (sb.charAt(sb.length() - 1) == ',')
+			sb.deleteCharAt(sb.length() - 1);
+		sb.append("], Segments: [");
+		this.segments.forEach(s -> sb.append((s == null ? "" : s.toString() + ",")));
+		if (sb.charAt(sb.length() - 1) == ',')
+			sb.deleteCharAt(sb.length() - 1);
+		sb.append("] ]");
+		return sb.toString();
+	}
 }

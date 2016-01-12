@@ -62,7 +62,7 @@ public class Alert extends ProcessingBlock implements IStaticProcessingBlock {
 	@Override
 	protected void putConfiguration(Map<String, Object> config) {
 		config.put("message", this.message);
-		config.put("severity", this.severity+"");
+		config.put("severity", this.severity);
 		config.put("attach_packet", this.attach_packet);
 		config.put("packet_size", this.packet_size);
 
