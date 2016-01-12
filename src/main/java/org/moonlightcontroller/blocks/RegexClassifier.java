@@ -12,23 +12,23 @@ import org.moonlightcontroller.processing.BlockClass;
 import org.moonlightcontroller.processing.IProcessingGraph;
 
 public class RegexClassifier extends ProcessingBlock implements IClassifierProcessingBlock{
-	private String[] pattern;
+	private List<String> pattern;
 	private boolean payload_only;
 	private Priority priority;
 
-	public RegexClassifier(String id, String[] pattern, Priority priority) {
+	public RegexClassifier(String id, List<String> pattern, Priority priority) {
 		super(id);
 		this.pattern = pattern;
 		this.priority = priority;
 	}
 	
-	public RegexClassifier(String id, String[] pattern, boolean payload_only, Priority priority) {
+	public RegexClassifier(String id, List<String> pattern, boolean payload_only, Priority priority) {
 		super(id);
 		this.pattern = pattern;
 		this.payload_only = payload_only;
 	}
 
-	public String[] getPattern() {
+	public List<String> getPattern() {
 		return pattern;
 	}
 
@@ -43,8 +43,18 @@ public class RegexClassifier extends ProcessingBlock implements IClassifierProce
 
 	@Override
 	protected void putConfiguration(Map<String, Object> config) {
-		config.put("pattern", this.pattern.toString());
+		config.put("pattern", this.patternsToString());
 		config.put("payload_only", this.payload_only);
+	}
+	
+	private String patternsToString() {
+		StringBuilder sb = new StringBuilder();
+		sb.append('[');
+		this.pattern.forEach(p -> sb.append('"').append(p).append('"').append(','));
+		if (sb.charAt(sb.length() - 1) == ',')
+			sb.deleteCharAt(sb.length() - 1);
+		sb.append(']');
+		return sb.toString();
 	}
 
 	@Override
