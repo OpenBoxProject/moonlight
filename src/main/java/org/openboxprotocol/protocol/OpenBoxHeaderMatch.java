@@ -10,6 +10,7 @@ import java.util.Set;
 import java.util.TreeMap;
 
 import org.moonlightcontroller.exceptions.MergeException;
+import org.openboxprotocol.types.EthType;
 import org.openboxprotocol.types.Masked;
 import org.openboxprotocol.types.ValueType;
 
@@ -140,7 +141,19 @@ public class OpenBoxHeaderMatch implements HeaderMatch {
 		Map<String, String> ans = new HashMap<>();
 		while (iter.hasNext()) {
 			Entry<HeaderField<?>, ValueType<?>> e = iter.next();
-			ans.put(e.getKey().toString(), e.getValue().toJson());
+			
+			String key = e.getKey().getName();
+			if (e.getKey().equals(HeaderField.IP_PROTO)) {
+				if (this.fields.containsKey(HeaderField.ETH_TYPE) &&
+						this.fields.get(HeaderField.ETH_TYPE).equals(EthType.IPv4)) {
+					key = "IPV4_PROTO";
+				} else if (this.fields.containsKey(HeaderField.ETH_TYPE) &&
+						this.fields.get(HeaderField.ETH_TYPE).equals(EthType.IPv6)) {
+					key = "IPV6_PROTO";
+				}
+			}
+			
+			ans.put(key, e.getValue().toJson());
 		}
 		return ans;
 	}
