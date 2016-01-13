@@ -26,8 +26,19 @@ public class TransportPort extends AbstractValueType<TransportPort> {
 	}
 
 	public static TransportPort fromJson(Object json) throws JSONParseException {
-		// TODO Auto-generated method stub
-		return null;
+		if (json instanceof Long) {
+			return TransportPort.of(((Long)json).intValue());
+		} else if (json instanceof Integer) {
+				return TransportPort.of((Integer)json);
+		} else if (json instanceof String) {
+			String s = (String)json;
+			if (s.equals("http"))
+				return TransportPort.of(80);
+			else
+				return null;
+		} else {
+			return null;
+		}
 	}
 	
 	@Override
