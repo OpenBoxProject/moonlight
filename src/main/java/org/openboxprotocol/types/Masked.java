@@ -44,9 +44,8 @@ public class Masked<F extends ValueType<F>> extends AbstractValueType<Masked<F>>
 	
 	@Override
 	public String toString() {
-		return String.format("[ Masked: %s/%s ]", this.value, this.mask);
+		return String.format("%s%%%s", this.value.toString(), this.mask.toString());
 	}
-	
 
 	@Override
 	public void serialize(JsonGenerator arg0, SerializerProvider arg1)
