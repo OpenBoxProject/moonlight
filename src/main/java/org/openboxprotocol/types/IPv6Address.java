@@ -46,4 +46,9 @@ public class IPv6Address extends AbstractValueType<IPv6Address> {
 			throws IOException {
 		arg0.writeString(this.toString());
 	}
+	
+	@Override
+	public String toJson() {
+		return this.toString();
+	}
 }

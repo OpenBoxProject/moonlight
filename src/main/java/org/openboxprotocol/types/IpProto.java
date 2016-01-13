@@ -100,4 +100,9 @@ public class IpProto extends AbstractValueType<IpProto> {
 			throws IOException {
 		arg0.writeNumber(this.ipProto);
 	}
+	
+	@Override
+	public String toJson() {
+		return this.ipProto + "";
+	}
 }

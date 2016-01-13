@@ -93,4 +93,9 @@ public class IPv4Address extends AbstractValueType<IPv4Address> {
 			throws IOException {
 		arg0.writeString(this.toString());
 	}
+	
+	@Override
+	public String toJson() {
+		return this.toString();
+	}
 }

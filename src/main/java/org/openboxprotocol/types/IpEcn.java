@@ -46,10 +46,19 @@ public class IpEcn extends AbstractValueType<IpEcn> {
 		return new IpEcn((Integer)json);
 	}
 
+	@Override
+	public String toString() {
+		return this.ipEcn + "";
+	}
 
 	@Override
 	public void serialize(JsonGenerator arg0, SerializerProvider arg1)
 			throws IOException {
 		arg0.writeNumber(this.ipEcn);
+	}
+	
+	@Override
+	public String toJson() {
+		return this.ipEcn + "";
 	}
 }

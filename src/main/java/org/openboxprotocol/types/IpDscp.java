@@ -46,10 +46,19 @@ public class IpDscp extends AbstractValueType<IpDscp> {
 		return new IpDscp((Integer)json);
 	}
 
+	@Override
+	public String toString() {
+		return this.ipDscp + "";
+	}
 
 	@Override
 	public void serialize(JsonGenerator arg0, SerializerProvider arg1)
 			throws IOException {
 		arg0.writeNumber(this.ipDscp);
+	}
+	
+	@Override
+	public String toJson() {
+		return this.ipDscp + "";
 	}
 }
