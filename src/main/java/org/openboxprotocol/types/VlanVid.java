@@ -27,10 +27,19 @@ public class VlanVid extends AbstractValueType<VlanVid> {
 	}
 
 	public static VlanVid fromJson(Object json) throws JSONParseException {
-		// TODO Auto-generated method stub
+		if (json instanceof Long) {
+			return new VlanVid(((Long)json).intValue());
+		} else if (json instanceof Integer) {
+			return new VlanVid((Integer)json);
+		}
 		return null;
 	}
 	
+	@Override
+	public String toString() {
+		return this.vid + "";
+	}
+
 	@Override
 	public int hashCode() {
 		return this.vid * 29;
@@ -45,5 +54,10 @@ public class VlanVid extends AbstractValueType<VlanVid> {
 	public void serialize(JsonGenerator arg0, SerializerProvider arg1)
 			throws IOException {
 		arg0.writeNumber(this.vid);
+	}
+	
+	@Override
+	public String toJson() {
+		return this.vid + "";
 	}
 }

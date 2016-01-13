@@ -106,5 +106,10 @@ public class EthType extends AbstractValueType<EthType> {
 			throws IOException {
 		arg0.writeNumber(this.ethType);
 	}
+	
+	@Override
+	public String toJson() {
+		return "0x" + Integer.toHexString(this.ethType).toUpperCase();
+	}
 
 }

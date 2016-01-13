@@ -19,12 +19,15 @@ public class VlanPcp extends AbstractValueType<VlanPcp> {
 
 	@Override
 	public VlanPcp applyMask(VlanPcp mask) {
-		// TODO Auto-generated method stub
-		return null;
+		return new VlanPcp(this.pcp & mask.pcp);
 	}
 
 	public static VlanPcp fromJson(Object json) throws JSONParseException {
-		// TODO Auto-generated method stub
+		if (json instanceof Long) {
+			return new VlanPcp(((Long)json).intValue());
+		} else if (json instanceof Integer) {
+			return new VlanPcp((Integer)json);
+		}
 		return null;
 	}
 	
@@ -37,11 +40,21 @@ public class VlanPcp extends AbstractValueType<VlanPcp> {
 	public boolean equals(Object other) {
 		return (other instanceof VlanPcp) && ((VlanPcp)other).pcp == this.pcp;
 	}
-
+	
+	@Override
+	public String toString() {
+		return this.pcp + "";
+	}
 
 	@Override
 	public void serialize(JsonGenerator arg0, SerializerProvider arg1)
 			throws IOException {
 		arg0.writeNumber(this.pcp);
 	}
+
+	@Override
+	public String toJson() {
+		return this.pcp + "";
+	}
+	
 }

@@ -140,7 +140,7 @@ public class OpenBoxHeaderMatch implements HeaderMatch {
 		Map<String, String> ans = new HashMap<>();
 		while (iter.hasNext()) {
 			Entry<HeaderField<?>, ValueType<?>> e = iter.next();
-			ans.put(e.getKey().toString(), e.getValue().toString());
+			ans.put(e.getKey().toString(), e.getValue().toJson());
 		}
 		return ans;
 	}

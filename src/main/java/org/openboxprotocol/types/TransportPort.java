@@ -65,4 +65,9 @@ public class TransportPort extends AbstractValueType<TransportPort> {
 			throws IOException {
 		arg0.writeNumber(this.port);
 	}
+
+	@Override
+	public String toJson() {
+		return Integer.toString(port);
+	}
 }
