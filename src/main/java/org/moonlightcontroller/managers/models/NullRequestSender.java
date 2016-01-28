@@ -23,6 +23,6 @@ public class NullRequestSender implements IRequestSender {
 			+ err.getXid() + ":" 
 			+ err.getType() + ":" 
 			+ err.getError_subtype() + ":" 
-			+ err.getMessage());
+			+ err.getMessage() + err.getExtended_message());
 	}
 }
