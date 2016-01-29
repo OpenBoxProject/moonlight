@@ -28,11 +28,13 @@ public class HeaderClassifier extends ProcessingBlock implements IClassifierProc
 
 	private List<? extends HeaderClassifierRule> rules;
 	private Priority priority;
+	private boolean allowVlan;
 	
-	public HeaderClassifier(String id, List<? extends HeaderClassifierRule> rules, Priority priority) {
+	public HeaderClassifier(String id, List<? extends HeaderClassifierRule> rules, Priority priority, boolean allowVlan) {
 		super(id);
 		this.priority = priority;
 		this.rules = rules;
+		this.allowVlan = allowVlan;
 	}
 	
 	@Override
@@ -55,19 +57,20 @@ public class HeaderClassifier extends ProcessingBlock implements IClassifierProc
 
 	@Override
 	protected ProcessingBlock spawn(String id) {
-		return new HeaderClassifier(id, this.getRules(), this.priority);
+		return new HeaderClassifier(id, this.getRules(), this.priority, this.allowVlan);
 	}
 
 	@Override
 	public boolean canMergeWith(IClassifierProcessingBlock other) {
-		return (other instanceof HeaderClassifier);
+		return (other instanceof HeaderClassifier) &&
+				(((HeaderClassifier)other).allowVlan == this.allowVlan);
 	}
-
 
 	@Override
 	protected void putConfiguration(Map<String, Object> config) {
 		//config.put("priority", this.priority.toString());
 		config.put("match", getRuleMaps());
+		config.put("allow_vlan", this.allowVlan);
 	}
 	
 	private List<Map<String, String>> getRuleMaps() {
@@ -135,7 +138,7 @@ public class HeaderClassifier extends ProcessingBlock implements IClassifierProc
 		Priority newP = (this.priority.compareTo(o.priority) > 0 ? this.priority : o.priority);
 		
 		IClassifierProcessingBlock merged = 
-				new HeaderClassifier("MERGED##" + this.getId() + "##" + other.getId() + "##" + UUIDGenerator.getSystemInstance().getUUID().toString(), rules, newP);
+				new HeaderClassifier("MERGED##" + this.getId() + "##" + other.getId() + "##" + UUIDGenerator.getSystemInstance().getUUID().toString(), rules, newP, this.allowVlan);
 		
 		for (HeaderClassifierRuleWithSources r : rules) {
 			outPortSources.add(r.sources);

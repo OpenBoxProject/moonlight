@@ -112,7 +112,7 @@ public class BasicFirewall extends BoxApplication{
 
 		FromDevice from = new FromDevice("BasicFirewall", "eth0", true, true);
 		ToDevice to = new ToDevice("BasicFirewall", "eth1");
-		HeaderClassifier classify = new HeaderClassifier("BasicFirewall", rules, Priority.HIGH);
+		HeaderClassifier classify = new HeaderClassifier("BasicFirewall", rules, Priority.HIGH, false);
 		org.moonlightcontroller.blocks.Alert alert = 
 				new org.moonlightcontroller.blocks.Alert("BasicFirewall.Alert", "Alert from firewall", 1, true, 100);
 		Discard discard = new Discard("BasicFirewall");

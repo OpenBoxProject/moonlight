@@ -42,7 +42,7 @@ public class BasicApp extends BoxApplication {
 		FromDevice from = new FromDevice("BasicApp", "eth0", true, true);
 		ToDevice to1 = new ToDevice("BasicApp", "eth1");
 		ToDevice to2 = new ToDevice("BasicApp", "eth2");
-		HeaderClassifier classify = new HeaderClassifier("BasicApp", rules, Priority.HIGH);
+		HeaderClassifier classify = new HeaderClassifier("BasicApp", rules, Priority.HIGH, false);
 
 		IProcessingGraph graph = new ProcessingGraph.Builder()
 			.setBlocks(ImmutableList.of(from, to1, classify, to2))

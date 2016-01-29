@@ -18,12 +18,12 @@ import org.moonlightcontroller.blocks.Discard;
 import org.moonlightcontroller.blocks.FromDevice;
 import org.moonlightcontroller.blocks.HeaderClassifier;
 import org.moonlightcontroller.blocks.HeaderClassifier.HeaderClassifierRule;
-import org.moonlightcontroller.events.EventManager;
-import org.moonlightcontroller.events.InstanceAlertArgs;
 import org.moonlightcontroller.blocks.IClassifierProcessingBlock;
 import org.moonlightcontroller.blocks.IStaticProcessingBlock;
 import org.moonlightcontroller.blocks.NetworkHeaderFieldsRewriter;
 import org.moonlightcontroller.blocks.ToDevice;
+import org.moonlightcontroller.events.EventManager;
+import org.moonlightcontroller.events.InstanceAlertArgs;
 import org.moonlightcontroller.exceptions.MergeException;
 import org.moonlightcontroller.managers.models.messages.AlertMessage;
 import org.moonlightcontroller.processing.BlockClass;
@@ -573,7 +573,7 @@ public class ApplicationAggregator implements IApplicationAggregator {
 		
 		IProcessingBlock[] firewallBlocks = {
 				new FromDevice("FromDevice-Firewall", ""),
-				new HeaderClassifier("HeaderClassifier-Firewall", ImmutableList.copyOf(firewallRules), Priority.CRITICAL),
+				new HeaderClassifier("HeaderClassifier-Firewall", ImmutableList.copyOf(firewallRules), Priority.CRITICAL, false),
 				new Discard("Discard-Firewall"),
 				new Alert("Alert-Firewall", "FIREWALL ALERT"),
 				new ToDevice("ToDevice-Firewall", ""),
@@ -605,7 +605,7 @@ public class ApplicationAggregator implements IApplicationAggregator {
 		
 		IProcessingBlock[] lbBlocks = {
 				new FromDevice("FromDevice-LB", "", true, true),
-				new HeaderClassifier("HeaderClassifier-LB", ImmutableList.copyOf(lbRules), Priority.MEDIUM),
+				new HeaderClassifier("HeaderClassifier-LB", ImmutableList.copyOf(lbRules), Priority.MEDIUM, false),
 				new Alert("Alert-LB", "LOAD BALANCER ALERT"),
 				new NetworkHeaderFieldsRewriter("NetworkHeaderFieldsRewriter-LB"),
 				new ToDevice("ToDevice-LB", ""),
