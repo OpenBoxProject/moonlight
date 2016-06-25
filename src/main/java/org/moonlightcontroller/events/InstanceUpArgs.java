@@ -1,6 +1,6 @@
 package org.moonlightcontroller.events;
 
-import org.openboxprotocol.protocol.topology.InstanceLocationSpecifier;
+import org.moonlightcontroller.topology.InstanceLocationSpecifier;
 
 public class InstanceUpArgs {
 

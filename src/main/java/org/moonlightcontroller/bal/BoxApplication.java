@@ -9,10 +9,10 @@ import org.moonlightcontroller.events.IHandleClient;
 import org.moonlightcontroller.events.IInstanceDownListener;
 import org.moonlightcontroller.events.IInstanceUpListener;
 import org.moonlightcontroller.processing.IProcessingGraph;
+import org.moonlightcontroller.topology.IApplicationTopology;
+import org.moonlightcontroller.topology.ILocationSpecifier;
 import org.openboxprotocol.protocol.IStatement;
 import org.openboxprotocol.protocol.Priority;
-import org.openboxprotocol.protocol.topology.IApplicationTopology;
-import org.openboxprotocol.protocol.topology.ILocationSpecifier;
 
 public abstract class BoxApplication {
 	

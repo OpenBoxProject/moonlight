@@ -1,8 +1,8 @@
 package org.moonlightcontroller.events;
 
 import org.moonlightcontroller.managers.models.IRequestSender;
+import org.moonlightcontroller.topology.ILocationSpecifier;
 import org.openboxprotocol.exceptions.InstanceNotAvailableException;
-import org.openboxprotocol.protocol.topology.ILocationSpecifier;
 
 public interface IHandleClient {
 	// TODO: are handles represented as strings?

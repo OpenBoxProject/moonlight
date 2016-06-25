@@ -5,7 +5,7 @@ import java.util.List;
 import org.moonlightcontroller.bal.BoxApplication;
 import org.moonlightcontroller.managers.models.messages.Alert;
 import org.moonlightcontroller.processing.IProcessingGraph;
-import org.openboxprotocol.protocol.topology.ILocationSpecifier;
+import org.moonlightcontroller.topology.ILocationSpecifier;
 
 public interface IApplicationAggregator {
 	void addApplications(List<BoxApplication> apps);

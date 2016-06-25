@@ -13,13 +13,13 @@ import org.moonlightcontroller.blocks.ToDevice;
 import org.moonlightcontroller.processing.Connector;
 import org.moonlightcontroller.processing.IProcessingGraph;
 import org.moonlightcontroller.processing.ProcessingGraph;
+import org.moonlightcontroller.topology.InstanceLocationSpecifier;
 import org.openboxprotocol.protocol.HeaderField;
 import org.openboxprotocol.protocol.HeaderMatch;
 import org.openboxprotocol.protocol.IStatement;
 import org.openboxprotocol.protocol.OpenBoxHeaderMatch;
 import org.openboxprotocol.protocol.Priority;
 import org.openboxprotocol.protocol.Statement;
-import org.openboxprotocol.protocol.topology.InstanceLocationSpecifier;
 import org.openboxprotocol.types.TransportPort;
 
 import com.google.common.collect.ImmutableList;

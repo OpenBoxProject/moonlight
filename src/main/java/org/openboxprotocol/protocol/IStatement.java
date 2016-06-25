@@ -1,7 +1,7 @@
 package org.openboxprotocol.protocol;
 
 import org.moonlightcontroller.processing.IProcessingGraph;
-import org.openboxprotocol.protocol.topology.ILocationSpecifier;
+import org.moonlightcontroller.topology.ILocationSpecifier;
 
 public interface IStatement {
 

@@ -28,10 +28,10 @@ import org.moonlightcontroller.processing.IProcessingBlock;
 import org.moonlightcontroller.processing.IProcessingGraph;
 import org.moonlightcontroller.processing.JsonBlock;
 import org.moonlightcontroller.processing.JsonConnector;
+import org.moonlightcontroller.topology.ILocationSpecifier;
+import org.moonlightcontroller.topology.InstanceLocationSpecifier;
+import org.moonlightcontroller.topology.TopologyManager;
 import org.openboxprotocol.exceptions.InstanceNotAvailableException;
-import org.openboxprotocol.protocol.topology.ILocationSpecifier;
-import org.openboxprotocol.protocol.topology.InstanceLocationSpecifier;
-import org.openboxprotocol.protocol.topology.TopologyManager;
 
 public class ConnectionManager implements ISouthboundClient {
 

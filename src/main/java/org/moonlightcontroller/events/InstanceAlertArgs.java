@@ -2,7 +2,7 @@ package org.moonlightcontroller.events;
 
 import org.moonlightcontroller.managers.models.messages.Alert;
 import org.moonlightcontroller.processing.IProcessingBlock;
-import org.openboxprotocol.protocol.topology.InstanceLocationSpecifier;
+import org.moonlightcontroller.topology.InstanceLocationSpecifier;
 
 public class InstanceAlertArgs {
 

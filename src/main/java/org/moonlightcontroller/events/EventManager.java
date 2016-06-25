@@ -8,8 +8,8 @@ import java.util.logging.Logger;
 
 import org.moonlightcontroller.bal.BoxApplication;
 import org.moonlightcontroller.managers.ConnectionManager;
-import org.openboxprotocol.protocol.topology.ApplicationTopology;
-import org.openboxprotocol.protocol.topology.TopologyManager;
+import org.moonlightcontroller.topology.ApplicationTopology;
+import org.moonlightcontroller.topology.TopologyManager;
 
 public class EventManager implements IEventManager {
 

@@ -8,8 +8,7 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
 import org.moonlightcontroller.managers.models.messages.IMessage;
-
-import org.openboxprotocol.protocol.topology.InstanceLocationSpecifier;
+import org.moonlightcontroller.topology.InstanceLocationSpecifier;
 
 import com.google.common.net.InetAddresses;
 

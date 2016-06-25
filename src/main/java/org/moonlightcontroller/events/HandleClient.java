@@ -4,8 +4,8 @@ import org.moonlightcontroller.managers.ISouthboundClient;
 import org.moonlightcontroller.managers.models.IRequestSender;
 import org.moonlightcontroller.managers.models.messages.ReadRequest;
 import org.moonlightcontroller.managers.models.messages.WriteRequest;
+import org.moonlightcontroller.topology.ILocationSpecifier;
 import org.openboxprotocol.exceptions.InstanceNotAvailableException;
-import org.openboxprotocol.protocol.topology.ILocationSpecifier;
 
 public class HandleClient implements IHandleClient {
 

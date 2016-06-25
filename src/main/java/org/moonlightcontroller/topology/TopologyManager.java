@@ -1,4 +1,4 @@
-package org.openboxprotocol.protocol.topology;
+package org.moonlightcontroller.topology;
 
 import java.io.IOException;
 import java.io.InputStream;

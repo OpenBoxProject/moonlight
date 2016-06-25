@@ -10,7 +10,7 @@ import org.moonlightcontroller.events.IEventManager;
 import org.moonlightcontroller.registry.IApplicationRegistry;
 import org.moonlightcontroller.southbound.server.ISouthboundServer;
 import org.moonlightcontroller.southbound.server.SouthboundServer;
-import org.openboxprotocol.protocol.topology.ITopologyManager;
+import org.moonlightcontroller.topology.ITopologyManager;
 
 public class MoonlightController {
 
