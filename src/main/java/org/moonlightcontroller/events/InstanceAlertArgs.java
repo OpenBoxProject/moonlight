@@ -4,6 +4,9 @@ import org.moonlightcontroller.managers.models.messages.Alert;
 import org.moonlightcontroller.processing.IProcessingBlock;
 import org.moonlightcontroller.topology.InstanceLocationSpecifier;
 
+/**
+ * Arguments for the alert event
+ */
 public class InstanceAlertArgs {
 
 	private InstanceLocationSpecifier instance;

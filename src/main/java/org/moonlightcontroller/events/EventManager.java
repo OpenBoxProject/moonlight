@@ -11,6 +11,11 @@ import org.moonlightcontroller.managers.ConnectionManager;
 import org.moonlightcontroller.topology.ApplicationTopology;
 import org.moonlightcontroller.topology.TopologyManager;
 
+
+/**
+ * A class which is responsible for dispatching incoming Alerts/Events
+ * to the different applications.
+ */
 public class EventManager implements IEventManager {
 
 	private final static Logger LOG = Logger.getLogger(EventManager.class.getName()); 

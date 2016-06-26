@@ -12,6 +12,10 @@ import org.moonlightcontroller.topology.InstanceLocationSpecifier;
 
 import com.google.common.net.InetAddresses;
 
+/**
+ * Sends REST messages over a tcp connection.
+ * This class knows how to set the right path for each message.
+ */
 public class SingleInstanceConnection implements ISingleInstanceConnection {
 
 	private String target;

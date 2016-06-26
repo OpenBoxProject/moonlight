@@ -14,6 +14,11 @@ import org.moonlightcontroller.managers.ConnectionManager;
 import org.moonlightcontroller.managers.models.messages.*;
 import org.moonlightcontroller.managers.models.messages.Error;
 
+/**
+ * This class has all listeners for incoming messages from OBIs
+ * Once a message is received, it invokes the correct method in ConnectionManager.
+ *
+ */
 @Path("/message/")
 public class SouthboundApi {
 	@GET

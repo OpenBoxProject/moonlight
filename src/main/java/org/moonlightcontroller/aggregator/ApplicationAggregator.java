@@ -49,6 +49,10 @@ import org.openboxprotocol.types.TransportPort;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Maps;
 
+/**
+ * The class which is responsible for performing aggregation
+ *
+ */
 public class ApplicationAggregator implements IApplicationAggregator {
 	
 	public static final boolean AGGREGATOR_DEBUG = false;

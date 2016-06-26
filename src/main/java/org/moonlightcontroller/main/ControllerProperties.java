@@ -1,10 +1,12 @@
 package org.moonlightcontroller.main;
 
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Properties;
 
+/**
+ * configuration class for the controller
+ */
 public class ControllerProperties {
 	private static ControllerProperties instance;
 	private int keepaliveInterval;

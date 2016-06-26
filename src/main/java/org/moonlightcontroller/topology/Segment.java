@@ -5,6 +5,10 @@ import java.util.List;
 
 import org.apache.commons.lang.builder.HashCodeBuilder;
 
+/**
+ * Implementation of ILocationSpecifier for Segment location
+ *
+ */
 public class Segment implements ILocationSpecifier {
 
 	long id;

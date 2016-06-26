@@ -38,6 +38,11 @@ import org.moonlightcontroller.topology.InstanceLocationSpecifier;
 import org.moonlightcontroller.topology.TopologyManager;
 import org.openboxprotocol.exceptions.InstanceNotAvailableException;
 
+
+/**
+ * Connection Manager is the class which holds connections to all active OBIs
+ * It can send them messages and receives messages from them.
+ */
 public class ConnectionManager implements ISouthboundClient {
 
 	private final static Logger LOG = Logger.getLogger(ConnectionManager.class.getName());

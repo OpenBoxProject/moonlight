@@ -17,8 +17,17 @@ import org.moonlightcontroller.processing.ProcessingGraph;
 
 import com.google.common.collect.ImmutableList;
 
+/**
+ * A class which provides graph utilities for aggregation
+ *
+ */
 class GraphUtils {
 	
+	/**
+	 * Normalizes a processing graph
+	 * @param graph
+	 * @return normalized graph
+	 */
 	public static IProcessingGraph normalizeToTree(IProcessingGraph graph) {
 		MutableProcessingGraph mg = new MutableProcessingGraph(graph);
 		
@@ -62,6 +71,7 @@ class GraphUtils {
 	}
 	
 	/**
+	 * Recursively clones a graph
 	 * This only works assuming root has only one successor!
 	 * 
 	 * @param g

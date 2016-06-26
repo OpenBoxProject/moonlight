@@ -4,6 +4,10 @@ import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.servlet.ServletContextHandler;
 import org.eclipse.jetty.servlet.ServletHolder;
 
+/**
+ * Starts the southbound server and listens on all supported message paths
+ *
+ */
 public class SouthboundServer implements ISouthboundServer {
 
 	public static final int SERVER_PORT = 3637;

@@ -1,11 +1,11 @@
 package org.moonlightcontroller.topology;
 
-import java.net.InetAddress;
-
 import org.apache.commons.lang.builder.HashCodeBuilder;
 
-import com.google.common.net.InetAddresses;
-
+/**
+ * Implementation of ILocationSpecifier for Instance location
+ *
+ */
 public class InstanceLocationSpecifier implements ILocationSpecifier {
 
 	long id;

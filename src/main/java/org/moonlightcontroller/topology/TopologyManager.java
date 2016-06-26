@@ -12,6 +12,11 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import org.apache.commons.io.IOUtils;
 
+/**
+ * Implementation of ITopologyManager over a json file
+ * Input is given with a json file which represents the network topology
+ *
+ */
 public class TopologyManager implements ITopologyManager {
 	private final static Logger LOG = Logger.getLogger(TopologyManager.class.getName()); 
 

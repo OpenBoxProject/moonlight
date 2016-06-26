@@ -2,6 +2,9 @@ package org.moonlightcontroller.events;
 
 import org.moonlightcontroller.topology.InstanceLocationSpecifier;
 
+/**
+ * Arguments for the instance up event
+ */
 public class InstanceUpArgs {
 
 	private InstanceLocationSpecifier instance;

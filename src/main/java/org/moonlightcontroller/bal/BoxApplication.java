@@ -14,6 +14,11 @@ import org.moonlightcontroller.topology.ILocationSpecifier;
 import org.openboxprotocol.protocol.IStatement;
 import org.openboxprotocol.protocol.Priority;
 
+/**
+ * Abstract class for all OpenBox Applications to inherit.
+ * It supplies the minimal functionality for inheriting classes to create OpenBox Applications.
+ * OpenBox Applications must inherit this class in order to be able to register with the registry. 
+ */
 public abstract class BoxApplication {
 	
 	protected String name;
@@ -34,14 +39,23 @@ public abstract class BoxApplication {
 		this.statements = new HashMap<>();
 	}
 	
+	/**
+	 * @return the name of the application
+	 */
 	public String getName() {
 		return name;
 	}
 	
+	/**
+	 * @return the priority of the application
+	 */
 	public Priority getPriority() {
 		return priority;
 	}
 			
+	/**
+	 * @return the statements of the application
+	 */
 	public Collection<IStatement> getStatements() {
 		return this.statements.values();
 	}
@@ -56,14 +70,32 @@ public abstract class BoxApplication {
 		return this.statements.get(loc).getProcessingGraph();
 	}
 	
+	/**
+	 * A handler for the Application Started event. 
+	 * Whenever the application starts, the controller will call this method.
+	 * Inheriting classes can override this, to get a notification on application starting.
+	 * @param top The topology of the network
+	 * @param handles A client for accessing read/write handles
+	 */
 	public void handleAppStart(IApplicationTopology top, IHandleClient handles) {
 	}
 	
+	/**
+	 * A handler for the Application Stop event. 
+	 * Whenever the application stops, the controller will call this method.
+	 * Inheriting classes can override this, to get a notification on application stopping.
+	 */
 	public void handleAppStop(){
 	}
 	
+	/**
+	 * A handler for the Application error event. 
+	 * Whenever the application encounters an error, the controller will call this method.
+	 * Inheriting classes can override this, to get a notification on application error.
+	 */
 	public void handleError(){
 	}
+	
 	
 	public IAlertListener getAlertListener(){
 		return this.alertListener;
