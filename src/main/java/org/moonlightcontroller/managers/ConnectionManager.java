@@ -1,5 +1,6 @@
 package org.moonlightcontroller.managers;
 
+import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -12,9 +13,13 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
 import org.moonlightcontroller.aggregator.ApplicationAggregator;
+import org.moonlightcontroller.blocks.CustomBlock;
+import org.moonlightcontroller.blocks.ObiType;
 import org.moonlightcontroller.managers.models.ConnectionInstance;
 import org.moonlightcontroller.managers.models.IRequestSender;
 import org.moonlightcontroller.managers.models.NullRequestSender;
+import org.moonlightcontroller.managers.models.messages.AddCustomModuleRequest;
+import org.moonlightcontroller.managers.models.messages.AddCustomModuleResponse;
 import org.moonlightcontroller.managers.models.messages.Alert;
 import org.moonlightcontroller.managers.models.messages.Error;
 import org.moonlightcontroller.managers.models.messages.Hello;
@@ -110,6 +115,12 @@ public class ConnectionManager implements ISouthboundClient {
 			List<JsonBlock> blocks = new ArrayList<>();
 			List<JsonConnector> connectors = new ArrayList<>();
 			if (processingGraph != null){
+				List<IProcessingBlock> custom = processingGraph.getBlocks().stream()
+						.filter(b -> b instanceof CustomBlock)
+						.collect(Collectors.toList());
+				if (custom.size() > 0){
+					this.sendCustomBlocks(custom, key, message.getObiType());
+				}
 				blocks = translateBlocks(processingGraph.getBlocks());
 				connectors = translateConnectors(processingGraph.getConnectors());
 			}
@@ -123,6 +134,25 @@ public class ConnectionManager implements ISouthboundClient {
 			LOG.warning("Error occured while handling Hello message" + e.toString());
 			e.printStackTrace();
 			return internalErrorResponse();
+		}
+	}
+
+	private void sendCustomBlocks(
+			List<IProcessingBlock> custom, 
+			InstanceLocationSpecifier loc, 
+			ObiType obitype) throws InstanceNotAvailableException, IOException {
+		
+		if (obitype == null){
+			obitype = ObiType.ClickObi;
+		}
+		for (IProcessingBlock block : custom) {
+			CustomBlock customblock = (CustomBlock)block;
+			AddCustomModuleRequest req = new AddCustomModuleRequest(
+					0,
+					customblock.getModuleName(), 
+					customblock.getModuleContent(), 
+					customblock.getTranslationObject(obitype));
+			this.sendMessage(loc, req, new NullRequestSender());
 		}
 	}
 
@@ -224,6 +254,12 @@ public class ConnectionManager implements ISouthboundClient {
 
 	public Response handleAlert(Alert message) {
 		ApplicationAggregator.getInstance().handleAlert(message);
+		return okResponse();
+	}
+
+	public Response handleAddCustomModuleResponse(AddCustomModuleResponse message) {
+		IRequestSender iRequestSender = requestSendersMapping.get(message.getXid());
+		iRequestSender.onSuccess(message);
 		return okResponse();
 	}
 }
