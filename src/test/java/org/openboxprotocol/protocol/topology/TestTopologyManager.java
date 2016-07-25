@@ -1,6 +1,7 @@
 package org.openboxprotocol.protocol.topology;
 
 import org.junit.Test;
+import org.moonlightcontroller.topology.TopologyManager;
 
 public class TestTopologyManager {
 	@Test

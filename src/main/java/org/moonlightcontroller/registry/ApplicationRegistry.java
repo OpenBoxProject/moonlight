@@ -14,6 +14,10 @@ import java.util.ServiceLoader;
 
 import org.moonlightcontroller.bal.BoxApplication;
 
+/**
+ * Application registry is responsible for loading applications into the OBC
+ * It is an Implementation for the IApplicationRegistry interface.
+ */
 public class ApplicationRegistry implements IApplicationRegistry {
 
 	private Map<String, BoxApplication> apps;

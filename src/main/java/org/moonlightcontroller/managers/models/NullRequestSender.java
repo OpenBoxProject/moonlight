@@ -5,6 +5,11 @@ import java.util.logging.Logger;
 import org.moonlightcontroller.managers.models.messages.Error;
 import org.moonlightcontroller.managers.models.messages.IMessage;
 
+/**
+ * A simple implementation for the IRequestSender
+ * Used mostly for inner interactions between OBC and OBI.
+ * Client application should implement their own IRequestSender
+ */
 public class NullRequestSender implements IRequestSender {
 
 	private final static Logger LOG = Logger.getLogger(NullRequestSender.class.getName());

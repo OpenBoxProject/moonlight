@@ -14,6 +14,11 @@ import org.moonlightcontroller.managers.ConnectionManager;
 import org.moonlightcontroller.managers.models.messages.*;
 import org.moonlightcontroller.managers.models.messages.Error;
 
+/**
+ * This class has all listeners for incoming messages from OBIs
+ * Once a message is received, it invokes the correct method in ConnectionManager.
+ *
+ */
 @Path("/message/")
 public class SouthboundApi {
 	@GET
@@ -27,7 +32,6 @@ public class SouthboundApi {
 	@Path("Hello")
 	@Consumes(MediaType.APPLICATION_JSON)
 	public Response hello(@Context HttpServletRequest request, Hello message) {
-		System.out.println("POOPY: " + request.getRemoteAddr());
 		return ConnectionManager.getInstance().handleHelloRequest(request.getRemoteAddr(), message);
 	}
 
@@ -99,5 +103,12 @@ public class SouthboundApi {
 	@Consumes(MediaType.APPLICATION_JSON)
 	public Response Alert(Alert message) {
 		return ConnectionManager.getInstance().handleAlert(message);
+	}
+	
+	@POST
+	@Path("AddCustomModuleResponse")
+	@Consumes(MediaType.APPLICATION_JSON)
+	public Response AddCustomModuleResponse(AddCustomModuleResponse message) {
+		return ConnectionManager.getInstance().handleAddCustomModuleResponse(message);
 	}
 }

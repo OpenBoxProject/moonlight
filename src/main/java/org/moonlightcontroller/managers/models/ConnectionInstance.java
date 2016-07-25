@@ -9,6 +9,10 @@ import org.moonlightcontroller.main.ControllerProperties;
 import org.moonlightcontroller.managers.models.messages.IMessage;
 import org.moonlightcontroller.southbound.client.SingleInstanceConnection;
 
+/**
+ * Connection Instance is class responsible of connection with OBIs 
+ * It implements the IConnectionInstance interface which enables sending messages to OBIs
+ */
 public class ConnectionInstance implements IConnectionInstance {
 
 	private long dpid;
@@ -34,38 +38,67 @@ public class ConnectionInstance implements IConnectionInstance {
 		this.client = new SingleInstanceConnection(this.ip, 3636);
 	}
 
+	/**
+	 * Updates the last keepalive update to Now
+	 */
 	public void updateKeepAlive() {
 		this.lastKeepAlive = LocalDateTime.now();
 	}
 
+	/**
+	 * @return the last keep alive time
+	 */
 	public LocalDateTime getKeepAliveDate() {
 		return this.lastKeepAlive;
 	}
 
+	/**
+	 * @return the keep alive interval
+	 */
 	public int getKeepAliveInterval() {
 		return this.keepaliveInterval;
 	}
 
+	/**
+	 * @return the OBI dpid for this connection
+	 */
 	public long getDpid() {
 		return dpid;
 	}
 
+	/**
+	 * Sets the dpid for this connection
+	 * @param dpid
+	 */
 	public void setDpid(long dpid) {
 		this.dpid = dpid;
 	}
 
+	/**
+	 * @return the version of the connection
+	 */
 	public String getVersion() {
 		return version;
 	}
 
+	/**
+	 * @return the capabilities of the OBI for this connection
+	 */
 	public Map<String, List<String>> getCapabilities() {
 		return capabilities;
 	}
 
+	/**
+	 * @return whether a processing graph was configured for this OBI
+	 */
 	public boolean isProcessingGraphConfiged() {
 		return isProcessingGraphConfiged;
 	}
 
+	/**
+	 * Sets the processing grpaph configured flag
+	 * @param isProcessingGraphConfiged
+	 */
 	public void setProcessingGraphConfiged(boolean isProcessingGraphConfiged) {
 		this.isProcessingGraphConfiged = isProcessingGraphConfiged;
 	}

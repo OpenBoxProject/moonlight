@@ -8,9 +8,14 @@ import java.util.logging.Logger;
 
 import org.moonlightcontroller.bal.BoxApplication;
 import org.moonlightcontroller.managers.ConnectionManager;
-import org.openboxprotocol.protocol.topology.ApplicationTopology;
-import org.openboxprotocol.protocol.topology.TopologyManager;
+import org.moonlightcontroller.topology.ApplicationTopology;
+import org.moonlightcontroller.topology.TopologyManager;
 
+
+/**
+ * A class which is responsible for dispatching incoming Alerts/Events
+ * to the different applications.
+ */
 public class EventManager implements IEventManager {
 
 	private final static Logger LOG = Logger.getLogger(EventManager.class.getName()); 

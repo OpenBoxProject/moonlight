@@ -1,5 +1,9 @@
 package org.moonlightcontroller.managers;
 
+/**
+ * Implementaion for XID generator
+ *
+ */
 public class XidGenerator {
 	private static int xid = 10000;
 	private static XidGenerator instance;
