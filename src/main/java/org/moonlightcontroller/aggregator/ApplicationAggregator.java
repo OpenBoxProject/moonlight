@@ -777,7 +777,15 @@ public class ApplicationAggregator implements IApplicationAggregator {
 			}
 		}
 	}
-	
+
+	public List<BoxApplication> getApps() {
+		return apps;
+	}
+
+	public Map<ILocationSpecifier, IProcessingGraph> getAggregated() {
+		return aggregated;
+	}
+
 	private static class Origin {
 		private BoxApplication app;
 		private IProcessingBlock block;

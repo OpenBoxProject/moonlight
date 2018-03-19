@@ -26,9 +26,9 @@ public class ObiMock {
 		return this.dpid;
 	}
 	
-	public ObiMock(int dpid, String serverIp, int serverPort) {
+	public ObiMock(int dpid, String southboundServerIp, int southboundServerPort, String obiHost, int obiPort) {
 		this.dpid = dpid;
-		this.client = new SingleInstanceConnection(serverIp, serverPort);
+		this.client = new SingleInstanceConnection(southboundServerIp, southboundServerPort, obiHost, obiPort);
 		instance = this;
 	}
 	
@@ -60,7 +60,9 @@ public class ObiMock {
 	}
 
 	public static void main(String[] args) {
-		ObiMock obi = new ObiMock(22, "127.0.0.1", 3637);
+		String listeningHost = args[0];
+		int listeningPort = Integer.valueOf(args[1]);
+		ObiMock obi = new ObiMock(22, "127.0.0.1", 3637, listeningHost, listeningPort);
 		try {
 			obi.start();
 		} catch (Exception e) {

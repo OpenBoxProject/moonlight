@@ -29,7 +29,8 @@ import org.moonlightcontroller.managers.models.messages.SetProcessingGraphRespon
 public class ObiMockApi {
 
 	private final static Logger LOG = Logger.getLogger(ObiMockApi.class.getName());
-	
+	private int measure = 10;
+
 	@GET
 	@Path("Test")
 	@Produces(MediaType.TEXT_PLAIN)
@@ -81,12 +82,13 @@ public class ObiMockApi {
 	@Consumes(MediaType.APPLICATION_JSON)
 	public Response readRequest(ReadRequest message) {
 		LOG.info("Got a a read request" + message.toString());
-		ReadResponse rr = new ReadResponse(message.getXid(), message.getBlockId(), message.getReadHandle(), "100");
+		measure += (int) (Math.random() * 20);
+		ReadResponse rr = new ReadResponse(message.getXid(), message.getBlockId(), message.getReadHandle(), String.valueOf(measure));
 		new Thread(()-> this.sendMessage(rr)).start();
 		return Response.status(Status.OK).build();
 	}
 
 	private void sendMessage(IMessage msg) {
-		ObiMock.getInstance().getClient().sendMessage(msg);
+			ObiMock.getInstance().getClient().sendMessage(msg);
 	}
 }

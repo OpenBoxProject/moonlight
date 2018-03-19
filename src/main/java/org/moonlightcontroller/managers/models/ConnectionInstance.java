@@ -8,6 +8,8 @@ import java.util.Map;
 import org.moonlightcontroller.main.ControllerProperties;
 import org.moonlightcontroller.managers.models.messages.IMessage;
 import org.moonlightcontroller.southbound.client.SingleInstanceConnection;
+import org.moonlightcontroller.southbound.server.SouthboundServer;
+import org.openbox.dashboard.SouthboundProfiler;
 
 /**
  * Connection Instance is class responsible of connection with OBIs 
@@ -34,8 +36,15 @@ public class ConnectionInstance implements IConnectionInstance {
 		this.keepaliveInterval = keepaliveInterval;
 		this.capabilities = capabilities;
 		this.setProcessingGraphConfiged(false);
+		String[] ipPort = ip.split(":");
 		this.ip = ip;
-		this.client = new SingleInstanceConnection(this.ip, 3636);
+
+		int port = 3636;
+
+		if (ipPort.length == 2)
+			port = Integer.valueOf(ipPort[1]);
+
+		this.client = new SingleInstanceConnection(ipPort[0], port, SouthboundServer.SERVER_HOST,  SouthboundServer.SERVER_PORT);
 	}
 
 	/**
@@ -154,5 +163,7 @@ public class ConnectionInstance implements IConnectionInstance {
 	@Override
 	public void sendRequest(IMessage message, IRequestSender requestSender) {
 		client.sendMessage(message);
+		SouthboundProfiler.getInstance().onMessage(message, false);
+
 	}
 }

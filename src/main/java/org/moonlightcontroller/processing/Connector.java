@@ -21,7 +21,7 @@ public class Connector implements IConnector {
 	}
 
 	@Override
-	public String getDestinatinBlockId() {;
+	public String getDestinationBlockId() {;
 		return this.destinationBlock.getId();
 	}
 

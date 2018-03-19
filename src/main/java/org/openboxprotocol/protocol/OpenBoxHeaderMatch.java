@@ -81,8 +81,11 @@ public class OpenBoxHeaderMatch implements HeaderMatch {
 				// Field has a value in both matches
 				ValueType<?> v1 = this.get(f);
 				ValueType<?> v2 = other.get(f);
-				if (!v1.equals(v2)) {
-					throw new MergeException(String.format("Rules conflict on field %s (value1=%s, value2=%s)", f.toString(), v1.toString(), v2.toString()));
+				if (v2 == null ||
+                        v1 == null ||
+                        !v2.equals(v1)) {
+					throw new MergeException(String.format("Rules conflict on field %s (value1=%s, value2=%s)", f.toString(),
+							v1 != null ? v1.toString() : "", v1 != null ? v2.toString() : ""));
 				}
 			}
 		}

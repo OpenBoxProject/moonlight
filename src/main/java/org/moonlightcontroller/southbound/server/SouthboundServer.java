@@ -10,8 +10,9 @@ import org.eclipse.jetty.servlet.ServletHolder;
  */
 public class SouthboundServer implements ISouthboundServer {
 
+	public static final String SERVER_HOST = "127.0.0.1";
 	public static final int SERVER_PORT = 3637;
-	
+
 	private Server jetty;
 
 	public SouthboundServer(int port) {

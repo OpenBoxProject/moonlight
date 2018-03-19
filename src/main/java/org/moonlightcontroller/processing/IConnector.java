@@ -8,7 +8,7 @@ public interface IConnector {
 
 	// Legacy
 	String getSourceBlockId();
-	String getDestinatinBlockId();
+	String getDestinationBlockId();
 	Builder createBuilder();
 	
 	public interface Builder {

@@ -11,6 +11,7 @@ import org.moonlightcontroller.registry.IApplicationRegistry;
 import org.moonlightcontroller.southbound.server.ISouthboundServer;
 import org.moonlightcontroller.southbound.server.SouthboundServer;
 import org.moonlightcontroller.topology.ITopologyManager;
+import org.openbox.dashboard.NetworkInformationService;
 
 /**
  * The class representing the Moonlight Controller 
@@ -18,9 +19,10 @@ import org.moonlightcontroller.topology.ITopologyManager;
  */
 public class MoonlightController {
 
+	private final ITopologyManager topology;
 	private IApplicationRegistry registry;
 	private ISouthboundServer sserver;
-	
+
 	/**
 	 * Initializes a new controller with the given parameters
 	 * @param registry An already loaded application registry
@@ -31,6 +33,7 @@ public class MoonlightController {
 			IApplicationRegistry registry, 
 			ITopologyManager topology,
 			int port) {
+		this.topology = topology;
 		this.registry = registry;
 		this.sserver = new SouthboundServer(port);
 	}
@@ -48,12 +51,15 @@ public class MoonlightController {
 		aggregator.performAggregation();
 		
 		IEventManager eManager = EventManager.getInstance();
-		eManager.addApplications(apps);		
-		
+		eManager.addApplications(apps);
+
+		NetworkInformationService.getInstance().setAggregated(aggregator);
+		NetworkInformationService.getInstance().setTopology(topology);
+
 		for (BoxApplication app : apps){
 			eManager.HandleAppStart(app.getName());
 		}
-		
+
 		try {
 			this.sserver.start();
 		} catch (Exception e) {

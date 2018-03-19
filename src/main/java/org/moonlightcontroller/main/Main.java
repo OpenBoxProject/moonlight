@@ -7,6 +7,7 @@ import org.moonlightcontroller.registry.ApplicationRegistry;
 import org.moonlightcontroller.registry.IApplicationRegistry;
 import org.moonlightcontroller.topology.ITopologyManager;
 import org.moonlightcontroller.topology.TopologyManager;
+import org.openbox.dashboard.DashboardServer;
 
 public class Main {
 	public static void main(String[] args) throws IOException {
@@ -26,7 +27,14 @@ public class Main {
 		
 		ITopologyManager topology = TopologyManager.getInstance();
 		MoonlightController mc = new MoonlightController(reg, topology, server_port);
+
+		Thread t = new Thread(() -> {
+			DashboardServer.start(3631);
+		});
+		t.start();
+
 		mc.start();
+		t.interrupt();
 		return;
 	}
 }

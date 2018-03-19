@@ -1,5 +1,23 @@
 package org.moonlightcontroller.managers;
 
+import org.moonlightcontroller.aggregator.ApplicationAggregator;
+import org.moonlightcontroller.blocks.CustomBlock;
+import org.moonlightcontroller.blocks.ObiType;
+import org.moonlightcontroller.managers.models.ConnectionInstance;
+import org.moonlightcontroller.managers.models.IRequestSender;
+import org.moonlightcontroller.managers.models.NullRequestSender;
+import org.moonlightcontroller.managers.models.messages.*;
+import org.moonlightcontroller.managers.models.messages.Error;
+import org.moonlightcontroller.processing.*;
+import org.moonlightcontroller.topology.ILocationSpecifier;
+import org.moonlightcontroller.topology.InstanceLocationSpecifier;
+import org.moonlightcontroller.topology.TopologyManager;
+import org.openbox.dashboard.NetworkInformationService;
+import org.openbox.dashboard.SouthboundProfiler;
+import org.openboxprotocol.exceptions.InstanceNotAvailableException;
+
+import javax.ws.rs.core.Response;
+import javax.ws.rs.core.Response.Status;
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -8,35 +26,6 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
-
-import javax.ws.rs.core.Response;
-import javax.ws.rs.core.Response.Status;
-
-import org.moonlightcontroller.aggregator.ApplicationAggregator;
-import org.moonlightcontroller.blocks.CustomBlock;
-import org.moonlightcontroller.blocks.ObiType;
-import org.moonlightcontroller.managers.models.ConnectionInstance;
-import org.moonlightcontroller.managers.models.IRequestSender;
-import org.moonlightcontroller.managers.models.NullRequestSender;
-import org.moonlightcontroller.managers.models.messages.AddCustomModuleRequest;
-import org.moonlightcontroller.managers.models.messages.AddCustomModuleResponse;
-import org.moonlightcontroller.managers.models.messages.Alert;
-import org.moonlightcontroller.managers.models.messages.Error;
-import org.moonlightcontroller.managers.models.messages.Hello;
-import org.moonlightcontroller.managers.models.messages.IMessage;
-import org.moonlightcontroller.managers.models.messages.KeepAlive;
-import org.moonlightcontroller.managers.models.messages.ListCapabilitiesResponse;
-import org.moonlightcontroller.managers.models.messages.SetProcessingGraphRequest;
-import org.moonlightcontroller.managers.models.messages.SetProcessingGraphResponse;
-import org.moonlightcontroller.processing.IConnector;
-import org.moonlightcontroller.processing.IProcessingBlock;
-import org.moonlightcontroller.processing.IProcessingGraph;
-import org.moonlightcontroller.processing.JsonBlock;
-import org.moonlightcontroller.processing.JsonConnector;
-import org.moonlightcontroller.topology.ILocationSpecifier;
-import org.moonlightcontroller.topology.InstanceLocationSpecifier;
-import org.moonlightcontroller.topology.TopologyManager;
-import org.openboxprotocol.exceptions.InstanceNotAvailableException;
 
 
 /**
@@ -101,7 +90,7 @@ public class ConnectionManager implements ISouthboundClient {
 				.isAfter(LocalDateTime.now().minusSeconds(data.getKeepAliveInterval()));
 	}
 
-	public Response handleHelloRequest(String ip, Hello message) {
+	public Response handleHelloRequest(Hello message) {
 		int xid = message.getXid();
 		messagesMapping.put(xid, message);
 		try {
@@ -109,7 +98,7 @@ public class ConnectionManager implements ISouthboundClient {
 			InstanceLocationSpecifier key = getInstanceLocationSpecifier(dpid);
 
 			ConnectionInstance value = (new ConnectionInstance.Builder())
-					.setIp(ip)
+					.setIp(message.getSourceAddr())
 					.setDpid(dpid)
 					.setVersion(message.getVersion())
 					.setCapabilities(message.getCapabilities())
@@ -129,8 +118,12 @@ public class ConnectionManager implements ISouthboundClient {
 				blocks = translateBlocks(processingGraph.getBlocks());
 				connectors = translateConnectors(processingGraph.getConnectors());
 			}
-			
+
 			SetProcessingGraphRequest processMessage = new SetProcessingGraphRequest(0, dpid, null, blocks, connectors);
+
+			SouthboundProfiler.getInstance().addOBI(message, processMessage);
+			NetworkInformationService.getInstance().addOBI(processMessage.getDpid(), message);
+
 			sendMessage(key, processMessage, new NullRequestSender());
 			
 			return okResponse();
@@ -168,7 +161,7 @@ public class ConnectionManager implements ISouthboundClient {
 	private JsonConnector translateConnector(IConnector connector) {
 		return new JsonConnector(connector.getSourceBlockId(), 
 				connector.getSourceOutputPort(), 
-				connector.getDestinatinBlockId(),
+				connector.getDestinationBlockId(),
 				0);
 	}
 
@@ -193,6 +186,10 @@ public class ConnectionManager implements ISouthboundClient {
 			InstanceLocationSpecifier loc = getInstanceLocationSpecifier(dpid);
 			ConnectionInstance instance = instancesMapping.get(loc);
 			instance.setProcessingGraphConfiged(true);
+
+			SouthboundProfiler.getInstance().onSetProcessingResponse(dpid); // update profiler
+			NetworkInformationService.getInstance().updateOBI(dpid, true); // update profiler
+
 			return okResponse();
 		}
 

@@ -3,13 +3,20 @@ package org.moonlightcontroller.managers.models.messages;
 public class ReadRequest extends Message {
 
 	private String blockId;
-	private String readHandle;
+	private String readHandle = "stub";
 	
 	// Default constructor to support Jersy
-	public ReadRequest() {}
-	
+	public ReadRequest() {
+		super();
+	}
+
+	public ReadRequest(int xid, String block) {
+		super(xid);
+		this.blockId = block;
+	}
+
 	public ReadRequest(String block, String handle) {
-		super(0);
+		super();
 		this.blockId = block;
 		this.readHandle = handle;
 	}
