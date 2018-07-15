@@ -10,9 +10,10 @@ public class ReadRequest extends Message {
 		super();
 	}
 
-	public ReadRequest(int xid, String block) {
+	public ReadRequest(int xid, String block, String handle) {
 		super(xid);
 		this.blockId = block;
+		this.readHandle = handle;
 	}
 
 	public ReadRequest(String block, String handle) {

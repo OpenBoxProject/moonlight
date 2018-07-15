@@ -58,11 +58,11 @@ public class NetworkInformationService {
 
         List<Map> apps = new ArrayList<>();
         this.aggregated.getApps().forEach((app) -> {
-            HashMap<String, Object> prettyApp = new HashMap<String, Object>();
+            HashMap<String, Object> prettyApp = new HashMap<>();
             prettyApp.put("name", app.getName());
 
             // Statements
-            List<Map> statements = new ArrayList<Map>();
+            List<Map> statements = new ArrayList<>();
             app.getStatements().stream().forEach((s) -> {
 
                 Map<String, Object> prettyStatement = toPrettyStatement(s);
@@ -102,10 +102,6 @@ public class NetworkInformationService {
             e.printStackTrace();
         }
 
-    }
-
-    public List<Map> getNetworkInformation(IProcessingGraph graph) {
-        return null;
     }
 
     public void setTopology(ITopologyManager topology) {

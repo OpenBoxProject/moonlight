@@ -16,6 +16,7 @@ import org.openbox.dashboard.NetworkInformationService;
 import org.openbox.dashboard.SouthboundProfiler;
 import org.openboxprotocol.exceptions.InstanceNotAvailableException;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 import java.io.IOException;
@@ -90,7 +91,7 @@ public class ConnectionManager implements ISouthboundClient {
 				.isAfter(LocalDateTime.now().minusSeconds(data.getKeepAliveInterval()));
 	}
 
-	public Response handleHelloRequest(Hello message) {
+	public Response handleHelloRequest(String remoteAddress, Hello message) {
 		int xid = message.getXid();
 		messagesMapping.put(xid, message);
 		try {
@@ -98,7 +99,7 @@ public class ConnectionManager implements ISouthboundClient {
 			InstanceLocationSpecifier key = getInstanceLocationSpecifier(dpid);
 
 			ConnectionInstance value = (new ConnectionInstance.Builder())
-					.setIp(message.getSourceAddr())
+					.setIp(message.getSourceAddr() != null ? message.getSourceAddr() : remoteAddress)
 					.setDpid(dpid)
 					.setVersion(message.getVersion())
 					.setCapabilities(message.getCapabilities())
@@ -210,11 +211,16 @@ public class ConnectionManager implements ISouthboundClient {
 
 	@Override
 	public void sendMessage(ILocationSpecifier loc, IMessage message, IRequestSender requestSender) throws InstanceNotAvailableException {
+		int xid = XidGenerator.generateXid();
+		sendMessage(xid, loc, message, requestSender);
+	}
+
+	public void sendMessage(int xid, ILocationSpecifier loc, IMessage message, IRequestSender requestSender) throws InstanceNotAvailableException {
 		ConnectionInstance connectionInstance = instancesMapping.get(loc);
 		if (connectionInstance == null) {
 			throw new InstanceNotAvailableException();
 		}
-		int xid = XidGenerator.generateXid();
+
 		message.setXid(xid);
 		messagesMapping.put(xid, message);
 		connectionInstance.sendRequest(message, requestSender);

@@ -35,8 +35,8 @@ public class SouthboundApi {
 	@Path("Hello")
 	@Consumes(MediaType.APPLICATION_JSON)
 	public Response hello(@Context HttpServletRequest request, Hello message) {
-		SouthboundProfiler.getInstance().onMessage(message, direction);
-		return ConnectionManager.getInstance().handleHelloRequest(message);
+		SouthboundProfiler.getInstance().onMessage(message, direction, message.getDpid());
+		return ConnectionManager.getInstance().handleHelloRequest(request.getRemoteAddr(), message);
 	}
 
 	@POST
@@ -54,7 +54,7 @@ public class SouthboundApi {
 		SouthboundProfiler.getInstance().onMessage(message, direction);
 		return ConnectionManager.getInstance().handleResponse(message);
 	}
-	
+
 	@POST
 	@Path("Error")
 	@Consumes(MediaType.APPLICATION_JSON)

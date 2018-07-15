@@ -1,9 +1,6 @@
 package org.moonlightcontroller.obimock;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
+import java.util.*;
 import java.util.logging.Logger;
 
 import javax.ws.rs.Consumes;
@@ -16,14 +13,7 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
 import org.moonlightcontroller.blocks.ObiType;
-import org.moonlightcontroller.managers.models.messages.Alert;
-import org.moonlightcontroller.managers.models.messages.AlertMessage;
-import org.moonlightcontroller.managers.models.messages.Hello;
-import org.moonlightcontroller.managers.models.messages.IMessage;
-import org.moonlightcontroller.managers.models.messages.ReadRequest;
-import org.moonlightcontroller.managers.models.messages.ReadResponse;
-import org.moonlightcontroller.managers.models.messages.SetProcessingGraphRequest;
-import org.moonlightcontroller.managers.models.messages.SetProcessingGraphResponse;
+import org.moonlightcontroller.managers.models.messages.*;
 
 @Path("/message/")
 public class ObiMockApi {
@@ -81,9 +71,19 @@ public class ObiMockApi {
 	@Path("ReadRequest")
 	@Consumes(MediaType.APPLICATION_JSON)
 	public Response readRequest(ReadRequest message) {
-		LOG.info("Got a a read request" + message.toString());
+		LOG.info("received a read request" + message.toString());
 		measure += (int) (Math.random() * 20);
 		ReadResponse rr = new ReadResponse(message.getXid(), message.getBlockId(), message.getReadHandle(), String.valueOf(measure));
+		new Thread(()-> this.sendMessage(rr)).start();
+		return Response.status(Status.OK).build();
+	}
+
+	@POST
+	@Path("WriteRequest")
+	@Consumes(MediaType.APPLICATION_JSON)
+	public Response writeRequest(WriteRequest message) {
+		LOG.info("received a write request" + message.toString());
+		WriteResponse rr = new WriteResponse(message.getXid(), message.getBlockId(), message.getWriteHandle());
 		new Thread(()-> this.sendMessage(rr)).start();
 		return Response.status(Status.OK).build();
 	}
@@ -91,4 +91,25 @@ public class ObiMockApi {
 	private void sendMessage(IMessage msg) {
 			ObiMock.getInstance().getClient().sendMessage(msg);
 	}
+
+
+	@POST
+	@Path("GlobalStatsRequest")
+	@Consumes(MediaType.APPLICATION_JSON)
+	public Response globalStatsRequest(GlobalStatsRequest message) {
+		LOG.info("received a read request" + message.toString());
+		Map<String, List<Double>> mock = new HashMap<>();
+		List<Double> measures = new ArrayList<>();
+		measures.add(90.2);
+		measures.add(93.1);
+		mock.put("cpu", measures);
+		mock.put("memory_rss", measures);
+		mock.put("memory_vms", measures);
+		mock.put("memory_usage", measures);
+
+		GlobalStatsResponse resp = new GlobalStatsResponse(message.getXid(), mock);
+		new Thread(()-> this.sendMessage(resp)).start();
+		return Response.status(Status.OK).build();
+	}
+
 }

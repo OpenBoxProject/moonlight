@@ -8,6 +8,7 @@ import org.moonlightcontroller.registry.IApplicationRegistry;
 import org.moonlightcontroller.topology.ITopologyManager;
 import org.moonlightcontroller.topology.TopologyManager;
 import org.openbox.dashboard.DashboardServer;
+import org.openbox.dashboard.websocket.WebSocketApplication;
 
 public class Main {
 	public static void main(String[] args) throws IOException {
@@ -21,7 +22,8 @@ public class Main {
 		        System.exit(1);
 		    }
 		}
-		
+		WebSocketApplication.start();
+
 		IApplicationRegistry reg = new ApplicationRegistry();
 		reg.loadFromPath("./apps");
 		

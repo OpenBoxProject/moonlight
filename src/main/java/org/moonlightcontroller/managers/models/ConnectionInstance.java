@@ -25,7 +25,7 @@ public class ConnectionInstance implements IConnectionInstance {
 	private boolean isProcessingGraphConfiged;
 	private SingleInstanceConnection client;
 	private String ip;
-	
+
 	public ConnectionInstance (long dpid,
 			String version,
 			int keepaliveInterval,
@@ -163,7 +163,7 @@ public class ConnectionInstance implements IConnectionInstance {
 	@Override
 	public void sendRequest(IMessage message, IRequestSender requestSender) {
 		client.sendMessage(message);
-		SouthboundProfiler.getInstance().onMessage(message, false);
+		SouthboundProfiler.getInstance().onMessage(message, false, dpid);
 
 	}
 }

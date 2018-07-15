@@ -10,6 +10,13 @@ public class WriteRequest extends Message {
 	// Default constructor to support Jersy
 	public WriteRequest() {}
 
+	public WriteRequest(int xid, String block, String handle, String value) {
+		super(xid);
+		this.blockId = block;
+		this.writeHandle = handle;
+		this.value = value;
+	}
+
 	public WriteRequest(String block, String handle, String value) {
 		super(0);
 		this.blockId = block;

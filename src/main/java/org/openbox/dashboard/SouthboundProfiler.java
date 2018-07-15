@@ -1,12 +1,19 @@
 package org.openbox.dashboard;
 
+import com.google.gson.Gson;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.map.SerializationConfig;
 import org.eclipse.jetty.util.ArrayQueue;
 import org.moonlightcontroller.managers.models.messages.Hello;
 import org.moonlightcontroller.managers.models.messages.IMessage;
 import org.moonlightcontroller.managers.models.messages.SetProcessingGraphRequest;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.messaging.handler.annotation.SendTo;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
+import org.springframework.stereotype.Controller;
+import org.springframework.stereotype.Service;
 
+import javax.annotation.PostConstruct;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -16,8 +23,9 @@ import java.util.logging.Logger;
 
 import static java.util.stream.Collectors.toList;
 
+@Service
 public class SouthboundProfiler {
-    private static SouthboundProfiler ourInstance = new SouthboundProfiler();
+    private static SouthboundProfiler ourInstance;
     private List<Map<String, Object>> obis = new ArrayList<>();
     private Queue<Map<String, Object>> messages = new ArrayQueue<>();
 
@@ -27,7 +35,11 @@ public class SouthboundProfiler {
     private final static Logger LOG = Logger.getLogger(SouthboundProfiler.class.getName());
     public static final String DATE_FORMAT_NOW = "yyyy-MM-dd HH:mm:ss";
 
+    @Autowired
+    private SimpMessagingTemplate template;
+
     private SouthboundProfiler() {
+        ourInstance = this;
     }
 
     public List<Map<String, Object>> getObis() {
@@ -91,25 +103,32 @@ public class SouthboundProfiler {
     public void onSetProcessingResponse(long dpid) {
         Map<String, Object> obi = null;
         for (Map<String, Object> o: obis) {
-            if ((o.get("dpid")).equals(dpid))
+            if ((o.get("dpid")).equals(dpid)) {
                 obi = o;
-            break;
+                break;
+            }
         }
 
         ((Map<String, Object>)obi.get("properties")).put("processingGraphReceived", true);
     }
 
     public void onMessage(IMessage message, Boolean incoming) {
+        onMessage(message, incoming, null);
+    }
+
+    public void onMessage(IMessage message, Boolean incoming, Long dpid) {
 
         Map<String, Object> msg = new HashMap<>();
         msg.put("time", now());
         msg.put("direction", incoming ? "IN" : "OUT");
         msg.put("message", message);
+        msg.put("dpid", dpid!=null ? dpid : "");
         messages.add(msg);
         if (messages.size() > 25)
             messages.remove();
 
-        LOG.finer(messages.toString());
+        LOG.info(messages.toString());
+        this.template.convertAndSend("/topic/messages", new Gson().toJson(msg));
     }
 
     private static String now() {

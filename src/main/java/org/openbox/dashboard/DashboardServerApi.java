@@ -1,14 +1,13 @@
 package org.openbox.dashboard;
 
-import org.moonlightcontroller.events.HandleClient;
 import org.moonlightcontroller.managers.ConnectionManager;
-import org.moonlightcontroller.managers.models.messages.AdminReadRequest;
-import org.moonlightcontroller.managers.models.messages.ReadRequest;
-import org.moonlightcontroller.topology.InstanceLocationSpecifier;
+import org.moonlightcontroller.managers.XidGenerator;
 import org.openboxprotocol.exceptions.InstanceNotAvailableException;
+import org.springframework.messaging.handler.annotation.SendTo;
 
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Queue;
@@ -41,6 +40,13 @@ public class DashboardServerApi {
 	}
 
 	@GET
+	@Path("numApps")
+	@Produces(MediaType.APPLICATION_JSON)
+	public int getNumApps() {
+		return NetworkInformationService.getInstance().getApps().size();
+	}
+
+	@GET
 	@Path("apps.json")
 	@Produces(MediaType.APPLICATION_JSON)
 	public List<Map> getApps() {
@@ -62,14 +68,19 @@ public class DashboardServerApi {
 	}
 
 	@POST
-	@Path("message/read")
+	@Path("message")
 	@Consumes(MediaType.APPLICATION_JSON)
-	public void read(AdminReadRequest message) throws InstanceNotAvailableException {
+	@Produces(MediaType.APPLICATION_JSON)
+	public Map<String, Integer> messageRequest(DashboardMessageRequest message) throws InstanceNotAvailableException {
+		int xid = XidGenerator.generateXid();
 		ConnectionManager.getInstance().sendMessage(
+				xid,
 				message.getLocationSpecifier(),
-				message.getReadRequest(),
+				message.getRequestMessage(),
 				new DashboardRequestSender());
+		Map<String, Integer> resp = new HashMap<>();
+		resp.put("xid", xid);
+		return resp;
 	}
-
 
 }
