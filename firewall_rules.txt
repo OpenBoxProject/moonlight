@@ -1,6 +1,0 @@
-{ "rules": [
-{ "match": { "eth_type":"ipv4","ipv4_src":"10.0.0.0", "ipv4_src_mask":"255.0.0.0","ip_proto":"tcp","tcp_src":80 }, "actions": [ { "type":"alert", "message": "alert" }, { "type": "drop" } ] },
-{ "match": { "eth_type":"ipv4","ip_proto":"tcp","tcp_src":80 }, "actions": [ { "type": "drop" } ] },
-{ "match": { "eth_type":"ipv4" }, "actions": [ { "type": "output", "interface": "em2" } ] },
-{ "match": { }, "actions": [ { "type": "drop" } ] }
-] }

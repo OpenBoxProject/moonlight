@@ -76,6 +76,7 @@ curl -X POST http://localhost:<obi_port>/message/SayHello
 ### Build the image
 
 ```bash
+cp moonlight/docker/Dockerfile .
 docker build . -t moonlight-controller
 ```
 
