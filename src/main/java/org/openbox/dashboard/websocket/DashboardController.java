@@ -1,61 +1,58 @@
 package org.openbox.dashboard.websocket;
 
-import com.google.gson.Gson;
-import org.springframework.messaging.handler.annotation.MessageMapping;
-import org.springframework.messaging.handler.annotation.Payload;
-import org.springframework.messaging.handler.annotation.SendTo;
+import org.moonlightcontroller.managers.ConnectionManager;
+import org.moonlightcontroller.managers.XidGenerator;
+import org.moonlightcontroller.topology.InstanceLocationSpecifier;
+import org.openbox.dashboard.DashboardMessageRequest;
+import org.openbox.dashboard.DashboardRequestSender;
+import org.openbox.dashboard.NetworkInformationService;
+import org.openbox.dashboard.SouthboundProfiler;
+import org.openboxprotocol.exceptions.InstanceNotAvailableException;
+import org.springframework.messaging.simp.annotation.SubscribeMapping;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Controller;
+
+import java.util.List;
+import java.util.Map;
 
 @Controller
 public class DashboardController {
-    @MessageMapping("/hello")
-    @SendTo("/topic/greetings")
-    public Greeting greeting(@Payload String messageStr) throws Exception {
-        HelloMessage message = new Gson().fromJson(messageStr, HelloMessage.class);
 
-        System.out.println(message.getName());
-        Thread.sleep(1000); // simulated delay
-        return new Greeting("Hello, " + message.getName() + "!");
+    @SubscribeMapping("/topic/topology")
+    public Map<String, List> topologyInit() {
+        return NetworkInformationService.getInstance().getTopologyGraph();
     }
 
     public static void start() {
 
     }
 
-    public class Greeting {
 
-        private String content;
+    @Scheduled(fixedRate = 20000)
+    private void scheduledStatRequests() throws InstanceNotAvailableException {
 
-        public Greeting() {
+        for (InstanceLocationSpecifier locationSpecifier : ConnectionManager.getInstance().getAliveInstances()) {
+
+            DashboardMessageRequest message = new DashboardMessageRequest();
+
+            message.setLocationSpecifier(locationSpecifier);
+
+            int xid = XidGenerator.generateXid();
+            try {
+                ConnectionManager.getInstance().sendMessage(
+                        xid,
+                        locationSpecifier,
+                        message.getRequestMessage(),
+                        new DashboardRequestSender());
+            } catch (InstanceNotAvailableException ignore) {} // no instance is running on the location
+
         }
-
-        public Greeting(String content) {
-            this.content = content;
-        }
-
-        public String getContent() {
-            return content;
-        }
-
     }
 
-    public class HelloMessage {
-
-        private String name;
-
-        public HelloMessage() {
-        }
-
-        public HelloMessage(String name) {
-            this.name = name;
-        }
-
-        public String getName() {
-            return name;
-        }
-
-        public void setName(String name) {
-            this.name = name;
+    @Scheduled(fixedRate = 30000)
+    private void scheduledKeepAliveCheck() throws InstanceNotAvailableException {
+        for (InstanceLocationSpecifier locationSpecifiers : ConnectionManager.getInstance().getDeadInstances()) {
+            NetworkInformationService.getInstance().removeOBI(locationSpecifiers.getId());
         }
     }
 }

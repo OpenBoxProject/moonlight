@@ -22,7 +22,6 @@ import org.openbox.dashboard.SouthboundProfiler;
  */
 @Path("/message/")
 public class SouthboundApi {
-	private static final Boolean direction = true;
 
 	@GET
 	@Path("test")
@@ -35,7 +34,6 @@ public class SouthboundApi {
 	@Path("Hello")
 	@Consumes(MediaType.APPLICATION_JSON)
 	public Response hello(@Context HttpServletRequest request, Hello message) {
-		SouthboundProfiler.getInstance().onMessage(message, direction, message.getDpid());
 		return ConnectionManager.getInstance().handleHelloRequest(request.getRemoteAddr(), message);
 	}
 
@@ -43,7 +41,6 @@ public class SouthboundApi {
 	@Path("KeepAlive")
 	@Consumes(MediaType.APPLICATION_JSON)
 	public Response keepalive(KeepAlive message) {
-		SouthboundProfiler.getInstance().onMessage(message, direction);
 		return ConnectionManager.getInstance().handleKeepaliveRequest(message);
 	}
 	
@@ -51,7 +48,6 @@ public class SouthboundApi {
 	@Path("ReadResponse")
 	@Consumes(MediaType.APPLICATION_JSON)
 	public Response ReadResponse(ReadResponse message) {
-		SouthboundProfiler.getInstance().onMessage(message, direction);
 		return ConnectionManager.getInstance().handleResponse(message);
 	}
 
@@ -59,7 +55,6 @@ public class SouthboundApi {
 	@Path("Error")
 	@Consumes(MediaType.APPLICATION_JSON)
 	public Response Error(Error message) {
-		SouthboundProfiler.getInstance().onMessage(message, direction);
 		return ConnectionManager.getInstance().handleErrorMessage(message);
 	}
 
@@ -67,7 +62,6 @@ public class SouthboundApi {
 	@Path("ListCapabilitiesResponse")
 	@Consumes(MediaType.APPLICATION_JSON)
 	public Response ListCapabilitiesResponse(ListCapabilitiesResponse message) {
-		SouthboundProfiler.getInstance().onMessage(message, direction);
 		return ConnectionManager.getInstance().handleListCapabilitiesResponse(message);
 	}
 
@@ -75,7 +69,6 @@ public class SouthboundApi {
 	@Path("SetParametersResponse")
 	@Consumes(MediaType.APPLICATION_JSON)
 	public Response SetParametersResponse(SetParametersResponse message) {
-		SouthboundProfiler.getInstance().onMessage(message, direction);
 		return ConnectionManager.getInstance().handleResponse(message);
 	}
 
@@ -83,7 +76,6 @@ public class SouthboundApi {
 	@Path("GetParametersResponse")
 	@Consumes(MediaType.APPLICATION_JSON)
 	public Response GetParametersResponse(GetParametersResponse message) {
-		SouthboundProfiler.getInstance().onMessage(message, direction);
 		return ConnectionManager.getInstance().handleResponse(message);
 	}
 
@@ -91,7 +83,6 @@ public class SouthboundApi {
 	@Path("GlobalStatsResponse")
 	@Consumes(MediaType.APPLICATION_JSON)
 	public Response GlobalStatsResponse(GlobalStatsResponse message) {
-		SouthboundProfiler.getInstance().onMessage(message, direction);
 		return ConnectionManager.getInstance().handleResponse(message);
 	}
 
@@ -99,7 +90,6 @@ public class SouthboundApi {
 	@Path("WriteResponse")
 	@Consumes(MediaType.APPLICATION_JSON)
 	public Response WriteResponse(WriteResponse message) {
-		SouthboundProfiler.getInstance().onMessage(message, direction);
 		return ConnectionManager.getInstance().handleResponse(message);
 	}
 
@@ -107,7 +97,6 @@ public class SouthboundApi {
 	@Path("SetProcessingGraphResponse")
 	@Consumes(MediaType.APPLICATION_JSON)
 	public Response SetProcessingGraphResponse(SetProcessingGraphResponse message) {
-		SouthboundProfiler.getInstance().onMessage(message, direction);
 		return ConnectionManager.getInstance().handleSetProcessingGraphResponse(message);
 	}
 
@@ -115,7 +104,6 @@ public class SouthboundApi {
 	@Path("Alert")
 	@Consumes(MediaType.APPLICATION_JSON)
 	public Response Alert(Alert message) {
-		SouthboundProfiler.getInstance().onMessage(message, direction);
 		return ConnectionManager.getInstance().handleAlert(message);
 	}
 	
@@ -123,7 +111,6 @@ public class SouthboundApi {
 	@Path("AddCustomModuleResponse")
 	@Consumes(MediaType.APPLICATION_JSON)
 	public Response AddCustomModuleResponse(AddCustomModuleResponse message) {
-		SouthboundProfiler.getInstance().onMessage(message, direction);
 		return ConnectionManager.getInstance().handleAddCustomModuleResponse(message);
 	}
 }

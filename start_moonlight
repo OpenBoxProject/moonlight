@@ -1,0 +1,2 @@
+cd target
+java -cp classes:./libs/* org.moonlightcontroller.main.Main

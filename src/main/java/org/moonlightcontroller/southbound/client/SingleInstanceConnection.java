@@ -8,6 +8,7 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
 import org.moonlightcontroller.managers.models.messages.IMessage;
+import org.moonlightcontroller.managers.models.messages.IOutMessage;
 
 /**
  * Sends REST messages over a tcp connection.
@@ -30,7 +31,7 @@ public class SingleInstanceConnection implements ISingleInstanceConnection {
 				MediaType.APPLICATION_JSON_TYPE);
 		msg.setSourceAddr(this.sourceAddr);
 
-		Response resp = builder.post(Entity.entity(msg, MediaType.APPLICATION_JSON_TYPE));
+		Response resp = builder.post(Entity.entity((IOutMessage)msg, MediaType.APPLICATION_JSON_TYPE));
 		if(resp.getStatus() != Status.OK.getStatusCode()){
 			throw new RuntimeException("HTTP Error: "+ resp.getStatus());
 		}

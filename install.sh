@@ -46,36 +46,57 @@ if [[ "$_java" ]]; then
     fi
 fi
 
+APT=true
+command -v apt-get >/dev/null 2>&1 || APT=false
 command -v mvn >/dev/null 2>&1 || INSTALL_MVN=true
 
-if [ "$INSTALL_JAVA" = true ] ; then
-	echo [+] Installing Java 1.8...
-	apt-get install python-software-properties software-properties-common
-	add-apt-repository ppa:webupd8team/java
-	apt-get update
-	echo debconf shared/accepted-oracle-license-v1-1 select true | sudo debconf-set-selections
-	echo debconf shared/accepted-oracle-license-v1-1 seen true | sudo debconf-set-selections
-	apt-get -y install oracle-java8-installer
-	echo [+] Java installation completed.
-fi
+if [ "$APT" = true ] ; then
+    apt-get update && apt-get upgrade
+    apt-get install python-software-properties  software-properties-common -y
+    apt-get update
 
-if [ "$INSTALL_MVN" = true ] ; then
-	echo [+] Installing Apache Maven...
-	apt-cache search maven
-	apt-get install maven
-	echo [+] Maven installation completed.
+    if [ "$INSTALL_JAVA" = true ] ; then
+        echo [+] Installing Java 1.8...
+        apt-get install python-software-properties software-properties-common -y
+        echo debconf shared/accepted-oracle-license-v1-1 select true | sudo debconf-set-selections
+        echo debconf shared/accepted-oracle-license-v1-1 seen true | sudo debconf-set-selections
+        apt-get -y install oracle-java8-installer
+        apt-get install openjdk-8-jdk -y
+        echo [+] Java installation completed.
+    fi
+
+   command -v mvn >/dev/null 2>&1 || INSTALL_MVN=true
+   if [ "$INSTALL_MVN" = true ] ; then
+        echo [+] Installing Apache Maven...
+        apt-cache search maven
+        apt-get install maven -y
+        echo [+] Maven installation completed.
+    else
+        echo [+] Apache Maven is already installed.
+    fi
 else
-	echo [+] Apache Maven is already installed.
+
+    if [ "$INSTALL_JAVA" = true ] ; then
+        echo [+] Java 1.8 is required...
+        exit 1
+    fi
+
+    if [ "$INSTALL_MVN" = true ] ; then
+        echo [+] Maven is required.
+        exit 1
+    fi
 fi
 
 echo [+] Installing Moonlight...
-mvn install
+mvn package
 
 echo [+] Configuring...
 
-echo 'pushd target && java -cp MoonlightController-1.0-jar-with-dependencies.jar org.moonlightcontroller.main.Main' > start_moonlight
-chmod +x start_moonlight
+chmod +x start_moonlight start_obi_mock
 
 echo '[+] *** SUCCESS: Moonlight Controller installation script has completed ***'
-echo '[+] To run, use: ./start_moonlight'
+
+echo "Moonlight Directory: $PWD"
+echo '[+] To run, add apps to target/apps and run: ./start_moonlight'
+echo '[+] To start an obi mock, run: ./start_obi_mock <listening_host> <listening_port> <obi_host> <obi_port> <dpid>'
 echo ''

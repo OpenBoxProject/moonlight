@@ -5,7 +5,6 @@ import org.codehaus.jackson.map.SerializationConfig;
 import org.moonlightcontroller.aggregator.ApplicationAggregator;
 import org.moonlightcontroller.aggregator.IApplicationAggregator;
 import org.moonlightcontroller.managers.models.messages.Message;
-import org.moonlightcontroller.processing.IProcessingGraph;
 import org.moonlightcontroller.topology.ILocationSpecifier;
 import org.moonlightcontroller.topology.ITopologyManager;
 import org.moonlightcontroller.topology.Segment;
@@ -116,12 +115,19 @@ public class NetworkInformationService {
         topology.bfs().iterator().forEachRemaining((block) -> {
             addBlock(block);
             if (block instanceof Segment) {
-                ArrayList<ILocationSpecifier> children = new ArrayList<>();
+                List<ILocationSpecifier> children = new ArrayList<>();
                 children.addAll(((Segment)block).getDirectEndpoints());
                 children.addAll(((Segment)block).getDirectSegments());
                 children.forEach((c) -> this.addLink(block, c));
             }
         });
+
+        SouthboundProfiler.getInstance().onTopologyUpdate(this.topologyGraph);
+
+    }
+
+    public ITopologyManager getTopology() {
+        return topology;
     }
 
     private void addLink(ILocationSpecifier src, ILocationSpecifier dst) {
@@ -138,9 +144,11 @@ public class NetworkInformationService {
         node.put("label", toBlockLabel(block));
 
         if ((String.valueOf(node.get("id")).startsWith("OBI")))
-        node.put("dpid", block.getId());
+            node.put("dpid", block.getId());
 
         topologyGraph.get("nodes").add(node);
+
+        SouthboundProfiler.getInstance().onTopologyUpdate(this.topologyGraph);
 
     }
 
@@ -190,6 +198,8 @@ public class NetworkInformationService {
 
         topologyGraph.get("links").add(link);
 
+        SouthboundProfiler.getInstance().onTopologyUpdate(this.topologyGraph);
+
     }
 
     public void updateOBI(Long dpid, boolean processingGraphReceived) {
@@ -200,6 +210,8 @@ public class NetworkInformationService {
         }
 
         ((Map<String, Object>) obi.get("properties")).put("processingGraphReceived", processingGraphReceived);
+
+        SouthboundProfiler.getInstance().onTopologyUpdate(this.topologyGraph);
     }
 
     public void removeOBI(Long dpid) {
@@ -208,7 +220,9 @@ public class NetworkInformationService {
 
         String id = "OBI"+dpid;
         topologyGraph.put("links", (List<Map>) topologyGraph.get("links").stream()
-                .filter((n) -> !id.equals(((Map<String, Object>) n).get("id"))).collect(Collectors.toList()));
+                .filter((n) -> !id.equals(((Map<String, Object>) n).get("target"))).collect(Collectors.toList()));
+
+        SouthboundProfiler.getInstance().onTopologyUpdate(this.topologyGraph);
 
     }
 

@@ -105,7 +105,7 @@ public class ConnectionInstance implements IConnectionInstance {
 	}
 
 	/**
-	 * Sets the processing grpaph configured flag
+	 * Sets the processing graph configured flag
 	 * @param isProcessingGraphConfiged
 	 */
 	public void setProcessingGraphConfiged(boolean isProcessingGraphConfiged) {
@@ -163,7 +163,7 @@ public class ConnectionInstance implements IConnectionInstance {
 	@Override
 	public void sendRequest(IMessage message, IRequestSender requestSender) {
 		client.sendMessage(message);
-		SouthboundProfiler.getInstance().onMessage(message, false, dpid);
+		SouthboundProfiler.getInstance().onMessage(message, false);
 
 	}
 }

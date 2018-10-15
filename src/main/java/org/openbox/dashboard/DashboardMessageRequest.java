@@ -9,13 +9,13 @@ import org.moonlightcontroller.topology.InstanceLocationSpecifier;
 
 public class DashboardMessageRequest {
 
-	private String type;
+	private String type = GlobalStatsRequest.class.getSimpleName();
 	private String blockId;
 	private String handle;
 	private String value = null;
 	private InstanceLocationSpecifier locationSpecifier;
 
-	// Default constructor to support Jersy
+	// Default constructor to support Jersey
 	public DashboardMessageRequest() {
 	}
 
@@ -42,7 +42,11 @@ public class DashboardMessageRequest {
 		return handle;
 	}
 
-	public ILocationSpecifier getLocationSpecifier() {
+    public void setLocationSpecifier(InstanceLocationSpecifier locationSpecifier) {
+        this.locationSpecifier = locationSpecifier;
+    }
+
+    public ILocationSpecifier getLocationSpecifier() {
 		return locationSpecifier;
 	}
 

@@ -22,7 +22,6 @@ public class Main {
 		        System.exit(1);
 		    }
 		}
-		WebSocketApplication.start();
 
 		IApplicationRegistry reg = new ApplicationRegistry();
 		reg.loadFromPath("./apps");
@@ -30,8 +29,9 @@ public class Main {
 		ITopologyManager topology = TopologyManager.getInstance();
 		MoonlightController mc = new MoonlightController(reg, topology, server_port);
 
-		Thread t = new Thread(() -> {
-			DashboardServer.start(3631);
+        WebSocketApplication.start();
+        Thread t = new Thread(() -> {
+			DashboardServer.start(3635);
 		});
 		t.start();
 

@@ -5,8 +5,9 @@ public abstract class Message implements IMessage {
 	protected int xid;
 	protected String type = getClass().getSimpleName();;
 	protected String sourceAddr;
+    private long dpid;
 
-	public Message () {
+    public Message () {
 		this.xid = (int)(Math.random() * Integer.MAX_VALUE);
 	}
 	
@@ -21,6 +22,14 @@ public abstract class Message implements IMessage {
 	public void setXid(int xid) {
 		this.xid = xid;
 	}
+
+	public void setDpid(long dpid) {
+		this.dpid = dpid;
+	}
+
+    public long getDpid() {
+        return dpid;
+    }
 
 	public String getType() {
 		return type;

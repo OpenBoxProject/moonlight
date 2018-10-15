@@ -8,12 +8,9 @@ import org.moonlightcontroller.managers.models.messages.Hello;
 import org.moonlightcontroller.managers.models.messages.IMessage;
 import org.moonlightcontroller.managers.models.messages.SetProcessingGraphRequest;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
-import org.springframework.stereotype.Controller;
 import org.springframework.stereotype.Service;
 
-import javax.annotation.PostConstruct;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -27,10 +24,10 @@ import static java.util.stream.Collectors.toList;
 public class SouthboundProfiler {
     private static SouthboundProfiler ourInstance;
     private List<Map<String, Object>> obis = new ArrayList<>();
-    private Queue<Map<String, Object>> messages = new ArrayQueue<>();
+    private Queue<Map<String, Object>> messages = new ArrayQueue<>(100);
 
     public static SouthboundProfiler getInstance() {
-        return ourInstance;
+        return ourInstance; // singleton instance is initialized by spring
     }
     private final static Logger LOG = Logger.getLogger(SouthboundProfiler.class.getName());
     public static final String DATE_FORMAT_NOW = "yyyy-MM-dd HH:mm:ss";
@@ -90,6 +87,7 @@ public class SouthboundProfiler {
         obi.put("processingGraph", graph);
 
         this.obis.add(obi);
+        NetworkInformationService.getInstance().addOBI(setProcessingGraphRequest.getDpid(), message);
         try {
             FileWriter fileWriter = new FileWriter("./obis.json");
             PrintWriter printWriter = new PrintWriter(fileWriter);
@@ -110,25 +108,28 @@ public class SouthboundProfiler {
         }
 
         ((Map<String, Object>)obi.get("properties")).put("processingGraphReceived", true);
+        NetworkInformationService.getInstance().updateOBI(dpid, true);
+
     }
 
     public void onMessage(IMessage message, Boolean incoming) {
-        onMessage(message, incoming, null);
-    }
-
-    public void onMessage(IMessage message, Boolean incoming, Long dpid) {
 
         Map<String, Object> msg = new HashMap<>();
         msg.put("time", now());
         msg.put("direction", incoming ? "IN" : "OUT");
         msg.put("message", message);
-        msg.put("dpid", dpid!=null ? dpid : "");
-        messages.add(msg);
-        if (messages.size() > 25)
+        msg.put("dpid", message.getDpid());
+        if (messages.size() == 100)
             messages.remove();
 
-        LOG.info(messages.toString());
+        messages.add(msg);
+
+//        LOG.info(messages.toString());
         this.template.convertAndSend("/topic/messages", new Gson().toJson(msg));
+    }
+
+    public void onTopologyUpdate(Map<String, List> topologyManager) {
+        this.template.convertAndSend("/topic/topology", new Gson().toJson(topologyManager));
     }
 
     private static String now() {

@@ -67,28 +67,44 @@ public class ConnectionManager implements ISouthboundClient {
 	}
 
 	private Response handleKeepaliveRequest(InstanceLocationSpecifier instanceLocationSpecifier, int xid) {
-		ConnectionInstance data = instancesMapping.get(instanceLocationSpecifier);
-		if (data != null) {
-			data.updateKeepAlive();
+		ConnectionInstance connectionInstance = instancesMapping.get(instanceLocationSpecifier);
+		if (connectionInstance != null) {
+			connectionInstance.updateKeepAlive();
 			return okResponse();
 		}
 
 		return internalErrorResponse();
 	}
 
+    public List<InstanceLocationSpecifier> getAliveInstances() {
+        return getAliveInstances(TopologyManager.getInstance().getSegment());
+    }
+
 	public List<InstanceLocationSpecifier> getAliveInstances(ILocationSpecifier loc) {
 		return TopologyManager.getInstance().getSubInstances(loc).stream()
 				.filter(item -> isAlive(item)).collect(Collectors.toList());
 	}
 
-	public List<InstanceLocationSpecifier> getAliveInstances() {
-		return getAliveInstances(TopologyManager.getInstance().getSegment());
-	}
+    public List<InstanceLocationSpecifier> getDeadInstances() {
 
-	private boolean isAlive(InstanceLocationSpecifier item) {
-		ConnectionInstance data = instancesMapping.get(item);
-		return data.getKeepAliveDate()
-				.isAfter(LocalDateTime.now().minusSeconds(data.getKeepAliveInterval()));
+        List<InstanceLocationSpecifier> deadInstances = instancesMapping.keySet().stream()
+                .filter(item -> !isAlive(item))
+                .collect(Collectors.toList());
+
+        deadInstances.forEach(instancesMapping::remove);
+
+        return deadInstances;
+    }
+
+    private boolean isAlive(InstanceLocationSpecifier item) {
+		ConnectionInstance connectionInstance = instancesMapping.get(item);
+		if (connectionInstance == null)
+		    return false;
+		else if (connectionInstance.getKeepAliveDate() == null)
+		    return true;
+
+		return connectionInstance.getKeepAliveDate()
+				.isAfter(LocalDateTime.now().minusSeconds(connectionInstance.getKeepAliveInterval()*3));
 	}
 
 	public Response handleHelloRequest(String remoteAddress, Hello message) {
@@ -123,10 +139,9 @@ public class ConnectionManager implements ISouthboundClient {
 			SetProcessingGraphRequest processMessage = new SetProcessingGraphRequest(0, dpid, null, blocks, connectors);
 
 			SouthboundProfiler.getInstance().addOBI(message, processMessage);
-			NetworkInformationService.getInstance().addOBI(processMessage.getDpid(), message);
 
 			sendMessage(key, processMessage, new NullRequestSender());
-			
+
 			return okResponse();
 
 		} catch (Exception e) {
@@ -189,7 +204,6 @@ public class ConnectionManager implements ISouthboundClient {
 			instance.setProcessingGraphConfiged(true);
 
 			SouthboundProfiler.getInstance().onSetProcessingResponse(dpid); // update profiler
-			NetworkInformationService.getInstance().updateOBI(dpid, true); // update profiler
 
 			return okResponse();
 		}
@@ -222,6 +236,7 @@ public class ConnectionManager implements ISouthboundClient {
 		}
 
 		message.setXid(xid);
+		message.setDpid(connectionInstance.getDpid());
 		messagesMapping.put(xid, message);
 		connectionInstance.sendRequest(message, requestSender);
 		requestSendersMapping.put(xid, requestSender);
@@ -229,13 +244,17 @@ public class ConnectionManager implements ISouthboundClient {
 	}
 
 	public Response handleResponse(IMessage message) {
-		IRequestSender iRequestSender = requestSendersMapping.get(message.getXid());
-		iRequestSender.onSuccess(message);
+        profile(message);
+
+        IRequestSender iRequestSender = requestSendersMapping.get(message.getXid());
+        iRequestSender.onSuccess(message);
 		return okResponse();
 	}
 
 	public Response handleErrorMessage(Error message) {
-		IRequestSender iRequestSender = requestSendersMapping.get(message.getXid());
+        profile(message);
+
+        IRequestSender iRequestSender = requestSendersMapping.get(message.getXid());
 		if (iRequestSender != null){
 			iRequestSender.onFailure(message);			
 		}
@@ -261,13 +280,25 @@ public class ConnectionManager implements ISouthboundClient {
 
 
 	public Response handleAlert(Alert message) {
-		ApplicationAggregator.getInstance().handleAlert(message);
+        profile(message);
+
+        ApplicationAggregator.getInstance().handleAlert(message);
 		return okResponse();
 	}
 
 	public Response handleAddCustomModuleResponse(AddCustomModuleResponse message) {
-		IRequestSender iRequestSender = requestSendersMapping.get(message.getXid());
+        profile(message);
+
+        IRequestSender iRequestSender = requestSendersMapping.get(message.getXid());
 		iRequestSender.onSuccess(message);
 		return okResponse();
 	}
+
+	private void profile(IMessage incomingMessage) {
+        IMessage outMessage = messagesMapping.get(incomingMessage.getXid());
+        if (outMessage != null)
+            incomingMessage.setDpid(outMessage.getDpid());
+
+        SouthboundProfiler.getInstance().onMessage(incomingMessage, true);
+    }
 }
