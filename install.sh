@@ -88,7 +88,7 @@ else
 fi
 
 echo [+] Installing Moonlight...
-mvn package
+mvn install
 
 echo [+] Configuring...
 
