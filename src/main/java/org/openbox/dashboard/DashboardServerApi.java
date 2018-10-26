@@ -61,10 +61,24 @@ public class DashboardServerApi {
 	}
 
 	@GET
-	@Path("network/log.json")
+	@Path("activity.json")
 	@Produces(MediaType.APPLICATION_JSON)
-	public Queue<Map<String, Object>> getNetworkLog() {
+	public Queue<Map<String, Object>> getNetworkActivity() {
 		return SouthboundProfiler.getInstance().getMessages();
+	}
+
+	@GET
+	@Path("performance.json")
+	@Produces(MediaType.APPLICATION_JSON)
+	public Queue<Map<String, Object>> getPerformance() {
+		return SouthboundProfiler.getInstance().getPerformanceStats();
+	}
+
+	@GET
+	@Path("alerts.json")
+	@Produces(MediaType.APPLICATION_JSON)
+	public Queue<Map<String, Object>> getAlerts() {
+		return SouthboundProfiler.getInstance().getAlerts();
 	}
 
 	@POST

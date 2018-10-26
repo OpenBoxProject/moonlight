@@ -14,19 +14,14 @@ import org.springframework.stereotype.Controller;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Queue;
 
 @Controller
 public class DashboardController {
 
-    @SubscribeMapping("/topic/topology")
-    public Map<String, List> topologyInit() {
-        return NetworkInformationService.getInstance().getTopologyGraph();
-    }
-
     public static void start() {
 
     }
-
 
     @Scheduled(fixedRate = 20000)
     private void scheduledStatRequests() throws InstanceNotAvailableException {

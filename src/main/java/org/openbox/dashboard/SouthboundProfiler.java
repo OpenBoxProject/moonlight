@@ -1,12 +1,11 @@
 package org.openbox.dashboard;
 
 import com.google.gson.Gson;
+import org.apache.commons.collections4.queue.CircularFifoQueue;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.map.SerializationConfig;
 import org.eclipse.jetty.util.ArrayQueue;
-import org.moonlightcontroller.managers.models.messages.Hello;
-import org.moonlightcontroller.managers.models.messages.IMessage;
-import org.moonlightcontroller.managers.models.messages.SetProcessingGraphRequest;
+import org.moonlightcontroller.managers.models.messages.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
@@ -24,12 +23,14 @@ import static java.util.stream.Collectors.toList;
 public class SouthboundProfiler {
     private static SouthboundProfiler ourInstance;
     private List<Map<String, Object>> obis = new ArrayList<>();
-    private Queue<Map<String, Object>> messages = new ArrayQueue<>(100);
+    private Queue<Map<String, Object>> messages = new CircularFifoQueue<>(200);
+    private Queue<Map<String, Object>> alerts = new CircularFifoQueue<>(100);
+    private Queue<Map<String, Object>> performanceStats = new CircularFifoQueue<>(100);
 
     public static SouthboundProfiler getInstance() {
         return ourInstance; // singleton instance is initialized by spring
     }
-    private final static Logger LOG = Logger.getLogger(SouthboundProfiler.class.getName());
+    private final static Logger log = Logger.getLogger(SouthboundProfiler.class.getName());
     public static final String DATE_FORMAT_NOW = "yyyy-MM-dd HH:mm:ss";
 
     @Autowired
@@ -114,18 +115,27 @@ public class SouthboundProfiler {
 
     public void onMessage(IMessage message, Boolean incoming) {
 
+        if (GlobalStatsRequest.class.getSimpleName().equals(message.getType())) // not profiling stats requests
+            return;
+
         Map<String, Object> msg = new HashMap<>();
         msg.put("time", now());
         msg.put("direction", incoming ? "IN" : "OUT");
         msg.put("message", message);
         msg.put("dpid", message.getDpid());
-        if (messages.size() == 100)
-            messages.remove();
 
-        messages.add(msg);
 
-//        LOG.info(messages.toString());
-        this.template.convertAndSend("/topic/messages", new Gson().toJson(msg));
+        if (GlobalStatsResponse.class.getSimpleName().equals(message.getType())) {
+            performanceStats.add(msg);
+            this.template.convertAndSend("/topic/performance", new Gson().toJson(msg));
+        } else if (Alert.class.getSimpleName().equals(message.getType())) {
+            alerts.add(msg);
+            this.template.convertAndSend("/topic/alerts", new Gson().toJson(msg));
+        } else {
+            messages.add(msg);
+            this.template.convertAndSend("/topic/messages", new Gson().toJson(msg));
+        }
+
     }
 
     public void onTopologyUpdate(Map<String, List> topologyManager) {
@@ -148,5 +158,13 @@ public class SouthboundProfiler {
 
     public Queue<Map<String, Object>> getMessages() {
         return messages;
+    }
+
+    public Queue<Map<String, Object>> getAlerts() {
+        return alerts;
+    }
+
+    public Queue<Map<String, Object>> getPerformanceStats() {
+        return performanceStats;
     }
 }
