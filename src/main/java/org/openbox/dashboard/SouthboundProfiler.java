@@ -91,7 +91,7 @@ public class SouthboundProfiler {
         try {
             FileWriter fileWriter = new FileWriter("./obis.json");
             PrintWriter printWriter = new PrintWriter(fileWriter);
-            printWriter.print(mapper.writeValueAsString(obis.get(0)));
+            printWriter.print(mapper.writeValueAsString(obis));
             printWriter.close();
         } catch (IOException e) {
             e.printStackTrace();

@@ -99,4 +99,25 @@ public class TopologyManager implements ITopologyManager {
 		}
 		return bfs;
 	}
+
+    @Override
+    public Segment getSegmentByEndpoint(long dpid) {
+        return getSegmentByEndpoint(this.segment, dpid);
+    }
+
+    private Segment getSegmentByEndpoint(Segment segment, long dpid) {
+
+        for (ILocationSpecifier ep : segment.getDirectEndpoints())
+            if (ep.isMatch(dpid))
+                return segment;
+
+        for (ILocationSpecifier directSegment : segment.getDirectSegments()) {
+            Segment endpointParentSegment = this.getSegmentByEndpoint((Segment) directSegment, dpid);
+            if (endpointParentSegment != null)
+                return endpointParentSegment;
+        }
+
+        return null;
+
+    }
 }

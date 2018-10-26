@@ -7,6 +7,7 @@ import org.moonlightcontroller.aggregator.IApplicationAggregator;
 import org.moonlightcontroller.managers.models.messages.Message;
 import org.moonlightcontroller.topology.ILocationSpecifier;
 import org.moonlightcontroller.topology.ITopologyManager;
+import org.moonlightcontroller.topology.InstanceLocationSpecifier;
 import org.moonlightcontroller.topology.Segment;
 
 import java.io.FileWriter;
@@ -112,14 +113,9 @@ public class NetworkInformationService {
         topologyGraph.put("links", links);
 
         this.topology = topology;
-        topology.bfs().iterator().forEachRemaining((block) -> {
-            addBlock(block);
-            if (block instanceof Segment) {
-                List<ILocationSpecifier> children = new ArrayList<>();
-                children.addAll(((Segment)block).getDirectEndpoints());
-                children.addAll(((Segment)block).getDirectSegments());
-                children.forEach((c) -> this.addLink(block, c));
-            }
+        topology.bfs().stream().filter((b) -> b instanceof Segment).iterator().forEachRemaining((segment) -> {
+            addSegment(segment);
+            ((Segment)segment).getDirectSegments().forEach((c) -> this.addLink(segment, c));
         });
 
         SouthboundProfiler.getInstance().onTopologyUpdate(this.topologyGraph);
@@ -138,13 +134,10 @@ public class NetworkInformationService {
         topologyGraph.get("links").add(link);
     }
 
-    private void addBlock(ILocationSpecifier block) {
+    private void addSegment(ILocationSpecifier block) {
         HashMap<String, Object> node = new HashMap<>();
         node.put("id", toBlockId(block));
         node.put("label", toBlockLabel(block));
-
-        if ((String.valueOf(node.get("id")).startsWith("OBI")))
-            node.put("dpid", block.getId());
 
         topologyGraph.get("nodes").add(node);
 
@@ -156,14 +149,14 @@ public class NetworkInformationService {
         if (!block.isSingleLocation())
             return "S" + block.getId();
         else
-            return "E" + block.getId();
+            return "OBI" + block.getId();
     }
 
     private String toBlockLabel(ILocationSpecifier block) {
         if (!block.isSingleLocation())
             return "Segment " + block.getId();
         else
-            return "Endpoint " + block.getId();
+            return "OBI " + block.getId();
     }
 
     public Map<String, List> getTopologyGraph() {
@@ -177,10 +170,11 @@ public class NetworkInformationService {
         String address = message.getSourceAddr();
 
         // add obi node
+        InstanceLocationSpecifier obiLocationSpecifier = new InstanceLocationSpecifier(dpid);
+        String obiId = toBlockId(obiLocationSpecifier);
+
         Map<String, Object> newObi = new HashMap<>();
         Map<String, Object> properties = new HashMap<>();
-
-        String obiId = "OBI" + dpid;
 
         newObi.put("id", obiId);
         newObi.put("label", "OBI " + dpid);
@@ -191,13 +185,8 @@ public class NetworkInformationService {
 
         topologyGraph.get("nodes").add(newObi);
 
-        // add endpoint->obi link
-        HashMap<String, Object> link = new HashMap<>();
-        link.put("source", "E"+dpid);
-        link.put("target", obiId);
-
-        topologyGraph.get("links").add(link);
-
+        // add segment -> obi link
+        addLink(topology.getSegmentByEndpoint(dpid), obiLocationSpecifier);
         SouthboundProfiler.getInstance().onTopologyUpdate(this.topologyGraph);
 
     }
