@@ -31,7 +31,7 @@ public class ApplicationRegistry implements IApplicationRegistry {
 	}
 
     @Override
-    public boolean loadFromPath(String path) throws IOException{
+    public boolean loadFromPath(String path) throws IOException {
         File loc = new File(path);
 
         if (!loc.exists()) {
@@ -43,11 +43,7 @@ public class ApplicationRegistry implements IApplicationRegistry {
             return false;
         }
 
-        File[] flist = loc.listFiles(new FileFilter() {
-            public boolean accept(File file) {
-                return file.getPath().toLowerCase().endsWith(".jar");
-            }
-        });
+        File[] flist = loc.listFiles(file -> file.getPath().toLowerCase().endsWith(".jar"));
 
 
         URL[] urls = new URL[flist.length];

@@ -20,21 +20,17 @@ import org.openbox.dashboard.NetworkInformationService;
 public class MoonlightController {
 
 	private final ITopologyManager topology;
-	private IApplicationRegistry registry;
 	private ISouthboundServer sserver;
 
 	/**
 	 * Initializes a new controller with the given parameters
-	 * @param registry An already loaded application registry
 	 * @param topology The network topology
 	 * @param port The port on which the controller should be listening
 	 */
 	public MoonlightController(
-			IApplicationRegistry registry, 
 			ITopologyManager topology,
 			int port) {
 		this.topology = topology;
-		this.registry = registry;
 		this.sserver = new SouthboundServer(port);
 	}
 	
@@ -42,23 +38,12 @@ public class MoonlightController {
 	 * Starts the controller
 	 * Iterates over all loaded OpenBox applications and sends them for aggregation
 	 * Also, registers them for event handling
+     * @param registry An already loaded application registry
 	 */
-	public void start(){
-		List<BoxApplication> apps = this.registry.getApplications();
-		
-		IApplicationAggregator aggregator = ApplicationAggregator.getInstance();
-		aggregator.addApplications(apps);
-		aggregator.performAggregation();
-		
-		IEventManager eManager = EventManager.getInstance();
-		eManager.addApplications(apps);
+	public void start(IApplicationRegistry applicationRegistry){
+        NetworkInformationService.getInstance().setTopology(topology);
 
-		NetworkInformationService.getInstance().setAggregated(aggregator);
-		NetworkInformationService.getInstance().setTopology(topology);
-
-		for (BoxApplication app : apps){
-			eManager.HandleAppStart(app.getName());
-		}
+		updateApps(applicationRegistry);
 
 		try {
 			this.sserver.start();
@@ -66,4 +51,25 @@ public class MoonlightController {
 			e.printStackTrace();
 		}
 	}
+
+    /**
+     * Updates the applications from the registry and performs aggregation
+     * @param registry An already loaded application registry
+     */
+    public void updateApps(IApplicationRegistry applicationRegistry) {
+        List<BoxApplication> apps = applicationRegistry.getApplications();
+
+        IApplicationAggregator aggregator = ApplicationAggregator.getInstance();
+        aggregator.performAggregation(apps);
+
+        IEventManager eManager = EventManager.getInstance();
+        eManager.addApplications(apps);
+
+        NetworkInformationService.getInstance().setAggregated(aggregator);
+
+        for (BoxApplication app : apps) {
+            eManager.HandleAppStart(app.getName());
+        }
+	}
+
 }

@@ -12,23 +12,12 @@ import org.moonlightcontroller.topology.ILocationSpecifier;
  *
  */
 public interface IApplicationAggregator {
-	/**
-	 * Adds a list of applications for aggregation
-	 * @param apps
-	 */
-	void addApplications(List<BoxApplication> apps);
-	
-	/**
-	 * Adds a single application for aggregation
-	 * @param apps
-	 */
-	void addApplication(BoxApplication apps);
-	
+
 	/**
 	 * Performs aggregation for all added applications
 	 */
-	void performAggregation();
-	
+	void performAggregation(List<BoxApplication> apps);
+
 	/**
 	 * after performAggregation is called this method returns a processing graph for each given location
 	 * @param loc

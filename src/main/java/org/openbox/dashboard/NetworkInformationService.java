@@ -4,6 +4,7 @@ import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.map.SerializationConfig;
 import org.moonlightcontroller.aggregator.ApplicationAggregator;
 import org.moonlightcontroller.aggregator.IApplicationAggregator;
+import org.moonlightcontroller.managers.models.ConnectionInstance;
 import org.moonlightcontroller.managers.models.messages.Message;
 import org.moonlightcontroller.topology.ILocationSpecifier;
 import org.moonlightcontroller.topology.ITopologyManager;
@@ -106,13 +107,14 @@ public class NetworkInformationService {
 
     public void setTopology(ITopologyManager topology) {
 
+        this.topology = topology;
+
         topologyGraph = new HashMap<>();
         ArrayList<Object> nodes = new ArrayList<>();
         ArrayList<Object> links = new ArrayList<>();
         topologyGraph.put("nodes", nodes);
         topologyGraph.put("links", links);
 
-        this.topology = topology;
         topology.bfs().stream().filter((b) -> b instanceof Segment).iterator().forEachRemaining((segment) -> {
             addSegment(segment);
             ((Segment)segment).getDirectSegments().forEach((c) -> this.addLink(segment, c));
@@ -163,15 +165,14 @@ public class NetworkInformationService {
         return topologyGraph;
     }
 
-    public void addOBI(long dpid, Message message) {
+    public void addOBI(ConnectionInstance connectionInstance) {
 
+        long dpid = connectionInstance.getDpid();
         removeOBI(dpid);
 
-        String address = message.getSourceAddr();
 
         // add obi node
-        InstanceLocationSpecifier obiLocationSpecifier = new InstanceLocationSpecifier(dpid);
-        String obiId = toBlockId(obiLocationSpecifier);
+        String obiId = toBlockId(new InstanceLocationSpecifier(dpid));
 
         Map<String, Object> newObi = new HashMap<>();
         Map<String, Object> properties = new HashMap<>();
@@ -179,16 +180,20 @@ public class NetworkInformationService {
         newObi.put("id", obiId);
         newObi.put("label", "OBI " + dpid);
         newObi.put("dpid", dpid);
-        properties.put("address", address);
         properties.put("processingGraphReceived", false);
         newObi.put("properties", properties);
 
+        addOBIToTopologyGraph(dpid, newObi);
+
+    }
+
+    private void addOBIToTopologyGraph(long dpid, Map<String, Object> newObi) {
         topologyGraph.get("nodes").add(newObi);
 
         // add segment -> obi link
+        InstanceLocationSpecifier obiLocationSpecifier = new InstanceLocationSpecifier(dpid);
         addLink(topology.getSegmentByEndpoint(dpid), obiLocationSpecifier);
         SouthboundProfiler.getInstance().onTopologyUpdate(this.topologyGraph);
-
     }
 
     public void updateOBI(Long dpid, boolean processingGraphReceived) {

@@ -5,6 +5,7 @@ import org.apache.commons.collections4.queue.CircularFifoQueue;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.map.SerializationConfig;
 import org.eclipse.jetty.util.ArrayQueue;
+import org.moonlightcontroller.managers.models.ConnectionInstance;
 import org.moonlightcontroller.managers.models.messages.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
@@ -44,7 +45,7 @@ public class SouthboundProfiler {
         return obis;
     }
 
-    public void addOBI(Hello message, SetProcessingGraphRequest setProcessingGraphRequest) {
+    public void addOBI(ConnectionInstance connectionInstance, SetProcessingGraphRequest setProcessingGraphRequest) {
 
         ObjectMapper mapper = new ObjectMapper();
         mapper.configure(SerializationConfig.Feature.FAIL_ON_EMPTY_BEANS, false);
@@ -57,11 +58,10 @@ public class SouthboundProfiler {
         obis = obis.stream().filter((o) -> (Long) o.get("dpid") != setProcessingGraphRequest.getDpid()).collect(toList());
 
         properties.put("dpid", setProcessingGraphRequest.getDpid());
-        properties.put("address", message.getSourceAddr());
         properties.put("modules", setProcessingGraphRequest.getModules());
-        properties.put("capabilities", message.getCapabilities());
-        properties.put("type", message.getObiType());
-        properties.put("version", message.getVersion());
+        properties.put("capabilities", connectionInstance.getCapabilities());
+        properties.put("type", connectionInstance.getObiType());
+        properties.put("version", connectionInstance.getVersion());
         properties.put("processingGraphReceived", false);
 
         graph.put("blocks", setProcessingGraphRequest.getBlocks().stream().map((b) -> {
@@ -88,7 +88,7 @@ public class SouthboundProfiler {
         obi.put("processingGraph", graph);
 
         this.obis.add(obi);
-        NetworkInformationService.getInstance().addOBI(setProcessingGraphRequest.getDpid(), message);
+        NetworkInformationService.getInstance().addOBI(connectionInstance);
         try {
             FileWriter fileWriter = new FileWriter("./obis.json");
             PrintWriter printWriter = new PrintWriter(fileWriter);

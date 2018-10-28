@@ -1,14 +1,6 @@
 package org.moonlightcontroller.aggregator;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.Map.Entry;
-import java.util.Queue;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.moonlightcontroller.aggregator.Tupple.Pair;
@@ -688,40 +680,33 @@ public class ApplicationAggregator implements IApplicationAggregator {
 		}
 		return _instance;
 	}
-	
-	@Override
-	public void addApplications(List<BoxApplication> apps) {
-		this.apps.addAll(apps);
-	}
 
-	@Override
-	public void addApplication(BoxApplication app) {
-		this.apps.add(app);
-	}
-	
-	@Override
-	public void performAggregation() {
+    @Override
+	public synchronized void performAggregation(List<BoxApplication> apps) {
 		synchronized (this) {
 			// TODO: The following should be done for each OBI location specifier
-			ITopologyManager topology = TopologyManager.getInstance(); 
-			for (BoxApplication app : this.apps) {
+
+            Map<ILocationSpecifier, IProcessingGraph> aggregated = new HashMap<>();
+            Map<ILocationSpecifier, Map<String, Origin>> origins = new HashMap<>();
+            ITopologyManager topology = TopologyManager.getInstance();
+			for (BoxApplication app : apps) {
 				
 				Map<InstanceLocationSpecifier, IProcessingGraph> flattened = flattenStatements(app);
 				
 				// Remembers the source app of each alert block
 				// (TODO: When we support merged alerts, we should change here)
 				for (Entry<InstanceLocationSpecifier, IProcessingGraph> entry : flattened.entrySet()) {
-					Map<String, Origin> origins = new HashMap<>();
+					Map<String, Origin> entryOrigins = new HashMap<>();
 					entry.getValue().getBlocks()
 							.stream()
 							.filter(b -> b.getBlockType().equals("Alert"))
-							.forEach(b -> origins.put(b.getId(), new Origin(app, b, b.getId())));
-					this.origins.put(entry.getKey(), origins);
+							.forEach(b -> entryOrigins.put(b.getId(), new Origin(app, b, b.getId())));
+					origins.put(entry.getKey(), entryOrigins);
 				}
 				
 				for (InstanceLocationSpecifier loc : topology.getAllEndpoints()) {
 					IProcessingGraph merged = flattened.get(loc);
-					IProcessingGraph prev = this.aggregated.get(loc);
+					IProcessingGraph prev = aggregated.get(loc);
 					if (merged == null){
 						continue;
 					}
@@ -729,9 +714,14 @@ public class ApplicationAggregator implements IApplicationAggregator {
 						merged = merge(prev, merged);
 					}
 					
-					this.aggregated.put(loc, merged);
+					aggregated.put(loc, merged);
 				}
 			}
+
+			// success
+			this.apps = apps;
+			this.aggregated = aggregated;
+			this.origins = origins;
 		}
 	}
 

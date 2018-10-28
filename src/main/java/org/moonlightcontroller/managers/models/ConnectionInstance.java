@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.moonlightcontroller.blocks.ObiType;
 import org.moonlightcontroller.main.ControllerProperties;
 import org.moonlightcontroller.managers.models.messages.IMessage;
 import org.moonlightcontroller.southbound.client.SingleInstanceConnection;
@@ -17,25 +18,27 @@ import org.openbox.dashboard.SouthboundProfiler;
  */
 public class ConnectionInstance implements IConnectionInstance {
 
-	private long dpid;
+    private long dpid;
 	private LocalDateTime lastKeepAlive;
 	private String version;
 	private int keepaliveInterval;
 	private Map<String, List<String>> capabilities;
-	private boolean isProcessingGraphConfiged;
+	private boolean isProcessingGraphReceived;
 	private SingleInstanceConnection client;
+    private final ObiType obiType;
 	private String ip;
 
-	public ConnectionInstance (long dpid,
-			String version,
-			int keepaliveInterval,
-			Map<String, List<String>> capabilities,
-			String ip) {
+	public ConnectionInstance(long dpid,
+                              String version,
+                              int keepaliveInterval,
+                              Map<String, List<String>> capabilities,
+                              String ip, ObiType obiType) {
 		this.setDpid(dpid);
 		this.version = version;
 		this.keepaliveInterval = keepaliveInterval;
 		this.capabilities = capabilities;
-		this.setProcessingGraphConfiged(false);
+		this.obiType = obiType;
+		this.setProcessingGraphReceived(false);
 		String[] ipPort = ip.split(":");
 		this.ip = ip;
 
@@ -97,19 +100,23 @@ public class ConnectionInstance implements IConnectionInstance {
 		return capabilities;
 	}
 
+    public ObiType getObiType() {
+        return obiType;
+    }
+
 	/**
 	 * @return whether a processing graph was configured for this OBI
 	 */
-	public boolean isProcessingGraphConfiged() {
-		return isProcessingGraphConfiged;
+	public boolean isProcessingGraphReceived() {
+		return isProcessingGraphReceived;
 	}
 
 	/**
 	 * Sets the processing graph configured flag
 	 * @param isProcessingGraphConfiged
 	 */
-	public void setProcessingGraphConfiged(boolean isProcessingGraphConfiged) {
-		this.isProcessingGraphConfiged = isProcessingGraphConfiged;
+	public void setProcessingGraphReceived(boolean isProcessingGraphConfiged) {
+		this.isProcessingGraphReceived = isProcessingGraphConfiged;
 	}
 
 	public static class Builder {
@@ -121,8 +128,9 @@ public class ConnectionInstance implements IConnectionInstance {
 		String version = "";
 		String ip;
 		Map<String, List<String>> capabilities = new HashMap<>();
+        private ObiType obiType;
 
-		public Builder() {
+        public Builder() {
 
 		}
 
@@ -156,9 +164,16 @@ public class ConnectionInstance implements IConnectionInstance {
 					version,
 					keepaliveInterval, 
 					capabilities,
-					ip);
+					ip,
+                    obiType);
 		}
-	}
+
+        public Builder setObiType(ObiType obiType) {
+            this.obiType = obiType;
+            return this;
+        }
+
+    }
 
 	@Override
 	public void sendRequest(IMessage message, IRequestSender requestSender) {

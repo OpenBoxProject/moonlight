@@ -1,5 +1,7 @@
 package org.openbox.dashboard;
 
+import org.moonlightcontroller.exceptions.ApplicationsLoadException;
+import org.moonlightcontroller.managers.ApplicationsManager;
 import org.moonlightcontroller.managers.ConnectionManager;
 import org.moonlightcontroller.managers.XidGenerator;
 import org.openboxprotocol.exceptions.InstanceNotAvailableException;
@@ -97,4 +99,9 @@ public class DashboardServerApi {
 		return resp;
 	}
 
+	@GET
+    @Path("reloadApplications")
+    public void reloadApplications() throws ApplicationsLoadException {
+        ApplicationsManager.getInstance().updateApps();
+    }
 }

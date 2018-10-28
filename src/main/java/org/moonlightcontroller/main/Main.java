@@ -3,6 +3,7 @@ package org.moonlightcontroller.main;
 import java.io.IOException;
 
 import org.moonlightcontroller.controller.MoonlightController;
+import org.moonlightcontroller.managers.ApplicationsManager;
 import org.moonlightcontroller.registry.ApplicationRegistry;
 import org.moonlightcontroller.registry.IApplicationRegistry;
 import org.moonlightcontroller.topology.ITopologyManager;
@@ -25,17 +26,24 @@ public class Main {
 
 		IApplicationRegistry reg = new ApplicationRegistry();
 		reg.loadFromPath("./apps");
-		
+
 		ITopologyManager topology = TopologyManager.getInstance();
-		MoonlightController mc = new MoonlightController(reg, topology, server_port);
+		MoonlightController mc = new MoonlightController(topology, server_port);
+
+        ApplicationsManager.getInstance().setMoonlightController(mc);
 
         WebSocketApplication.start();
         Thread t = new Thread(() -> {
-			DashboardServer.start(3635);
-		});
+            DashboardServer dashboardServer = new DashboardServer(3635);
+            try {
+                dashboardServer.start();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        });
 		t.start();
 
-		mc.start();
+		mc.start(reg);
 		t.interrupt();
 		return;
 	}

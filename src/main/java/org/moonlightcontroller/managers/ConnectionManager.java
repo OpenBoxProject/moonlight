@@ -12,11 +12,9 @@ import org.moonlightcontroller.processing.*;
 import org.moonlightcontroller.topology.ILocationSpecifier;
 import org.moonlightcontroller.topology.InstanceLocationSpecifier;
 import org.moonlightcontroller.topology.TopologyManager;
-import org.openbox.dashboard.NetworkInformationService;
 import org.openbox.dashboard.SouthboundProfiler;
 import org.openboxprotocol.exceptions.InstanceNotAvailableException;
 
-import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 import java.io.IOException;
@@ -114,44 +112,62 @@ public class ConnectionManager implements ISouthboundClient {
 			long dpid = message.getDpid();
 			InstanceLocationSpecifier key = getInstanceLocationSpecifier(dpid);
 
-			ConnectionInstance value = (new ConnectionInstance.Builder())
+			ConnectionInstance connectionInstance = (new ConnectionInstance.Builder())
 					.setIp(message.getSourceAddr() != null ? message.getSourceAddr() : remoteAddress)
 					.setDpid(dpid)
 					.setVersion(message.getVersion())
 					.setCapabilities(message.getCapabilities())
+                    .setObiType(message.getObiType())
 					.build();
-			instancesMapping.put(key, value);
 
-			IProcessingGraph processingGraph = ApplicationAggregator.getInstance().getProcessingGraph(key);
-			List<JsonBlock> blocks = new ArrayList<>();
-			List<JsonConnector> connectors = new ArrayList<>();
-			if (processingGraph != null){
-				List<IProcessingBlock> custom = processingGraph.getBlocks().stream()
-						.filter(b -> b instanceof CustomBlock)
-						.collect(Collectors.toList());
-				if (custom.size() > 0){
-					this.sendCustomBlocks(custom, key, message.getObiType());
-				}
-				blocks = translateBlocks(processingGraph.getBlocks());
-				connectors = translateConnectors(processingGraph.getConnectors());
-			}
+			instancesMapping.put(key, connectionInstance);
 
-			SetProcessingGraphRequest processMessage = new SetProcessingGraphRequest(0, dpid, null, blocks, connectors);
-
-			SouthboundProfiler.getInstance().addOBI(message, processMessage);
-
-			sendMessage(key, processMessage, new NullRequestSender());
+            sendProcessingGraphToLocation(connectionInstance);
 
 			return okResponse();
 
 		} catch (Exception e) {
-			LOG.warning("Error occured while handling Hello message" + e.toString());
+			LOG.warning("Error occurred while handling Hello message" + e.toString());
 			e.printStackTrace();
 			return internalErrorResponse();
 		}
 	}
 
-	private void sendCustomBlocks(
+	public void sendProcessingnGraphs() {
+	    this.getAliveInstances().forEach(obi -> {
+            try {
+                sendProcessingGraphToLocation(instancesMapping.get(obi));
+            } catch (InstanceNotAvailableException ignore) { // will be handled by keepAlive mechanism
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        });
+    }
+
+    private void sendProcessingGraphToLocation(ConnectionInstance connectionInstance) throws InstanceNotAvailableException, IOException {
+        InstanceLocationSpecifier key = new InstanceLocationSpecifier(connectionInstance.getDpid());
+        IProcessingGraph processingGraph = ApplicationAggregator.getInstance().getProcessingGraph(key);
+        List<JsonBlock> blocks = new ArrayList<>();
+        List<JsonConnector> connectors = new ArrayList<>();
+        if (processingGraph != null) {
+            List<IProcessingBlock> custom = processingGraph.getBlocks().stream()
+                    .filter(b -> b instanceof CustomBlock)
+                    .collect(Collectors.toList());
+            if (custom.size() > 0){
+                this.sendCustomBlocks(custom, key, connectionInstance.getObiType());
+            }
+            blocks = translateBlocks(processingGraph.getBlocks());
+            connectors = translateConnectors(processingGraph.getConnectors());
+        }
+
+        SetProcessingGraphRequest processMessage = new SetProcessingGraphRequest(0, connectionInstance.getDpid(), null, blocks, connectors);
+
+        SouthboundProfiler.getInstance().addOBI(connectionInstance, processMessage);
+
+        sendMessage(key, processMessage, new NullRequestSender());
+    }
+
+    private void sendCustomBlocks(
 			List<IProcessingBlock> custom, 
 			InstanceLocationSpecifier loc, 
 			ObiType obitype) throws InstanceNotAvailableException, IOException {
@@ -169,6 +185,10 @@ public class ConnectionManager implements ISouthboundClient {
 			this.sendMessage(loc, req, new NullRequestSender());
 		}
 	}
+
+	private void resendProcessingGraphs() {
+
+    }
 
 	private List<JsonConnector> translateConnectors(List<IConnector> connectors) {
 		return connectors.stream().map(connector -> translateConnector(connector)).collect(Collectors.toList());
@@ -201,7 +221,7 @@ public class ConnectionManager implements ISouthboundClient {
 			long dpid = ((SetProcessingGraphRequest)originMessage).getDpid();
 			InstanceLocationSpecifier loc = getInstanceLocationSpecifier(dpid);
 			ConnectionInstance instance = instancesMapping.get(loc);
-			instance.setProcessingGraphConfiged(true);
+			instance.setProcessingGraphReceived(true);
 
 			SouthboundProfiler.getInstance().onSetProcessingResponse(dpid); // update profiler
 
