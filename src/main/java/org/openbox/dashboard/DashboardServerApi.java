@@ -1,14 +1,20 @@
 package org.openbox.dashboard;
 
+import org.apache.commons.io.FileUtils;
+import org.glassfish.jersey.media.multipart.FormDataContentDisposition;
+import org.glassfish.jersey.media.multipart.FormDataParam;
 import org.moonlightcontroller.exceptions.ApplicationsLoadException;
 import org.moonlightcontroller.managers.ApplicationsManager;
 import org.moonlightcontroller.managers.ConnectionManager;
 import org.moonlightcontroller.managers.XidGenerator;
 import org.openboxprotocol.exceptions.InstanceNotAvailableException;
-import org.springframework.messaging.handler.annotation.SendTo;
 
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -19,7 +25,7 @@ import java.util.logging.Logger;
 public class DashboardServerApi {
 
 	private final static Logger LOG = Logger.getLogger(DashboardServerApi.class.getName());
-	
+
 	@GET
 	@Path("ping")
 	@Produces(MediaType.TEXT_PLAIN)
@@ -103,5 +109,22 @@ public class DashboardServerApi {
     @Path("reloadApplications")
     public void reloadApplications() throws ApplicationsLoadException {
         ApplicationsManager.getInstance().updateApps();
+    }
+
+    @POST
+    @Path("/uploadApplication")
+    @Consumes(MediaType.MULTIPART_FORM_DATA)
+    public Response uploadFile(
+            @FormDataParam("file") InputStream uploadedInputStream,
+            @FormDataParam("file") FormDataContentDisposition fileDetail) throws IOException, ApplicationsLoadException {
+
+        String uploadedFileLocation = "./apps/" + fileDetail.getFileName();
+
+        // save it
+        FileUtils.copyInputStreamToFile(uploadedInputStream, new File(uploadedFileLocation));
+
+        reloadApplications();
+        return Response.status(200).build();
+
     }
 }

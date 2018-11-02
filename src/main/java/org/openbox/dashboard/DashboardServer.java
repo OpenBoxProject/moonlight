@@ -1,10 +1,11 @@
 package org.openbox.dashboard;
 
-import org.eclipse.jetty.server.Handler;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.servlet.ServletContextHandler;
 import org.eclipse.jetty.servlet.ServletHolder;
-import org.moonlightcontroller.controller.MoonlightController;
+import org.glassfish.jersey.media.multipart.MultiPartFeature;
+import org.glassfish.jersey.server.ResourceConfig;
+import org.glassfish.jersey.servlet.ServletContainer;
 
 import javax.servlet.DispatcherType;
 import java.util.EnumSet;
@@ -26,9 +27,14 @@ public class DashboardServer {
 		Server jettyServer = new Server(this.port);
 		jettyServer.setHandler(context);
 
-		ServletHolder jerseyServlet = context.addServlet(org.glassfish.jersey.servlet.ServletContainer.class, "/*");
+        ResourceConfig resourceConfig = new ResourceConfig()
+                .packages(DashboardServerApi.class.getPackage().getName())
+                .register(MultiPartFeature.class);
+
+		ServletHolder jerseyServlet = new ServletHolder(new ServletContainer(resourceConfig));
 		jerseyServlet.setInitOrder(0);
 		jerseyServlet.setInitParameter("jersey.config.server.provider.classnames", DashboardServerApi.class.getCanonicalName());
+        context.addServlet(jerseyServlet, "/*");
 
 		this.jetty = jettyServer;
 		try {
