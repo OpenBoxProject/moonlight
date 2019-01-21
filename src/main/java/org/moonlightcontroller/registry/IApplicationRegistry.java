@@ -21,7 +21,6 @@ public interface IApplicationRegistry {
 	 * @return
 	 * @throws IOException
 	 */
-	boolean loadFromClassPath(String path) throws IOException;
 	boolean loadFromPath(String path) throws IOException;
 
 	/**

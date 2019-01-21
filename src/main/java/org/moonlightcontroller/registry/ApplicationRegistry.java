@@ -63,19 +63,6 @@ public class ApplicationRegistry implements IApplicationRegistry {
     }
 
 	@Override
-	public boolean loadFromClassPath(String path) throws IOException{
-
-        ServiceLoader<BoxApplication> sl = ServiceLoader.load(BoxApplication.class, this.getClass().getClassLoader());
-        Iterator<BoxApplication> apit = sl.iterator();
-        while (apit.hasNext()){
-            BoxApplication app = apit.next();
-            System.out.printf("Registry: Found application: %s %n", app.getName());
-            this.apps.put(app.getName(), app);
-        }
-		return true;
-	}
-	
-	@Override
 	public List<BoxApplication> getApplications() {
 		List<BoxApplication> list = new ArrayList<>(this.apps.values());
 		return list;
