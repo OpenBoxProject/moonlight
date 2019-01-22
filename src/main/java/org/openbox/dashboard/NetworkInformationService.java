@@ -2,10 +2,13 @@ package org.openbox.dashboard;
 
 import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.map.SerializationConfig;
-import org.moonlightcontroller.aggregator.ApplicationAggregator;
 import org.moonlightcontroller.aggregator.IApplicationAggregator;
+import org.moonlightcontroller.bal.BoxApplication;
 import org.moonlightcontroller.managers.models.ConnectionInstance;
 import org.moonlightcontroller.managers.models.messages.Message;
+import org.moonlightcontroller.registry.ApplicationRegistry;
+import org.moonlightcontroller.registry.IApplicationRegistry;
+import org.moonlightcontroller.registry.RegisteredBoxApplication;
 import org.moonlightcontroller.topology.ILocationSpecifier;
 import org.moonlightcontroller.topology.ITopologyManager;
 import org.moonlightcontroller.topology.InstanceLocationSpecifier;
@@ -37,7 +40,7 @@ public class NetworkInformationService {
     }
     private final static Logger LOG = Logger.getLogger(NetworkInformationService.class.getName());
 
-    private ApplicationAggregator aggregated;
+    private IApplicationAggregator aggregated;
     private ITopologyManager topology;
 
     private NetworkInformationService() {
@@ -51,16 +54,18 @@ public class NetworkInformationService {
         return prettyAggregated;
     }
 
-    public void setAggregated(IApplicationAggregator aggregated) {
+    public void onPostAggregation(IApplicationRegistry applicationRegistry, IApplicationAggregator aggregated) {
 
-        this.aggregated = (ApplicationAggregator) aggregated;
+        this.aggregated = aggregated;
         ObjectMapper mapper = new ObjectMapper();
         mapper.configure(SerializationConfig.Feature.FAIL_ON_EMPTY_BEANS, false);
 
         List<Map> apps = new ArrayList<>();
-        this.aggregated.getApps().forEach((app) -> {
+        applicationRegistry.getApplications().forEach((registeredBoxApplication) -> {
+            BoxApplication app = registeredBoxApplication.getApplication();
             HashMap<String, Object> prettyApp = new HashMap<>();
-            prettyApp.put("name", app.getName());
+            prettyApp.put("name", registeredBoxApplication.getName());
+            prettyApp.put("jarName", registeredBoxApplication.getJarName());
 
             // Statements
             List<Map> statements = new ArrayList<>();

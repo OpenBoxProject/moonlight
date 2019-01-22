@@ -16,7 +16,9 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Queue;
@@ -109,12 +111,45 @@ public class DashboardServerApi {
 
 	private final static String APPS_REPOSITORY_DIRECTORY = "./apps-repo";
 	private final static String DEPLOYED_APPS_DIRECTORY = "./apps";
+	
+	private class RepositoryApp {
+
+		private String jarName;
+		private boolean deployed;
+
+		RepositoryApp(String jarName, boolean deployed) {
+			this.jarName = jarName;
+			this.deployed = deployed;
+		}
+
+		public String getJarName() {
+			return jarName;
+		}
+
+		public boolean getDeployed() {
+			return deployed;
+		}
+	}
 
 	@GET
     @Path("listRepositoryApps")
     @Produces(MediaType.APPLICATION_JSON)
-    public List<String> listRepositoryApps() throws ApplicationsLoadException {
-        return FileUtils.listFiles(new File(APPS_REPOSITORY_DIRECTORY), new String[]{"jar"}, false).stream().map(File::getName).sorted().collect(Collectors.toList());
+    public List<RepositoryApp> listRepositoryApps() throws ApplicationsLoadException {
+		List<RepositoryApp> repositoryApps = new ArrayList<>();
+
+		if (!new File(APPS_REPOSITORY_DIRECTORY).exists())
+			return repositoryApps;
+
+		HashSet<String> deployedApps = new HashSet<>();
+		getApps().forEach((app) -> deployedApps.add((String) app.get("jarName")));
+
+		FileUtils.listFiles(new File(APPS_REPOSITORY_DIRECTORY), new String[]{"jar"}, false).forEach((file) -> {
+			boolean deployed = deployedApps.contains(file.getName());
+
+			repositoryApps.add(new RepositoryApp(file.getName(), deployed));
+		});
+
+		return repositoryApps;
     }
 
     @POST

@@ -1,6 +1,7 @@
 package org.moonlightcontroller.aggregator;
 
 import java.util.List;
+import java.util.Map;
 
 import org.moonlightcontroller.bal.BoxApplication;
 import org.moonlightcontroller.managers.models.messages.Alert;
@@ -25,6 +26,13 @@ public interface IApplicationAggregator {
 	 */
 	IProcessingGraph getProcessingGraph(ILocationSpecifier loc);
 	
+	/**
+	 * after performAggregation is called this method returns a map from location to processing graph for that location
+	 * @param loc
+	 * @return
+	 */
+	Map<ILocationSpecifier, IProcessingGraph> getAggregated();
+
 	/**
 	 * Handles alerts coming from the control plane.
 	 * It will know to which application the alert should be routed
