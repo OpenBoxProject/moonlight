@@ -64,12 +64,7 @@ To run multiple OBIs on different ports and dpids (Data Plane IDs / Endpoints), 
 
 Once an Mock OBI is loaded, it listens for HTTP requests on the configured <obi_port> port.
 
-To make the OBI send an Hello message to the controller and obtain a processing graph, run: 
-
-To make the mock OBI send an Hello message to the moonlight controller, run: 
-```bash
-curl -X POST http://localhost:<obi_port>/message/SayHello
-```
+The mock OBI will send an Hello message to the moonlight controller upon initialization.
 
 ## Install on Docker
 
