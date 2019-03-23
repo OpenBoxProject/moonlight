@@ -121,7 +121,7 @@ public class ObiMockApi {
 	@Consumes(MediaType.APPLICATION_JSON)
 	public Response globalStatsRequest(GlobalStatsRequest message) {
 		LOG.info("received a read request" + message.toString());
-		Map<String, Object> mock = new HashMap<>();
+		Map<String, Double> mock = new HashMap<>();
 
 		// simulating multiple cpu
 
