@@ -52,12 +52,12 @@ public class DashboardMessageRequest {
 
 	public Message getRequestMessage() {
 		if (this.type.equals("read"))
-			return new ReadRequest((int) this.locationSpecifier.getId(), blockId, this.handle);
+			return new ReadRequest(blockId, this.handle);
 		else if (this.type.equals("write"))
-			return new WriteRequest((int) this.locationSpecifier.getId(), blockId, this.handle, this.value);
+			return new WriteRequest(blockId, this.handle, this.value);
 
 		// global stats
-		return new GlobalStatsRequest((int) this.locationSpecifier.getId());
+		return new GlobalStatsRequest();
 
 	}
 }
