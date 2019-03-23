@@ -95,20 +95,13 @@ public class ObiMockApi {
 			ObiMock.getInstance().getClient().sendMessage(msg);
 	}
 
-    private static MockMeasure core1 = new MockMeasure("core1");
-    private static MockMeasure core2 = new MockMeasure("core2");
+    private static MockMeasure avg_load = new MockMeasure("avg_load");
     private static MockMeasure memVMS = new MockMeasure("memVMS");
     private static MockMeasure memRSS = new MockMeasure("memRSS");
     private static MockMeasure memUsage = new MockMeasure("memUsage");
 
-    synchronized private List<Double> getCPUByCore() {
-
-        List<Double> cpuByCore = new ArrayList<>();
-        cpuByCore.add(core1.next());
-        cpuByCore.add(core2.next());
-
-        return cpuByCore;
-
+    synchronized private double getAvgLoad() {
+        return avg_load.next() / 100;
     }
 
     synchronized private double getMemVMS() {
@@ -132,11 +125,11 @@ public class ObiMockApi {
 
 		// simulating multiple cpu
 
-		mock.put("cpu", getCPUByCore());
+		mock.put("avg_load", getAvgLoad());
 		mock.put("memory_rss", getMemRSS());
 		mock.put("memory_vms", getMemVMS());
 		mock.put("memory_usage", getMemUsage());
-        System.out.println("MEMORY RSS " + memRSS);
+        
         GlobalStatsResponse resp = new GlobalStatsResponse(message.getXid(), mock);
 		new Thread(()-> this.sendMessage(resp)).start();
 		return Response.status(Status.OK).build();
