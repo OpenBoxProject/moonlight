@@ -186,10 +186,6 @@ public class ConnectionManager implements ISouthboundClient {
 		}
 	}
 
-	private void resendProcessingGraphs() {
-
-    }
-
 	private List<JsonConnector> translateConnectors(List<IConnector> connectors) {
 		return connectors.stream().map(connector -> translateConnector(connector)).collect(Collectors.toList());
 	}
@@ -200,7 +196,6 @@ public class ConnectionManager implements ISouthboundClient {
 				connector.getDestinationBlockId(),
 				0);
 	}
-
 
 	private List<JsonBlock> translateBlocks(List<IProcessingBlock> blocks) {
 		return blocks.stream().map(block -> translateBlock(block)).collect(Collectors.toList());
