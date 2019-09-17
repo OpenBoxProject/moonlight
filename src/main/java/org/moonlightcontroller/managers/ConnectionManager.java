@@ -1,5 +1,22 @@
 package org.moonlightcontroller.managers;
 
+import org.moonlightcontroller.aggregator.ApplicationAggregator;
+import org.moonlightcontroller.blocks.CustomBlock;
+import org.moonlightcontroller.blocks.ObiType;
+import org.moonlightcontroller.managers.models.ConnectionInstance;
+import org.moonlightcontroller.managers.models.IRequestSender;
+import org.moonlightcontroller.managers.models.NullRequestSender;
+import org.moonlightcontroller.managers.models.messages.*;
+import org.moonlightcontroller.managers.models.messages.Error;
+import org.moonlightcontroller.processing.*;
+import org.moonlightcontroller.topology.ILocationSpecifier;
+import org.moonlightcontroller.topology.InstanceLocationSpecifier;
+import org.moonlightcontroller.topology.TopologyManager;
+import org.openbox.dashboard.SouthboundProfiler;
+import org.openboxprotocol.exceptions.InstanceNotAvailableException;
+
+import javax.ws.rs.core.Response;
+import javax.ws.rs.core.Response.Status;
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -8,35 +25,6 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
-
-import javax.ws.rs.core.Response;
-import javax.ws.rs.core.Response.Status;
-
-import org.moonlightcontroller.aggregator.ApplicationAggregator;
-import org.moonlightcontroller.blocks.CustomBlock;
-import org.moonlightcontroller.blocks.ObiType;
-import org.moonlightcontroller.managers.models.ConnectionInstance;
-import org.moonlightcontroller.managers.models.IRequestSender;
-import org.moonlightcontroller.managers.models.NullRequestSender;
-import org.moonlightcontroller.managers.models.messages.AddCustomModuleRequest;
-import org.moonlightcontroller.managers.models.messages.AddCustomModuleResponse;
-import org.moonlightcontroller.managers.models.messages.Alert;
-import org.moonlightcontroller.managers.models.messages.Error;
-import org.moonlightcontroller.managers.models.messages.Hello;
-import org.moonlightcontroller.managers.models.messages.IMessage;
-import org.moonlightcontroller.managers.models.messages.KeepAlive;
-import org.moonlightcontroller.managers.models.messages.ListCapabilitiesResponse;
-import org.moonlightcontroller.managers.models.messages.SetProcessingGraphRequest;
-import org.moonlightcontroller.managers.models.messages.SetProcessingGraphResponse;
-import org.moonlightcontroller.processing.IConnector;
-import org.moonlightcontroller.processing.IProcessingBlock;
-import org.moonlightcontroller.processing.IProcessingGraph;
-import org.moonlightcontroller.processing.JsonBlock;
-import org.moonlightcontroller.processing.JsonConnector;
-import org.moonlightcontroller.topology.ILocationSpecifier;
-import org.moonlightcontroller.topology.InstanceLocationSpecifier;
-import org.moonlightcontroller.topology.TopologyManager;
-import org.openboxprotocol.exceptions.InstanceNotAvailableException;
 
 
 /**
@@ -77,72 +65,109 @@ public class ConnectionManager implements ISouthboundClient {
 	}
 
 	private Response handleKeepaliveRequest(InstanceLocationSpecifier instanceLocationSpecifier, int xid) {
-		ConnectionInstance data = instancesMapping.get(instanceLocationSpecifier);
-		if (data != null) {
-			data.updateKeepAlive();
+		ConnectionInstance connectionInstance = instancesMapping.get(instanceLocationSpecifier);
+		if (connectionInstance != null) {
+			connectionInstance.updateKeepAlive();
 			return okResponse();
 		}
 
 		return internalErrorResponse();
 	}
 
+    public List<InstanceLocationSpecifier> getAliveInstances() {
+        return getAliveInstances(TopologyManager.getInstance().getSegment());
+    }
+
 	public List<InstanceLocationSpecifier> getAliveInstances(ILocationSpecifier loc) {
 		return TopologyManager.getInstance().getSubInstances(loc).stream()
 				.filter(item -> isAlive(item)).collect(Collectors.toList());
 	}
 
-	public List<InstanceLocationSpecifier> getAliveInstances() {
-		return getAliveInstances(TopologyManager.getInstance().getSegment());
+    public List<InstanceLocationSpecifier> getDeadInstances() {
+
+        List<InstanceLocationSpecifier> deadInstances = instancesMapping.keySet().stream()
+                .filter(item -> !isAlive(item))
+                .collect(Collectors.toList());
+
+        deadInstances.forEach(instancesMapping::remove);
+
+        return deadInstances;
+    }
+
+    private boolean isAlive(InstanceLocationSpecifier item) {
+		ConnectionInstance connectionInstance = instancesMapping.get(item);
+		if (connectionInstance == null)
+		    return false;
+		else if (connectionInstance.getKeepAliveDate() == null)
+		    return true;
+
+		return connectionInstance.getKeepAliveDate()
+				.isAfter(LocalDateTime.now().minusSeconds(connectionInstance.getKeepAliveInterval()*3));
 	}
 
-	private boolean isAlive(InstanceLocationSpecifier item) {
-		ConnectionInstance data = instancesMapping.get(item);
-		return data.getKeepAliveDate()
-				.isAfter(LocalDateTime.now().minusSeconds(data.getKeepAliveInterval()));
-	}
-
-	public Response handleHelloRequest(String ip, Hello message) {
+	public Response handleHelloRequest(String remoteAddress, Hello message) {
 		int xid = message.getXid();
 		messagesMapping.put(xid, message);
 		try {
 			long dpid = message.getDpid();
 			InstanceLocationSpecifier key = getInstanceLocationSpecifier(dpid);
 
-			ConnectionInstance value = (new ConnectionInstance.Builder())
-					.setIp(ip)
+			ConnectionInstance connectionInstance = (new ConnectionInstance.Builder())
+					.setIp(message.getSourceAddr() != null ? message.getSourceAddr() : remoteAddress)
 					.setDpid(dpid)
 					.setVersion(message.getVersion())
 					.setCapabilities(message.getCapabilities())
+                    .setObiType(message.getObiType())
 					.build();
-			instancesMapping.put(key, value);
 
-			IProcessingGraph processingGraph = ApplicationAggregator.getInstance().getProcessingGraph(key);
-			List<JsonBlock> blocks = new ArrayList<>();
-			List<JsonConnector> connectors = new ArrayList<>();
-			if (processingGraph != null){
-				List<IProcessingBlock> custom = processingGraph.getBlocks().stream()
-						.filter(b -> b instanceof CustomBlock)
-						.collect(Collectors.toList());
-				if (custom.size() > 0){
-					this.sendCustomBlocks(custom, key, message.getObiType());
-				}
-				blocks = translateBlocks(processingGraph.getBlocks());
-				connectors = translateConnectors(processingGraph.getConnectors());
-			}
-			
-			SetProcessingGraphRequest processMessage = new SetProcessingGraphRequest(0, dpid, null, blocks, connectors);
-			sendMessage(key, processMessage, new NullRequestSender());
-			
+			instancesMapping.put(key, connectionInstance);
+
+            sendProcessingGraphToLocation(connectionInstance);
+
 			return okResponse();
 
 		} catch (Exception e) {
-			LOG.warning("Error occured while handling Hello message" + e.toString());
+			LOG.warning("Error occurred while handling Hello message" + e.toString());
 			e.printStackTrace();
 			return internalErrorResponse();
 		}
 	}
 
-	private void sendCustomBlocks(
+	public void sendProcessingnGraphs() {
+	    this.getAliveInstances().forEach(obi -> {
+            try {
+                sendProcessingGraphToLocation(instancesMapping.get(obi));
+            } catch (InstanceNotAvailableException ignore) { // will be handled by keepAlive mechanism
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        });
+    }
+
+    private void sendProcessingGraphToLocation(ConnectionInstance connectionInstance) throws InstanceNotAvailableException, IOException {
+        InstanceLocationSpecifier key = new InstanceLocationSpecifier(connectionInstance.getDpid());
+        IProcessingGraph processingGraph = ApplicationAggregator.getInstance().getProcessingGraph(key);
+        List<JsonBlock> blocks = new ArrayList<>();
+        List<JsonConnector> connectors = new ArrayList<>();
+        if (processingGraph != null) {
+            List<IProcessingBlock> custom = processingGraph.getBlocks().stream()
+                    .filter(b -> b instanceof CustomBlock)
+                    .collect(Collectors.toList());
+            if (custom.size() > 0){
+                this.sendCustomBlocks(custom, key, connectionInstance.getObiType());
+            }
+            blocks = translateBlocks(processingGraph.getBlocks());
+            connectors = translateConnectors(processingGraph.getConnectors());
+        }
+
+        SetProcessingGraphRequest processMessage = new SetProcessingGraphRequest(0, connectionInstance.getDpid(), null, blocks, connectors);
+
+        SouthboundProfiler.getInstance().addOBI(connectionInstance, processMessage);
+
+        sendMessage(key, processMessage, new NullRequestSender());
+    }
+
+    private void sendCustomBlocks(
 			List<IProcessingBlock> custom, 
 			InstanceLocationSpecifier loc, 
 			ObiType obitype) throws InstanceNotAvailableException, IOException {
@@ -168,10 +193,9 @@ public class ConnectionManager implements ISouthboundClient {
 	private JsonConnector translateConnector(IConnector connector) {
 		return new JsonConnector(connector.getSourceBlockId(), 
 				connector.getSourceOutputPort(), 
-				connector.getDestinatinBlockId(),
+				connector.getDestinationBlockId(),
 				0);
 	}
-
 
 	private List<JsonBlock> translateBlocks(List<IProcessingBlock> blocks) {
 		return blocks.stream().map(block -> translateBlock(block)).collect(Collectors.toList());
@@ -192,7 +216,10 @@ public class ConnectionManager implements ISouthboundClient {
 			long dpid = ((SetProcessingGraphRequest)originMessage).getDpid();
 			InstanceLocationSpecifier loc = getInstanceLocationSpecifier(dpid);
 			ConnectionInstance instance = instancesMapping.get(loc);
-			instance.setProcessingGraphConfiged(true);
+			instance.setProcessingGraphReceived(true);
+
+			SouthboundProfiler.getInstance().onSetProcessingResponse(dpid); // update profiler
+
 			return okResponse();
 		}
 
@@ -213,12 +240,18 @@ public class ConnectionManager implements ISouthboundClient {
 
 	@Override
 	public void sendMessage(ILocationSpecifier loc, IMessage message, IRequestSender requestSender) throws InstanceNotAvailableException {
+		int xid = XidGenerator.generateXid();
+		sendMessage(xid, loc, message, requestSender);
+	}
+
+	public void sendMessage(int xid, ILocationSpecifier loc, IMessage message, IRequestSender requestSender) throws InstanceNotAvailableException {
 		ConnectionInstance connectionInstance = instancesMapping.get(loc);
 		if (connectionInstance == null) {
 			throw new InstanceNotAvailableException();
 		}
-		int xid = XidGenerator.generateXid();
+
 		message.setXid(xid);
+		message.setDpid(connectionInstance.getDpid());
 		messagesMapping.put(xid, message);
 		connectionInstance.sendRequest(message, requestSender);
 		requestSendersMapping.put(xid, requestSender);
@@ -226,13 +259,17 @@ public class ConnectionManager implements ISouthboundClient {
 	}
 
 	public Response handleResponse(IMessage message) {
-		IRequestSender iRequestSender = requestSendersMapping.get(message.getXid());
-		iRequestSender.onSuccess(message);
+        profile(message);
+
+        IRequestSender iRequestSender = requestSendersMapping.get(message.getXid());
+        iRequestSender.onSuccess(message);
 		return okResponse();
 	}
 
 	public Response handleErrorMessage(Error message) {
-		IRequestSender iRequestSender = requestSendersMapping.get(message.getXid());
+        profile(message);
+
+        IRequestSender iRequestSender = requestSendersMapping.get(message.getXid());
 		if (iRequestSender != null){
 			iRequestSender.onFailure(message);			
 		}
@@ -258,13 +295,25 @@ public class ConnectionManager implements ISouthboundClient {
 
 
 	public Response handleAlert(Alert message) {
-		ApplicationAggregator.getInstance().handleAlert(message);
+        profile(message);
+
+        ApplicationAggregator.getInstance().handleAlert(message);
 		return okResponse();
 	}
 
 	public Response handleAddCustomModuleResponse(AddCustomModuleResponse message) {
-		IRequestSender iRequestSender = requestSendersMapping.get(message.getXid());
+        profile(message);
+
+        IRequestSender iRequestSender = requestSendersMapping.get(message.getXid());
 		iRequestSender.onSuccess(message);
 		return okResponse();
 	}
+
+	private void profile(IMessage incomingMessage) {
+        IMessage outMessage = messagesMapping.get(incomingMessage.getXid());
+        if (outMessage != null)
+            incomingMessage.setDpid(outMessage.getDpid());
+
+        SouthboundProfiler.getInstance().onMessage(incomingMessage, true);
+    }
 }

@@ -50,12 +50,9 @@ public class InstanceLocationSpecifier implements ILocationSpecifier {
 	}
 
 	@Override
-	public boolean isMatch(long m) {		
-		if (this.id == m){
-			return true;
-		}
-		return false;
-	}
+	public boolean isMatch(long m) {
+        return this.id == m;
+    }
 
 	@Override
 	public ILocationSpecifier findChild(long m) {

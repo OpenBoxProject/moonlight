@@ -3,10 +3,13 @@ package org.moonlightcontroller.main;
 import java.io.IOException;
 
 import org.moonlightcontroller.controller.MoonlightController;
+import org.moonlightcontroller.managers.ApplicationsManager;
 import org.moonlightcontroller.registry.ApplicationRegistry;
 import org.moonlightcontroller.registry.IApplicationRegistry;
 import org.moonlightcontroller.topology.ITopologyManager;
 import org.moonlightcontroller.topology.TopologyManager;
+import org.openbox.dashboard.DashboardServer;
+import org.openbox.dashboard.websocket.WebSocketApplication;
 
 public class Main {
 	public static void main(String[] args) throws IOException {
@@ -20,13 +23,28 @@ public class Main {
 		        System.exit(1);
 		    }
 		}
-		
+
 		IApplicationRegistry reg = new ApplicationRegistry();
 		reg.loadFromPath("./apps");
-		
+
 		ITopologyManager topology = TopologyManager.getInstance();
-		MoonlightController mc = new MoonlightController(reg, topology, server_port);
-		mc.start();
+		MoonlightController mc = new MoonlightController(topology, server_port);
+
+        ApplicationsManager.getInstance().setMoonlightController(mc);
+
+        WebSocketApplication.start();
+        Thread t = new Thread(() -> {
+            DashboardServer dashboardServer = new DashboardServer(3635);
+            try {
+                dashboardServer.start();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        });
+		t.start();
+
+		mc.start(reg);
+		t.interrupt();
 		return;
 	}
 }

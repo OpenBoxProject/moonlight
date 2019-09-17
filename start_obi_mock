@@ -1,0 +1,4 @@
+#Usage: ./start_obi_mock <listening_host> <listening_port> <obi_host> <obi_port> <dpid>
+
+cd target
+java -cp test-classes:classes:./libs/* org.moonlightcontroller.obimock.ObiMock $1 $2 $3 $4 $5

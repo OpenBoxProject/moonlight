@@ -1,9 +1,6 @@
 package org.moonlightcontroller.obimock;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
+import java.util.*;
 import java.util.logging.Logger;
 
 import javax.ws.rs.Consumes;
@@ -16,37 +13,34 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
 import org.moonlightcontroller.blocks.ObiType;
-import org.moonlightcontroller.managers.models.messages.Alert;
-import org.moonlightcontroller.managers.models.messages.AlertMessage;
-import org.moonlightcontroller.managers.models.messages.Hello;
-import org.moonlightcontroller.managers.models.messages.IMessage;
-import org.moonlightcontroller.managers.models.messages.ReadRequest;
-import org.moonlightcontroller.managers.models.messages.ReadResponse;
-import org.moonlightcontroller.managers.models.messages.SetProcessingGraphRequest;
-import org.moonlightcontroller.managers.models.messages.SetProcessingGraphResponse;
+import org.moonlightcontroller.managers.models.messages.*;
 
 @Path("/message/")
 public class ObiMockApi {
 
 	private final static Logger LOG = Logger.getLogger(ObiMockApi.class.getName());
-	
-	@GET
+	private int measure = 10;
+
+    @GET
 	@Path("Test")
 	@Produces(MediaType.TEXT_PLAIN)
 	public String test() {
 		return "test";
 	}
 
+    public static void sayHello() {
+        HashMap<String, List<String>> caps = new HashMap<>();
+        caps.put("Caps1", Arrays.asList("cap1_1", "cap1_2"));
+        int xid = ObiMock.getInstance().fetchAndIncxid();
+        Hello hello = new Hello(xid, ObiMock.getInstance().getdpid(), "1.0", caps, ObiType.ClickObi);
+        sendMessage(hello);
+    }
+
 	@POST
 	@Path("SayHello")
 	@Produces(MediaType.TEXT_PLAIN)
-	public void sayhello() {
-		HashMap<String, List<String>> caps = new HashMap<>();
-		caps.put("Caps1", Arrays.asList("cap1_1", "cap1_2"));
-		int xid = ObiMock.getInstance().fetchAndIncxid();
-		Hello hello = new Hello(xid, ObiMock.getInstance().getdpid(), "1.0", caps, ObiType.ClickObi);
-		this.sendMessage(hello);
-		
+	public void sayHelloRequest() {
+		sayHello();
 	}
 
 	@POST
@@ -57,7 +51,7 @@ public class ObiMockApi {
 		List<AlertMessage> alerts = new ArrayList<>();
 		alerts.add(new AlertMessage(1, System.currentTimeMillis(), "Alert from mock OBI", 1, "packet", "BasicFirewall.Alert"));
 		Alert alertMessage = new Alert(xid, ObiMock.getInstance().getdpid(), alerts);
-		this.sendMessage(alertMessage);		
+		sendMessage(alertMessage);
 	}
 	
 	@POST
@@ -71,7 +65,7 @@ public class ObiMockApi {
 		}
 		
 		SetProcessingGraphResponse msg = new SetProcessingGraphResponse(message.getXid());
-		new Thread(()-> this.sendMessage(msg)).start();
+		new Thread(()-> sendMessage(msg)).start();
 		
 		return Response.status(Status.OK).build();
 	}
@@ -80,13 +74,65 @@ public class ObiMockApi {
 	@Path("ReadRequest")
 	@Consumes(MediaType.APPLICATION_JSON)
 	public Response readRequest(ReadRequest message) {
-		LOG.info("Got a a read request" + message.toString());
-		ReadResponse rr = new ReadResponse(message.getXid(), message.getBlockId(), message.getReadHandle(), "100");
-		new Thread(()-> this.sendMessage(rr)).start();
+		LOG.info("received a read request" + message.toString());
+		measure += (int) (Math.random() * 20);
+		ReadResponse rr = new ReadResponse(message.getXid(), message.getBlockId(), message.getReadHandle(), String.valueOf(measure));
+		new Thread(()-> sendMessage(rr)).start();
 		return Response.status(Status.OK).build();
 	}
 
-	private void sendMessage(IMessage msg) {
-		ObiMock.getInstance().getClient().sendMessage(msg);
+	@POST
+	@Path("WriteRequest")
+	@Consumes(MediaType.APPLICATION_JSON)
+	public Response writeRequest(WriteRequest message) {
+		LOG.info("received a write request" + message.toString());
+		WriteResponse rr = new WriteResponse(message.getXid(), message.getBlockId(), message.getWriteHandle());
+		new Thread(()-> sendMessage(rr)).start();
+		return Response.status(Status.OK).build();
 	}
+
+	private static void sendMessage(IMessage msg) {
+			ObiMock.getInstance().getClient().sendMessage(msg);
+	}
+
+    private static MockMeasure avg_load = new MockMeasure("avg_load");
+    private static MockMeasure memVMS = new MockMeasure("memVMS");
+    private static MockMeasure memRSS = new MockMeasure("memRSS");
+    private static MockMeasure memUsage = new MockMeasure("memUsage");
+
+    synchronized private double getAvgLoad() {
+        return avg_load.next() / 100;
+    }
+
+    synchronized private double getMemVMS() {
+        return memVMS.next();
+    }
+
+    synchronized private double getMemRSS() {
+        return memRSS.next();
+    }
+
+    synchronized private double getMemUsage() {
+        return memUsage.next();
+    }
+
+	@POST
+	@Path("GlobalStatsRequest")
+	@Consumes(MediaType.APPLICATION_JSON)
+	public Response globalStatsRequest(GlobalStatsRequest message) {
+		LOG.info("received a read request" + message.toString());
+		Map<String, Double> mock = new HashMap<>();
+
+		// simulating multiple cpu
+
+		mock.put("avg_load", getAvgLoad());
+		mock.put("memory_rss", getMemRSS());
+		mock.put("memory_vms", getMemVMS());
+		mock.put("memory_usage", getMemUsage());
+        
+        GlobalStatsResponse resp = new GlobalStatsResponse(message.getXid(), mock);
+		new Thread(()-> this.sendMessage(resp)).start();
+		return Response.status(Status.OK).build();
+	}
+
 }

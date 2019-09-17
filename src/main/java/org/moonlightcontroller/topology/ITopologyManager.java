@@ -31,4 +31,6 @@ public interface ITopologyManager {
 	 * @return a list of all locations in bfs order
 	 */
 	List<ILocationSpecifier> bfs();
+
+    Segment getSegmentByEndpoint(long dpid);
 }
